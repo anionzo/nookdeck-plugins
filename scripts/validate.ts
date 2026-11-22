@@ -46,6 +46,36 @@ for (const [i, p] of (Array.isArray(list) ? list : []).entries()) {
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
 console.log(`plugins.json OK (${seen.size} plugins)`);
 
+// themes.json: every variant says light or dark, and it matches the pack's own nookdeck.json (read from themes/<folder>/ here)
+if (await Bun.file("themes.json").exists()) {
+  const themes = JSON.parse(await Bun.file("themes.json").text());
+  const terrors: string[] = [];
+  if (!Array.isArray(themes)) terrors.push("themes.json must be an array");
+  for (const [i, t] of (Array.isArray(themes) ? themes : []).entries()) {
+    const at = `themes.json entry ${i} (${t?.id ?? "?"})`;
+    const vs: any[] = Array.isArray(t?.variants) ? t.variants : [];
+    if (!vs.length) { terrors.push(`${at}: variants must list every variant with its mode`); continue; }
+    for (const v of vs) if (v?.mode !== "light" && v?.mode !== "dark") terrors.push(`${at}: variant "${v?.id ?? "?"}" needs mode "light" or "dark"`);
+    const folder = typeof t?.repo === "string" ? /\/tree\/[^/]+\/(.+?)\/?$/.exec(t.repo)?.[1] : undefined;
+    const file = folder ? Bun.file(`${folder}/nookdeck.json`) : null;
+    let m: any = null;
+    if (file && (await file.exists())) m = JSON.parse(await file.text());
+    else if (process.env.OFFLINE !== "1" && typeof t?.repo === "string") {
+      const u = rawManifestUrl(t.repo);
+      try { const r = u ? await fetch(u) : null; if (r?.ok) m = await r.json(); } catch { /* reported below */ }
+    }
+    if (!m) { if (process.env.OFFLINE !== "1") terrors.push(`${at}: could not read the pack's nookdeck.json`); continue; }
+    const mine = new Map<string, string>((Array.isArray(m.variants) ? m.variants : []).map((x: any) => [String(x.id), String(x.mode)]));
+    for (const v of vs) {
+      if (!mine.has(String(v.id))) terrors.push(`${at}: variant "${v.id}" is not in nookdeck.json`);
+      else if (mine.get(String(v.id)) !== v.mode) terrors.push(`${at}: variant "${v.id}" is ${v.mode} here but ${mine.get(String(v.id))} in nookdeck.json`);
+    }
+    for (const id of mine.keys()) if (!vs.some((v) => String(v.id) === id)) terrors.push(`${at}: nookdeck.json variant "${id}" is missing from themes.json`);
+  }
+  if (terrors.length) { console.error(terrors.join("\n")); process.exit(1); }
+  console.log(`themes.json OK (${Array.isArray(themes) ? themes.length : 0} themes)`);
+}
+
 // the README tables are generated: fail when they are out of date
 {
   const { expectedReadme } = await import("./readme.ts");
