@@ -30,11 +30,11 @@ You don't have to be listed here to share a plugin: anyone can install from a Gi
 
 | Plugin | What it does | Permissions |
 |---|---|---|
-| [Crypto price](https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/crypto-price) | Live coin price from CoinGecko, as a stat tile | network: api.coingecko.com |
-| [Clipboard snippets](https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/clipboard-snippets) | Buttons that copy a saved text to the clipboard | shell (settings passed as environment variables) |
+| [Crypto price](plugins/crypto-price) | Live coin price from CoinGecko, as a stat tile | network: api.coingecko.com |
+| [Clipboard snippets](plugins/clipboard-snippets) | Buttons that copy a saved text to the clipboard | shell (settings passed as environment variables) |
 
-| [GitHub stars](https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/github-stars) | Star count of a repository, with a short history (runs code) | network: api.github.com, storage |
-| [Uptime ping](https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/uptime-ping) | Is a website up, and how fast (runs code) | network: nookdeck.app |
+| [GitHub stars](plugins/github-stars) | Star count of a repository, with a short history (runs code) | network: api.github.com, storage |
+| [Uptime ping](plugins/uptime-ping) | Is a website up, and how fast (runs code) | network: nookdeck.app |
 
 Plugins that run code need Nookdeck 0.3.1 or later.
 
