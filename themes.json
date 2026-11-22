@@ -1,5 +1,135 @@
 [
   {
+    "id": "dev.nookdeck.aurora",
+    "name": "Aurora",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/aurora",
+    "version": "1.0.0",
+    "sha256": "f836f9acc3c5123e5f33184d3b42983f3e4ce32787aeb53e4c19ea83421b10fd",
+    "description": "A slow aurora of colour behind frosted-glass tiles. Borealis (green, teal, violet) and Sunset (orange, pink, purple). The drift stops in lite mode and with reduced motion, and the colours stay.",
+    "license": "MIT",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "borealis",
+        "name": "Borealis",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/aurora/previews/borealis.png",
+        "colors": {
+          "bg": "#06121f",
+          "tile": "#ffffff",
+          "accent": "#7dffd0",
+          "text": "#f2fffb",
+          "muted": "#f2fffb"
+        }
+      },
+      {
+        "id": "sunset",
+        "name": "Sunset",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/aurora/previews/sunset.png",
+        "colors": {
+          "bg": "#1a0b22",
+          "tile": "#ffffff",
+          "accent": "#ffb45e",
+          "text": "#fff6ee",
+          "muted": "#fff6ee"
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.blueprint",
+    "name": "Blueprint",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/blueprint",
+    "version": "1.0.0",
+    "sha256": "7f36c0d54c795e54326f14e0acef6c1d835172291cb30349178bb44cab491fb2",
+    "description": "A technical drawing: a fine grid, white hairline tiles, dimension ticks at the tile corners and a mono face. Blueprint (blue) and Whiteprint (light). No animation.",
+    "license": "OFL-1.1 (fonts: IBM Plex Mono)",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "blueprint",
+        "name": "Blueprint",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/blueprint/previews/blueprint.png",
+        "colors": {
+          "bg": "#0b3d91",
+          "tile": "#0b3d91",
+          "accent": "#ffd166",
+          "text": "#e8f0ff",
+          "muted": "#8db4ff"
+        }
+      },
+      {
+        "id": "whiteprint",
+        "name": "Whiteprint",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/blueprint/previews/whiteprint.png",
+        "colors": {
+          "bg": "#f4f7fb",
+          "tile": "#f4f7fb",
+          "accent": "#d1495b",
+          "text": "#173a6b",
+          "muted": "#7f95b8"
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.brutalist",
+    "name": "Brutalist",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/brutalist",
+    "version": "1.0.0",
+    "sha256": "f751e61502fe2b5681f098bf2bd398119119da87faece433465a85a9d0b03873",
+    "description": "Thick black borders, hard offset shadows, flat clashing colours and oversized numbers. Yellow, Concrete and Riot. Archivo Black for numbers and titles, Archivo Narrow Bold for labels. Pressing a tile pushes it into its shadow. No animation.",
+    "license": "OFL-1.1 (fonts: Archivo Black, Archivo Narrow)",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "yellow",
+        "name": "Yellow",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/brutalist/previews/yellow.png",
+        "colors": {
+          "bg": "#ffe600",
+          "tile": "#ffffff",
+          "accent": "#ff2e63",
+          "text": "#000000",
+          "muted": "#000000"
+        }
+      },
+      {
+        "id": "concrete",
+        "name": "Concrete",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/brutalist/previews/concrete.png",
+        "colors": {
+          "bg": "#bdbdbd",
+          "tile": "#f5f5f5",
+          "accent": "#000000",
+          "text": "#000000",
+          "muted": "#000000"
+        }
+      },
+      {
+        "id": "riot",
+        "name": "Riot",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/brutalist/previews/riot.png",
+        "colors": {
+          "bg": "#ff1f1f",
+          "tile": "#1d3bff",
+          "accent": "#ffe600",
+          "text": "#ffffff",
+          "muted": "#ffffff"
+        }
+      }
+    ]
+  },
+  {
     "id": "dev.nookdeck.catppuccin",
     "name": "Catppuccin",
     "author": "Nookdeck (port of Catppuccin)",
@@ -295,6 +425,84 @@
     ]
   },
   {
+    "id": "dev.nookdeck.pixel",
+    "name": "Pixel",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/pixel",
+    "version": "1.0.0",
+    "sha256": "12a98823b3ecdd5b03177b511affdec7f767cba53661dda5330d778792d1ca6f",
+    "description": "8-bit: Press Start 2P for numbers and titles, Silkscreen for labels, stepped square borders, a dithered sheet and a chunky palette. Arcade (dark) and Handheld (four greens). No animation.",
+    "license": "OFL-1.1 (fonts: Press Start 2P, Silkscreen)",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "arcade",
+        "name": "Arcade",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/pixel/previews/arcade.png",
+        "colors": {
+          "bg": "#12082b",
+          "tile": "#2a1760",
+          "accent": "#ffd23f",
+          "text": "#fff7d6",
+          "muted": "#b8a6ff"
+        }
+      },
+      {
+        "id": "handheld",
+        "name": "Handheld",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/pixel/previews/handheld.png",
+        "colors": {
+          "bg": "#9bbc0f",
+          "tile": "#8bac0f",
+          "accent": "#0f380f",
+          "text": "#0f380f",
+          "muted": "#306230"
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.sketchbook",
+    "name": "Sketchbook",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/sketchbook",
+    "version": "1.0.0",
+    "sha256": "6cb21fda91f25efcb9a09615336fa9e9daae27507f5d06053f507e2b580d4d94",
+    "description": "Hand-drawn: ruled paper with a paper grain, wobbly ink outlines, handwriting labels and a marker highlight on whatever is on. Notebook (ruled lines) and Chalkboard (dark green, chalk white). No animation.",
+    "license": "OFL-1.1 (fonts: Caveat)",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "notebook",
+        "name": "Notebook",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/sketchbook/previews/notebook.png",
+        "colors": {
+          "bg": "#fbf7ec",
+          "tile": "#fbf7ec",
+          "accent": "#ffd93b",
+          "text": "#23304a",
+          "muted": "#23304a"
+        }
+      },
+      {
+        "id": "chalkboard",
+        "name": "Chalkboard",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/sketchbook/previews/chalkboard.png",
+        "colors": {
+          "bg": "#243a30",
+          "tile": "#243a30",
+          "accent": "#ffe27a",
+          "text": "#f3f1e7",
+          "muted": "#f3f1e7"
+        }
+      }
+    ]
+  },
+  {
     "id": "dev.nookdeck.synthwave-84",
     "name": "SynthWave '84",
     "author": "Nookdeck (port of SynthWave '84 by Robb Owen)",
@@ -339,6 +547,58 @@
             "to": "#2a1d44",
             "angle": 180
           }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.terminal",
+    "name": "Terminal",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/terminal",
+    "version": "1.0.0",
+    "sha256": "8b3830247326224414857cefc7cc9904d6290cc1101c5462773cfdc7683c01d5",
+    "description": "A CRT phosphor terminal: scanlines, a soft glow on values, a blinking cursor in the top bar and dashed ASCII-style tile borders. Green, Amber and Ice. The blink stops in lite mode and with reduced motion.",
+    "license": "OFL-1.1 (fonts: VT323)",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "green",
+        "name": "Green",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/terminal/previews/green.png",
+        "colors": {
+          "bg": "#020a04",
+          "tile": "#020a04",
+          "accent": "#33ff66",
+          "text": "#33ff66",
+          "muted": "#1f8f3c"
+        }
+      },
+      {
+        "id": "amber",
+        "name": "Amber",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/terminal/previews/amber.png",
+        "colors": {
+          "bg": "#0a0600",
+          "tile": "#0a0600",
+          "accent": "#ffb000",
+          "text": "#ffb000",
+          "muted": "#8a5f00"
+        }
+      },
+      {
+        "id": "ice",
+        "name": "Ice",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/de45f1be5c025e121ecc18fa57506a89aeef7939/themes/terminal/previews/ice.png",
+        "colors": {
+          "bg": "#02080c",
+          "tile": "#02080c",
+          "accent": "#9be9ff",
+          "text": "#9be9ff",
+          "muted": "#3f7f93"
         }
       }
     ]

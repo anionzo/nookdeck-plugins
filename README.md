@@ -51,12 +51,18 @@ Browse them at [nookdeck.app/themes](https://nookdeck.app/themes), or in Nookdec
 
 | Theme | Variants | Licence | Credit |
 |---|---|---|---|
+| [Aurora](themes/aurora) | Borealis, Sunset | MIT | Original Nookdeck design |
+| [Blueprint](themes/blueprint) | Blueprint, Whiteprint | OFL-1.1 (fonts: IBM Plex Mono) | Original Nookdeck design |
+| [Brutalist](themes/brutalist) | Yellow, Concrete, Riot | OFL-1.1 (fonts: Archivo Black, Archivo Narrow) | Original Nookdeck design |
 | [Catppuccin](themes/catppuccin) | Latte, Frappé, Macchiato, Mocha | MIT | Port of Catppuccin (catppuccin.com) |
 | [Cyberpunk](themes/cyberpunk) | Neon, Acid, Chrome | OFL-1.1 (font) | Original Nookdeck design |
 | [JellyFish](themes/jellyfish) | JellyFish | Apache-2.0 | Port of JellyFish by Pawel Borkar |
 | [Night Owl](themes/night-owl) | Night Owl, Light Owl | MIT | Port of Night Owl by Sarah Drasner |
 | [One Dark Pro](themes/one-dark-pro) | One Dark Pro, Flat, Darker, Mix, Night Flat | MIT | Port of One Dark Pro by Binaryify |
+| [Pixel](themes/pixel) | Arcade, Handheld | OFL-1.1 (fonts: Press Start 2P, Silkscreen) | Original Nookdeck design |
+| [Sketchbook](themes/sketchbook) | Notebook, Chalkboard | OFL-1.1 (fonts: Caveat) | Original Nookdeck design |
 | [SynthWave '84](themes/synthwave-84) | SynthWave '84, Midnight drive | MIT | Port of SynthWave '84 by Robb Owen |
+| [Terminal](themes/terminal) | Green, Amber, Ice | OFL-1.1 (fonts: VT323) | Original Nookdeck design |
 | [Tokyo Night](themes/tokyo-night) | Night, Storm, Moon, Day | Apache-2.0 and MIT | Port of Tokyo Night by enkia and folke |
 <!-- listed:end -->
 
