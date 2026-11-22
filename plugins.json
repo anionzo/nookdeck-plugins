@@ -4,8 +4,8 @@
     "name": "Crypto price",
     "author": "Nookdeck",
     "repo": "https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/crypto-price",
-    "version": "1.0.0",
-    "sha256": "7757fc7db72e0f091e051eb8371101a19ffdecdd09ab27a39bfb4d73b1c96ecd",
+    "version": "1.0.1",
+    "sha256": "7233e20250c8482192e730c1cfc2c284c8613172762e0d13e3a357034957be5f",
     "description": "Live price of a coin from CoinGecko, as a stat tile",
     "permissions": { "network": ["api.coingecko.com"] }
   }
