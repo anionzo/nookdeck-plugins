@@ -26,6 +26,18 @@ A maintainer reviews every entry. Plugins that ask for `shell` or `keyboard` get
 
 You don't have to be listed here to share a plugin: anyone can install from a GitHub URL. Unlisted plugins show an "Unreviewed" badge.
 
+## Listed plugins
+
+| Plugin | What it does | Permissions |
+|---|---|---|
+| [Crypto price](https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/crypto-price) | Live coin price from CoinGecko, as a stat tile | network: api.coingecko.com |
+
+More samples (GitHub stars, uptime ping) arrive with plugins that run code in Nookdeck 0.3.
+
+## Checks
+
+Every pull request runs `bun scripts/validate.ts`: it checks the entry, then fetches the plugin's own `nookdeck.json` from the repo and makes sure the id, version and permissions match. [`nookdeck.schema.json`](nookdeck.schema.json) is the schema for that manifest (the same one the Nookdeck SDK ships).
+
 ## Tiers
 
 - **Community:** listed here and maintained by its author.
