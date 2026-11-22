@@ -45,3 +45,10 @@ for (const [i, p] of (Array.isArray(list) ? list : []).entries()) {
 }
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
 console.log(`plugins.json OK (${seen.size} plugins)`);
+
+// the README tables are generated: fail when they are out of date
+{
+  const { expectedReadme } = await import("./readme.ts");
+  if ((await expectedReadme()) !== (await Bun.file("README.md").text())) { console.error("README.md is out of date: run bun scripts/readme.ts and commit"); process.exit(1); }
+  console.log("README.md tables up to date");
+}
