@@ -1,0 +1,20 @@
+/* Aurora for Nookdeck: soft blobs of colour that drift slowly behind frosted tiles. CSS only, no images.
+   The drift is off in lite mode and with reduced motion (the deck turns theme animation off), so the first frame stays as a still. */
+
+[data-part="background"] { display: block !important; background-color: var(--nd-bg); background-size: 160% 160%; background-position: 0% 50%; -webkit-animation: au-drift 40s ease-in-out infinite alternate; animation: au-drift 40s ease-in-out infinite alternate; }
+.pd-root[data-theme-variant="borealis"] [data-part="background"] {
+  background-image: radial-gradient(40% 55% at 20% 25%, rgba(46, 230, 166, .55), transparent 70%), radial-gradient(45% 50% at 75% 20%, rgba(36, 170, 200, .5), transparent 70%), radial-gradient(50% 55% at 60% 85%, rgba(140, 90, 240, .5), transparent 70%);
+}
+.pd-root[data-theme-variant="sunset"] [data-part="background"] {
+  background-image: radial-gradient(40% 55% at 20% 80%, rgba(255, 140, 50, .55), transparent 70%), radial-gradient(45% 50% at 80% 25%, rgba(255, 70, 140, .5), transparent 70%), radial-gradient(50% 55% at 45% 30%, rgba(150, 80, 220, .55), transparent 70%);
+}
+@-webkit-keyframes au-drift { from { background-position: 0% 40%; } to { background-position: 100% 60%; } }
+@keyframes au-drift { from { background-position: 0% 40%; } to { background-position: 100% 60%; } }
+@media (prefers-reduced-motion: reduce) { [data-part="background"] { -webkit-animation: none; animation: none; } }
+
+/* Frosted glass: a thin light edge and a faint top highlight. */
+[data-part="tile"] { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 6px 18px rgba(0, 0, 0, .18); }
+[data-part="tile"][data-state="on"], [data-part="tile"][data-state="playing"] { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 0 0 1px var(--nd-accent), 0 6px 18px rgba(0, 0, 0, .18); }
+[data-part="tile-value"], [data-part="tile-label"] { text-shadow: 0 1px 6px rgba(0, 0, 0, .25); }
+
+

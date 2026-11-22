@@ -1,0 +1,23 @@
+/* Brutalist for Nookdeck: hard shadows, thick borders, no softness. CSS only, no animation, cheap on lite mode.
+   Shadows and borders follow the variant's border colour, so Riot and Concrete stay consistent. */
+
+[data-part="tile"] { box-shadow: 6px 6px 0 var(--nd-border-color); }
+/* A pressed tile is pushed into its shadow. */
+[data-part="tile"]:active { -webkit-transform: translate(4px, 4px); transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--nd-border-color); }
+[data-part="tile"][data-state="on"], [data-part="tile"][data-state="playing"] { background-color: var(--nd-accent); color: var(--nd-border-color); }
+[data-part="tile"][data-state="warn"] { background-color: var(--nd-warn); }
+[data-part="tile"][data-state="error"] { background-color: var(--nd-error); }
+
+/* Oversized, tight numbers; shouting labels. */
+[data-part="tile-value"] { font-size: 1.3em; letter-spacing: -.03em; line-height: .95; }
+[data-kind="clock"] [data-part="tile-value"] { font-size: 1.45em; }
+/* Labels use the narrow face (--nd-font), may wrap to two lines and never truncate. */
+[data-part="tile-label"] { text-transform: uppercase; letter-spacing: .01em; font-size: .86em; line-height: .95; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: break-word; text-align: center; max-width: 100%; }
+[data-part="tile-sub"] { text-transform: uppercase; letter-spacing: .04em; }
+
+/* The page bar and dots get the same hard edge. */
+[data-part="header"] { text-transform: uppercase; letter-spacing: .04em; }
+[data-part="header"] b { font-family: var(--nd-number-font); }
+[data-part="sheet"] { border-top: 3px solid var(--nd-border-color); }
+
+[data-kind="standby"] [data-part="tile-value"] { font-size: 1.6em; -webkit-text-stroke: 2px var(--nd-border-color); }

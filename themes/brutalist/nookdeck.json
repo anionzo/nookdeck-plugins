@@ -1,0 +1,129 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.brutalist",
+  "name": "Brutalist",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "Thick black borders, hard offset shadows, flat clashing colours and oversized numbers. Yellow, Concrete and Riot. Archivo Black for numbers and titles, Archivo Narrow Bold for labels. Pressing a tile pushes it into its shadow. No animation.",
+  "preview": "previews/yellow.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "solid",
+    "radius": 0,
+    "gap": 12,
+    "font": "pkg:Archivo Narrow",
+    "numberFont": "pkg:Archivo Black",
+    "labelWeight": "bold",
+    "shadow": "none",
+    "iconStroke": 2.75,
+    "fonts": [
+      {
+        "family": "Archivo Black",
+        "file": "fonts/ArchivoBlack-Regular.woff2",
+        "weight": 400
+      },
+      {
+        "family": "Archivo Narrow",
+        "file": "fonts/ArchivoNarrow-Bold.woff2",
+        "weight": 700
+      }
+    ]
+  },
+  "variants": [
+    {
+      "id": "yellow",
+      "name": "Yellow",
+      "mode": "light",
+      "preview": "previews/yellow.png",
+      "theme": {
+        "accent": "#ff2e63",
+        "background": "#ffe600",
+        "tile": "#ffffff",
+        "text": "#000000",
+        "muted": "#000000",
+        "border": {
+          "width": 3,
+          "color": "#000000"
+        },
+        "palette": {
+          "ok": "#00c853",
+          "warn": "#ff9100",
+          "error": "#ff1744",
+          "info": "#2979ff"
+        },
+        "chartColors": [
+          "#ff2e63",
+          "#2979ff",
+          "#000000",
+          "#00c853",
+          "#ff9100",
+          "#7c4dff"
+        ]
+      }
+    },
+    {
+      "id": "concrete",
+      "name": "Concrete",
+      "mode": "light",
+      "preview": "previews/concrete.png",
+      "theme": {
+        "accent": "#000000",
+        "background": "#bdbdbd",
+        "tile": "#f5f5f5",
+        "text": "#000000",
+        "muted": "#000000",
+        "border": {
+          "width": 3,
+          "color": "#000000"
+        },
+        "palette": {
+          "ok": "#00c853",
+          "warn": "#ff6d00",
+          "error": "#d50000",
+          "info": "#304ffe"
+        },
+        "chartColors": [
+          "#000000",
+          "#d50000",
+          "#304ffe",
+          "#ff6d00",
+          "#616161",
+          "#00c853"
+        ]
+      }
+    },
+    {
+      "id": "riot",
+      "name": "Riot",
+      "mode": "dark",
+      "preview": "previews/riot.png",
+      "theme": {
+        "accent": "#ffe600",
+        "background": "#ff1f1f",
+        "tile": "#1d3bff",
+        "text": "#ffffff",
+        "muted": "#ffffff",
+        "border": {
+          "width": 3,
+          "color": "#000000"
+        },
+        "palette": {
+          "ok": "#00c853",
+          "warn": "#ffe600",
+          "error": "#ffffff",
+          "info": "#00e5ff"
+        },
+        "chartColors": [
+          "#ffe600",
+          "#ffffff",
+          "#00e5ff",
+          "#000000",
+          "#ff9100",
+          "#76ff03"
+        ]
+      }
+    }
+  ]
+}

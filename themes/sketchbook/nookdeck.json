@@ -1,0 +1,99 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.sketchbook",
+  "name": "Sketchbook",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "Hand-drawn: ruled paper with a paper grain, wobbly ink outlines, handwriting labels and a marker highlight on whatever is on. Notebook (ruled lines) and Chalkboard (dark green, chalk white). No animation.",
+  "preview": "previews/notebook.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "outline",
+    "radius": 6,
+    "gap": 12,
+    "font": "pkg:Caveat",
+    "numberFont": "pkg:Caveat",
+    "fontScale": 1.25,
+    "labelWeight": "bold",
+    "iconStroke": 2,
+    "shadow": "none",
+    "fonts": [
+      {
+        "family": "Caveat",
+        "file": "fonts/Caveat-Regular.woff2",
+        "weight": 400
+      },
+      {
+        "family": "Caveat",
+        "file": "fonts/Caveat-Bold.woff2",
+        "weight": 700
+      }
+    ]
+  },
+  "variants": [
+    {
+      "id": "notebook",
+      "name": "Notebook",
+      "mode": "light",
+      "preview": "previews/notebook.png",
+      "theme": {
+        "accent": "#ffd93b",
+        "background": "#fbf7ec",
+        "tile": "#fbf7ec",
+        "text": "#23304a",
+        "muted": "#23304a",
+        "border": {
+          "width": 2,
+          "color": "#23304a"
+        },
+        "palette": {
+          "ok": "#2e9b57",
+          "warn": "#e08a00",
+          "error": "#d0342c",
+          "info": "#2a6fd6"
+        },
+        "chartColors": [
+          "#2a6fd6",
+          "#d0342c",
+          "#2e9b57",
+          "#e08a00",
+          "#8a4fd6",
+          "#23304a"
+        ]
+      }
+    },
+    {
+      "id": "chalkboard",
+      "name": "Chalkboard",
+      "mode": "dark",
+      "preview": "previews/chalkboard.png",
+      "theme": {
+        "accent": "#ffe27a",
+        "background": "#243a30",
+        "tile": "#243a30",
+        "text": "#f3f1e7",
+        "muted": "#f3f1e7",
+        "border": {
+          "width": 2,
+          "color": "#f3f1e7"
+        },
+        "palette": {
+          "ok": "#9be3b0",
+          "warn": "#ffd27a",
+          "error": "#ff9a8a",
+          "info": "#a9d6ff"
+        },
+        "chartColors": [
+          "#ffe27a",
+          "#a9d6ff",
+          "#9be3b0",
+          "#ff9a8a",
+          "#e0b8ff",
+          "#f3f1e7"
+        ]
+      }
+    }
+  ]
+}

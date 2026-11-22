@@ -1,0 +1,21 @@
+/* Pixel for Nookdeck: 8-bit in CSS only. Safe for Safari 12 and lite mode (no animation, no conic gradients). */
+
+/* A dithered sheet: a 2px checker at low alpha over the background. */
+[data-part="background"] { display: block !important; background-color: var(--nd-bg); }
+.pd-root[data-theme-variant="arcade"] [data-part="background"] { background-image: linear-gradient(45deg, rgba(255, 255, 255, .06) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, .06) 75%), linear-gradient(45deg, rgba(255, 255, 255, .06) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, .06) 75%); background-size: 4px 4px; background-position: 0 0, 2px 2px; }
+.pd-root[data-theme-variant="handheld"] [data-part="background"] { background-image: linear-gradient(45deg, rgba(15, 56, 15, .14) 25%, transparent 25%, transparent 75%, rgba(15, 56, 15, .14) 75%), linear-gradient(45deg, rgba(15, 56, 15, .14) 25%, transparent 25%, transparent 75%, rgba(15, 56, 15, .14) 75%); background-size: 4px 4px; background-position: 0 0, 2px 2px; }
+
+/* Stepped borders: four hard shadows leave the corners notched, like a pixel-art frame. */
+[data-part="tile"] { border: 0 !important; border-radius: 0 !important; box-shadow: 0 -4px 0 0 var(--nd-text), 0 4px 0 0 var(--nd-text), -4px 0 0 0 var(--nd-text), 4px 0 0 0 var(--nd-text), 4px 4px 0 0 var(--nd-muted) !important; margin: 4px; }
+[data-part="tile"][data-state="on"], [data-part="tile"][data-state="playing"] { box-shadow: 0 -4px 0 0 var(--nd-accent), 0 4px 0 0 var(--nd-accent), -4px 0 0 0 var(--nd-accent), 4px 0 0 0 var(--nd-accent), 4px 4px 0 0 var(--nd-muted) !important; }
+[data-part="tile"][data-state="warn"] { box-shadow: 0 -4px 0 0 var(--nd-warn), 0 4px 0 0 var(--nd-warn), -4px 0 0 0 var(--nd-warn), 4px 0 0 0 var(--nd-warn) !important; }
+[data-part="tile"][data-state="error"] { box-shadow: 0 -4px 0 0 var(--nd-error), 0 4px 0 0 var(--nd-error), -4px 0 0 0 var(--nd-error), 4px 0 0 0 var(--nd-error) !important; }
+
+/* Pixel type: no smoothing, wider spacing, labels allowed to wrap. */
+.pd-root { -webkit-font-smoothing: none; }
+[data-part="tile-label"] { text-transform: uppercase; font-size: .54em; line-height: 1.15; letter-spacing: -.03em; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: normal; text-align: center; max-width: 100%; }
+[data-part="tile-icon"] { image-rendering: pixelated; }
+[data-part="header"] { text-transform: uppercase; font-size: .8em; color: var(--nd-text); }
+[data-part="header"] b { font-family: var(--nd-number-font); }
+
+

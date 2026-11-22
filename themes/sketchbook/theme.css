@@ -1,0 +1,26 @@
+/* Sketchbook for Nookdeck: hand-drawn, CSS plus one small grain PNG. Safe for Safari 12 and lite mode (no animation). */
+
+/* Paper: the grain on top, ruled lines under it (Notebook), a red margin line. The grain is a file of this package. */
+[data-part="background"] {
+  display: block !important; background-color: var(--nd-bg);
+  
+  background-image: url("paper.png"), repeating-linear-gradient(to bottom, rgba(42, 111, 214, .22) 0, rgba(42, 111, 214, .22) 1px, transparent 1px, transparent 26px), linear-gradient(90deg, transparent 38px, rgba(208, 52, 44, .35) 38px, rgba(208, 52, 44, .35) 40px, transparent 40px);
+  background-size: 160px 160px, auto, auto;
+}
+/* Chalkboard keeps the grain (as dust) and drops the ruled lines. */
+.pd-root[data-theme-variant="chalkboard"] [data-part="background"] { display: block !important; background-color: var(--nd-bg); background-image: url("paper.png"); background-size: 160px 160px; opacity: .8; }
+
+/* Wobbly outlines: unequal radii make each tile look drawn by hand; a few tiles tilt a hair. */
+[data-part="tile"] { border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px !important; border-style: solid; }
+[data-part="tile"]:nth-child(3n+2) { border-radius: 14px 225px 14px 255px / 255px 14px 225px 14px !important; }
+[data-part="tile"]:nth-child(4n+1) { -webkit-transform: rotate(-.6deg); transform: rotate(-.6deg); }
+[data-part="tile"]:nth-child(4n+3) { -webkit-transform: rotate(.5deg); transform: rotate(.5deg); }
+
+/* A marker stripe under the label of whatever is on. */
+[data-part="tile"][data-state="on"] [data-part="tile-label"], [data-part="tile"][data-state="playing"] [data-part="tile-label"] { background-image: linear-gradient(transparent 52%, var(--nd-accent) 52%, var(--nd-accent) 92%, transparent 92%); padding: 0 .3em; }
+[data-part="tile"][data-state="warn"] { border-color: var(--nd-warn); }
+[data-part="tile"][data-state="error"] { border-color: var(--nd-error); }
+[data-part="tile-label"] { font-size: 1.05em; line-height: 1; }
+[data-part="header"] b { font-weight: 700; font-size: 1.15em; }
+
+

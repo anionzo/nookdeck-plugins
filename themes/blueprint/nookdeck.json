@@ -1,0 +1,98 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.blueprint",
+  "name": "Blueprint",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "A technical drawing: a fine grid, white hairline tiles, dimension ticks at the tile corners and a mono face. Blueprint (blue) and Whiteprint (light). No animation.",
+  "preview": "previews/blueprint.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "outline",
+    "radius": 0,
+    "gap": 10,
+    "font": "pkg:IBM Plex Mono",
+    "numberFont": "pkg:IBM Plex Mono",
+    "labelWeight": "medium",
+    "iconStroke": 1.25,
+    "shadow": "none",
+    "fonts": [
+      {
+        "family": "IBM Plex Mono",
+        "file": "fonts/IBMPlexMono-Regular.woff2",
+        "weight": 400
+      },
+      {
+        "family": "IBM Plex Mono",
+        "file": "fonts/IBMPlexMono-SemiBold.woff2",
+        "weight": 600
+      }
+    ]
+  },
+  "variants": [
+    {
+      "id": "blueprint",
+      "name": "Blueprint",
+      "mode": "dark",
+      "preview": "previews/blueprint.png",
+      "theme": {
+        "accent": "#ffd166",
+        "background": "#0b3d91",
+        "tile": "#0b3d91",
+        "text": "#e8f0ff",
+        "muted": "#8db4ff",
+        "border": {
+          "width": 1,
+          "color": "#e8f0ff"
+        },
+        "palette": {
+          "ok": "#7dffb2",
+          "warn": "#ffd166",
+          "error": "#ff8a8a",
+          "info": "#9fd0ff"
+        },
+        "chartColors": [
+          "#ffd166",
+          "#9fd0ff",
+          "#7dffb2",
+          "#ff8a8a",
+          "#c9b6ff",
+          "#e8f0ff"
+        ]
+      }
+    },
+    {
+      "id": "whiteprint",
+      "name": "Whiteprint",
+      "mode": "light",
+      "preview": "previews/whiteprint.png",
+      "theme": {
+        "accent": "#d1495b",
+        "background": "#f4f7fb",
+        "tile": "#f4f7fb",
+        "text": "#173a6b",
+        "muted": "#7f95b8",
+        "border": {
+          "width": 1,
+          "color": "#173a6b"
+        },
+        "palette": {
+          "ok": "#1b9e5a",
+          "warn": "#c77700",
+          "error": "#c62828",
+          "info": "#1f5fbf"
+        },
+        "chartColors": [
+          "#173a6b",
+          "#d1495b",
+          "#1f5fbf",
+          "#1b9e5a",
+          "#c77700",
+          "#6a4fb3"
+        ]
+      }
+    }
+  ]
+}

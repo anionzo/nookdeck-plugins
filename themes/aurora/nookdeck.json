@@ -1,0 +1,88 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.aurora",
+  "name": "Aurora",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "A slow aurora of colour behind frosted-glass tiles. Borealis (green, teal, violet) and Sunset (orange, pink, purple). The drift stops in lite mode and with reduced motion, and the colours stay.",
+  "preview": "previews/borealis.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "tint",
+    "radius": 18,
+    "gap": 12,
+    "labelWeight": "medium",
+    "iconStroke": 1.75,
+    "shadow": "soft"
+  },
+  "variants": [
+    {
+      "id": "borealis",
+      "name": "Borealis",
+      "mode": "dark",
+      "preview": "previews/borealis.png",
+      "theme": {
+        "accent": "#7dffd0",
+        "background": "#06121f",
+        "tile": "#ffffff",
+        "text": "#f2fffb",
+        "muted": "#f2fffb",
+        "tileOpacity": 0.14,
+        "tileBlur": 16,
+        "border": {
+          "width": 1,
+          "color": "#ffffff"
+        },
+        "palette": {
+          "ok": "#7dffb2",
+          "warn": "#ffe08a",
+          "error": "#ff9aa8",
+          "info": "#9fd8ff"
+        },
+        "chartColors": [
+          "#7dffd0",
+          "#9fd8ff",
+          "#c3a6ff",
+          "#ffe08a",
+          "#ff9aa8",
+          "#f2fffb"
+        ]
+      }
+    },
+    {
+      "id": "sunset",
+      "name": "Sunset",
+      "mode": "dark",
+      "preview": "previews/sunset.png",
+      "theme": {
+        "accent": "#ffb45e",
+        "background": "#1a0b22",
+        "tile": "#ffffff",
+        "text": "#fff6ee",
+        "muted": "#fff6ee",
+        "tileOpacity": 0.14,
+        "tileBlur": 16,
+        "border": {
+          "width": 1,
+          "color": "#ffffff"
+        },
+        "palette": {
+          "ok": "#9ff0b0",
+          "warn": "#ffd27a",
+          "error": "#ff8a9a",
+          "info": "#9fd0ff"
+        },
+        "chartColors": [
+          "#ffb45e",
+          "#ff7aa8",
+          "#c18bff",
+          "#ffd27a",
+          "#9fd0ff",
+          "#fff6ee"
+        ]
+      }
+    }
+  ]
+}

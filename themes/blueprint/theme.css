@@ -1,0 +1,22 @@
+/* Blueprint for Nookdeck: a technical drawing in CSS only. Safe for Safari 12 and lite mode (no animation). */
+
+/* The sheet: a fine grid every 12px with a stronger one every 60px, drawn in the text colour at low alpha. */
+[data-part="background"] { display: block !important; background-color: var(--nd-bg); }
+.pd-root[data-theme-variant="blueprint"] [data-part="background"] { background-image: linear-gradient(rgba(255, 255, 255, .2) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .2) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px); background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px; }
+.pd-root[data-theme-variant="whiteprint"] [data-part="background"] { background-image: linear-gradient(rgba(23, 58, 107, .22) 1px, transparent 1px), linear-gradient(90deg, rgba(23, 58, 107, .22) 1px, transparent 1px), linear-gradient(rgba(23, 58, 107, .09) 1px, transparent 1px), linear-gradient(90deg, rgba(23, 58, 107, .09) 1px, transparent 1px); background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px; }
+
+[data-part="tile"] { border-style: solid; border-width: 1px; border-color: var(--nd-text); }
+/* Dimension ticks: short lines that stick out at two corners, like a drawing's extension lines. */
+[data-part="tile"]::before { content: ""; position: absolute; left: 4px; top: 4px; width: 8px; height: 8px; border-left: 1px solid var(--nd-accent); border-top: 1px solid var(--nd-accent); pointer-events: none; }
+[data-part="tile"]::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 8px; height: 8px; border-right: 1px solid var(--nd-accent); border-bottom: 1px solid var(--nd-accent); pointer-events: none; }
+[data-part="tile"][data-state="on"], [data-part="tile"][data-state="playing"] { border-color: var(--nd-accent); }
+[data-part="tile"][data-state="on"] [data-part="tile-icon"], [data-part="tile"][data-state="playing"] [data-part="tile-icon"] { color: var(--nd-accent); }
+[data-part="tile"][data-state="warn"] { border-color: var(--nd-warn); }
+[data-part="tile"][data-state="error"] { border-color: var(--nd-error); }
+
+[data-part="tile-label"] { text-transform: uppercase; letter-spacing: .02em; font-size: .7em; line-height: 1; white-space: normal; overflow: visible; text-overflow: clip; text-align: center; }
+[data-part="tile-value"] { letter-spacing: -.02em; }
+[data-part="header"] { text-transform: uppercase; letter-spacing: .12em; border-bottom: 1px solid var(--nd-text); }
+[data-part="page-dots"] { opacity: .8; }
+
+

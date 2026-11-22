@@ -1,0 +1,99 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.pixel",
+  "name": "Pixel",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "8-bit: Press Start 2P for numbers and titles, Silkscreen for labels, stepped square borders, a dithered sheet and a chunky palette. Arcade (dark) and Handheld (four greens). No animation.",
+  "preview": "previews/arcade.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "solid",
+    "radius": 0,
+    "gap": 14,
+    "font": "pkg:Silkscreen",
+    "numberFont": "pkg:Press Start 2P",
+    "fontScale": 0.8,
+    "labelWeight": "regular",
+    "iconStroke": 2.5,
+    "shadow": "none",
+    "fonts": [
+      {
+        "family": "Press Start 2P",
+        "file": "fonts/PressStart2P-Regular.woff2",
+        "weight": 400
+      },
+      {
+        "family": "Silkscreen",
+        "file": "fonts/Silkscreen-Regular.woff2",
+        "weight": 400
+      }
+    ]
+  },
+  "variants": [
+    {
+      "id": "arcade",
+      "name": "Arcade",
+      "mode": "dark",
+      "preview": "previews/arcade.png",
+      "theme": {
+        "accent": "#ffd23f",
+        "background": "#12082b",
+        "tile": "#2a1760",
+        "text": "#fff7d6",
+        "muted": "#b8a6ff",
+        "border": {
+          "width": 0,
+          "color": "#fff7d6"
+        },
+        "palette": {
+          "ok": "#4cff7a",
+          "warn": "#ffd23f",
+          "error": "#ff4d6d",
+          "info": "#4cc9ff"
+        },
+        "chartColors": [
+          "#ffd23f",
+          "#4cc9ff",
+          "#4cff7a",
+          "#ff4d6d",
+          "#c77dff",
+          "#fff7d6"
+        ]
+      }
+    },
+    {
+      "id": "handheld",
+      "name": "Handheld",
+      "mode": "light",
+      "preview": "previews/handheld.png",
+      "theme": {
+        "accent": "#0f380f",
+        "background": "#9bbc0f",
+        "tile": "#8bac0f",
+        "text": "#0f380f",
+        "muted": "#306230",
+        "border": {
+          "width": 0,
+          "color": "#0f380f"
+        },
+        "palette": {
+          "ok": "#306230",
+          "warn": "#306230",
+          "error": "#0f380f",
+          "info": "#306230"
+        },
+        "chartColors": [
+          "#0f380f",
+          "#306230",
+          "#0f380f",
+          "#306230",
+          "#0f380f",
+          "#306230"
+        ]
+      }
+    }
+  ]
+}

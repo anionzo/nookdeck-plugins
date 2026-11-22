@@ -1,0 +1,125 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.terminal",
+  "name": "Terminal",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "A CRT phosphor terminal: scanlines, a soft glow on values, a blinking cursor in the top bar and dashed ASCII-style tile borders. Green, Amber and Ice. The blink stops in lite mode and with reduced motion.",
+  "preview": "previews/green.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "outline",
+    "radius": 0,
+    "gap": 8,
+    "font": "pkg:VT323",
+    "numberFont": "pkg:VT323",
+    "fontScale": 1.15,
+    "labelWeight": "regular",
+    "showLabels": true,
+    "iconStroke": 1.5,
+    "fonts": [
+      {
+        "family": "VT323",
+        "file": "fonts/VT323-Regular.woff2",
+        "weight": 400
+      }
+    ]
+  },
+  "variants": [
+    {
+      "id": "green",
+      "name": "Green",
+      "mode": "dark",
+      "preview": "previews/green.png",
+      "theme": {
+        "accent": "#33ff66",
+        "background": "#020a04",
+        "tile": "#020a04",
+        "text": "#33ff66",
+        "muted": "#1f8f3c",
+        "border": {
+          "width": 1,
+          "color": "#1f8f3c"
+        },
+        "palette": {
+          "ok": "#33ff66",
+          "warn": "#d6ff3a",
+          "error": "#ff5a4d",
+          "info": "#6affd8"
+        },
+        "chartColors": [
+          "#33ff66",
+          "#d6ff3a",
+          "#6affd8",
+          "#ff5a4d",
+          "#1f8f3c",
+          "#33ff66"
+        ]
+      }
+    },
+    {
+      "id": "amber",
+      "name": "Amber",
+      "mode": "dark",
+      "preview": "previews/amber.png",
+      "theme": {
+        "accent": "#ffb000",
+        "background": "#0a0600",
+        "tile": "#0a0600",
+        "text": "#ffb000",
+        "muted": "#8a5f00",
+        "border": {
+          "width": 1,
+          "color": "#8a5f00"
+        },
+        "palette": {
+          "ok": "#ffb000",
+          "warn": "#ffd866",
+          "error": "#ff6a3a",
+          "info": "#ffe29a"
+        },
+        "chartColors": [
+          "#ffb000",
+          "#ffd866",
+          "#ffe29a",
+          "#ff6a3a",
+          "#8a5f00",
+          "#ffb000"
+        ]
+      }
+    },
+    {
+      "id": "ice",
+      "name": "Ice",
+      "mode": "dark",
+      "preview": "previews/ice.png",
+      "theme": {
+        "accent": "#9be9ff",
+        "background": "#02080c",
+        "tile": "#02080c",
+        "text": "#9be9ff",
+        "muted": "#3f7f93",
+        "border": {
+          "width": 1,
+          "color": "#3f7f93"
+        },
+        "palette": {
+          "ok": "#9be9ff",
+          "warn": "#d9f6ff",
+          "error": "#ff7a8a",
+          "info": "#c0b3ff"
+        },
+        "chartColors": [
+          "#9be9ff",
+          "#d9f6ff",
+          "#c0b3ff",
+          "#ff7a8a",
+          "#3f7f93",
+          "#9be9ff"
+        ]
+      }
+    }
+  ]
+}
