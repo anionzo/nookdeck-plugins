@@ -1,0 +1,47 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.night-owl",
+  "name": "Night Owl",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck (port of Night Owl)",
+  "description": "Night Owl and Light Owl: a theme for night owls and early birds, ported from Sarah Drasner's VS Code theme.",
+  "preview": "previews/night-owl.png",
+  "auto": { "light": "light-owl", "dark": "night-owl" },
+  "theme": { "tileStyle": "solid", "radius": 14, "gap": 10, "labelWeight": "medium" },
+  "variants": [
+    {
+      "id": "night-owl",
+      "name": "Night Owl",
+      "mode": "dark",
+      "theme": {
+        "accent": "#82AAFF",
+        "background": "#011627",
+        "tile": "#0b2942",
+        "text": "#d6deeb",
+        "muted": "#637777",
+        "border": { "width": 1, "color": "#5f7e97" },
+        "palette": { "ok": "#22da6e", "warn": "#c5e478", "error": "#EF5350", "info": "#82AAFF" },
+        "chartColors": ["#82AAFF", "#c792ea", "#c5e478", "#F78C6C", "#7fdbca", "#ecc48d"]
+      },
+      "preview": "previews/night-owl.png"
+    },
+    {
+      "id": "light-owl",
+      "name": "Light Owl",
+      "mode": "light",
+      "theme": {
+        "accent": "#2AA298",
+        "background": "#FBFBFB",
+        "tile": "#F0F0F0",
+        "text": "#403f53",
+        "muted": "#989fb1",
+        "border": { "width": 1, "color": "#d9d9d9" },
+        "palette": { "ok": "#08916a", "warn": "#E0AF02", "error": "#de3d3b", "info": "#288ed7" },
+        "chartColors": ["#4876d6", "#994cc3", "#08916a", "#aa0982", "#0c969b", "#c96765"]
+      },
+      "preview": "previews/light-owl.png"
+    }
+  ]
+}

@@ -19,7 +19,11 @@ export default definePlugin({
 
     ctx.widgets.provide("stars", async (s) => {
       const repo = String(s.repo ?? "");
-      return { render: "stat", data: { value: await stars(repo), label: repo } };
+      const value = await stars(repo);
+      // The history is written by the "history" widget; the stat only reads it, so the "spark" style has a trend to draw.
+      const old = ((await ctx.storage.get(`history:${repo}`)) as number[] | undefined) ?? [];
+      const points = [...old, value].slice(-60);
+      return { render: "stat", data: { value, label: repo, ...(points.length > 1 ? { points } : {}) } };
     }, { every: 300 });
 
     ctx.widgets.provide("history", async (s) => {

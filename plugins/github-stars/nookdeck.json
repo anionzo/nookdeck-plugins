@@ -2,7 +2,7 @@
   "$schema": "https://nookdeck.app/schema/plugin.json",
   "id": "dev.nookdeck.github-stars",
   "name": "GitHub stars",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "nookdeck": ">=0.3.1",
   "author": "Nookdeck",
   "description": "Star count of a GitHub repository, with a short history",
@@ -14,6 +14,8 @@
       "name": "Stars",
       "render": "stat",
       "sizes": ["2x1", "2x2"],
+      "style": "spark",
+      "preview": { "value": 1284, "label": "howznguyen/nookdeck", "points": [820, 870, 905, 940, 1002, 1055, 1110, 1168, 1215, 1284] },
       "settings": [{ "key": "repo", "type": "string", "label": "Repository (owner/name)", "default": "howznguyen/nookdeck" }]
     },
     {
@@ -21,6 +23,8 @@
       "name": "Stars over time",
       "render": "chart",
       "sizes": ["2x2", "4x2"],
+      "style": "area",
+      "preview": { "points": [820, 840, 870, 890, 905, 930, 940, 975, 1002, 1030, 1055, 1080, 1110, 1140, 1168, 1190, 1215, 1250, 1284], "label": "howznguyen/nookdeck", "unit": "stars" },
       "settings": [{ "key": "repo", "type": "string", "label": "Repository (owner/name)", "default": "howznguyen/nookdeck" }]
     }
   ],

@@ -1,0 +1,166 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.tokyo-night",
+  "name": "Tokyo Night",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck (port of Tokyo Night)",
+  "description": "Tokyo Night: a clean dark theme that celebrates the lights of downtown Tokyo. Night, Storm, Moon and a light Day.",
+  "preview": "previews/night.png",
+  "auto": {
+    "light": "day",
+    "dark": "night"
+  },
+  "theme": {
+    "tileStyle": "solid",
+    "radius": 14,
+    "gap": 10
+  },
+  "variants": [
+    {
+      "id": "night",
+      "name": "Night",
+      "mode": "dark",
+      "theme": {
+        "accent": "#7aa2f7",
+        "background": "#1a1b26",
+        "gradient": {
+          "from": "#16161e",
+          "to": "#1a1b26",
+          "angle": 180
+        },
+        "tile": "#292e42",
+        "text": "#c0caf5",
+        "muted": "#565f89",
+        "border": {
+          "width": 1,
+          "color": "#414868"
+        },
+        "palette": {
+          "ok": "#9ece6a",
+          "warn": "#e0af68",
+          "error": "#f7768e",
+          "info": "#7dcfff"
+        },
+        "chartColors": [
+          "#7aa2f7",
+          "#bb9af7",
+          "#9ece6a",
+          "#ff9e64",
+          "#7dcfff",
+          "#f7768e"
+        ]
+      },
+      "preview": "previews/night.png"
+    },
+    {
+      "id": "storm",
+      "name": "Storm",
+      "mode": "dark",
+      "theme": {
+        "accent": "#7aa2f7",
+        "background": "#24283b",
+        "gradient": {
+          "from": "#1f2335",
+          "to": "#24283b",
+          "angle": 180
+        },
+        "tile": "#292e42",
+        "text": "#c0caf5",
+        "muted": "#565f89",
+        "border": {
+          "width": 1,
+          "color": "#414868"
+        },
+        "palette": {
+          "ok": "#9ece6a",
+          "warn": "#e0af68",
+          "error": "#f7768e",
+          "info": "#7dcfff"
+        },
+        "chartColors": [
+          "#7aa2f7",
+          "#bb9af7",
+          "#9ece6a",
+          "#ff9e64",
+          "#7dcfff",
+          "#f7768e"
+        ]
+      },
+      "preview": "previews/storm.png"
+    },
+    {
+      "id": "moon",
+      "name": "Moon",
+      "mode": "dark",
+      "theme": {
+        "accent": "#82aaff",
+        "background": "#222436",
+        "gradient": {
+          "from": "#1e2030",
+          "to": "#222436",
+          "angle": 180
+        },
+        "tile": "#2f334d",
+        "text": "#c8d3f5",
+        "muted": "#636da6",
+        "border": {
+          "width": 1,
+          "color": "#444a73"
+        },
+        "palette": {
+          "ok": "#c3e88d",
+          "warn": "#ffc777",
+          "error": "#ff757f",
+          "info": "#86e1fc"
+        },
+        "chartColors": [
+          "#82aaff",
+          "#c099ff",
+          "#c3e88d",
+          "#ff966c",
+          "#86e1fc",
+          "#ff757f"
+        ]
+      },
+      "preview": "previews/moon.png"
+    },
+    {
+      "id": "day",
+      "name": "Day",
+      "mode": "light",
+      "theme": {
+        "accent": "#2e7de9",
+        "background": "#e1e2e7",
+        "gradient": {
+          "from": "#d0d5e3",
+          "to": "#e1e2e7",
+          "angle": 180
+        },
+        "tile": "#c4c8da",
+        "text": "#3760bf",
+        "muted": "#68709a",
+        "border": {
+          "width": 1,
+          "color": "#b4b5b9"
+        },
+        "palette": {
+          "ok": "#587539",
+          "warn": "#8c6c3e",
+          "error": "#f52a65",
+          "info": "#007197"
+        },
+        "chartColors": [
+          "#2e7de9",
+          "#9854f1",
+          "#587539",
+          "#b15c00",
+          "#007197",
+          "#f52a65"
+        ]
+      },
+      "preview": "previews/day.png"
+    }
+  ]
+}

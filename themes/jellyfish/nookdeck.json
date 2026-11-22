@@ -1,0 +1,30 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.jellyfish",
+  "name": "JellyFish",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck (port of JellyFish)",
+  "description": "JellyFish: deep navy with hot pink and cyan glow, ported from Pawel Borkar's VS Code theme.",
+  "preview": "previews/jellyfish.png",
+  "theme": { "tileStyle": "solid", "radius": 14, "gap": 10 },
+  "variants": [
+    {
+      "id": "jellyfish",
+      "name": "JellyFish",
+      "mode": "dark",
+      "theme": {
+        "accent": "#ff0055",
+        "background": "#00002c",
+        "tile": "#160021",
+        "text": "#ffffff",
+        "muted": "#838383",
+        "border": { "width": 1, "color": "#ff4800" },
+        "palette": { "ok": "#20dd20", "warn": "#eeff00", "error": "#FF5370", "info": "#00ffff" },
+        "chartColors": ["#ff0062", "#00ffff", "#eeff00", "#fa71ff", "#ff7e34", "#20dd20"]
+      },
+      "preview": "previews/jellyfish.png"
+    }
+  ]
+}

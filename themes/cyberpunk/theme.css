@@ -1,0 +1,47 @@
+/* Cyberpunk for Nookdeck: original design, CSS only. Safe for Safari 12 and lite mode:
+   no gap on flex, no aspect-ratio, no :is(). The agent turns animations off in lite mode and with reduced motion.
+   Without clip-path support the tiles stay square (radius 0), which is also fine. */
+
+/* Scanlines over everything, very faint. */
+:root::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 1; opacity: .5;
+  background-image: repeating-linear-gradient(to bottom, rgba(255, 255, 255, .035) 0, rgba(255, 255, 255, .035) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 3px);
+}
+
+/* Clipped corners: top right and bottom left. */
+[data-part="tile"] {
+  -webkit-clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+/* Corner ticks in the accent colour on the two square corners. */
+[data-part="tile"]::before {
+  content: ""; position: absolute; left: 0; top: 0; width: 10px; height: 10px; pointer-events: none;
+  border-left: 2px solid var(--nd-accent); border-top: 2px solid var(--nd-accent);
+}
+[data-part="tile"]::after {
+  content: ""; position: absolute; right: 0; bottom: 0; width: 10px; height: 10px; pointer-events: none;
+  border-right: 2px solid var(--nd-accent); border-bottom: 2px solid var(--nd-accent);
+}
+[data-part="tile-label"] { text-transform: uppercase; letter-spacing: .12em; font-size: .86em; }
+[data-part="tile-value"] { letter-spacing: .02em; }
+[data-part="tile"][data-state="on"], [data-part="tile"][data-state="playing"] { background-image: linear-gradient(90deg, rgba(255, 255, 255, .0), rgba(255, 255, 255, .08)); }
+[data-part="tile"][data-state="error"] { border-color: var(--nd-error); }
+
+/* The clock glitches now and then: a short chromatic jitter, once every few seconds. */
+[data-kind="clock"] [data-part="tile-value"] { text-shadow: 1px 0 var(--nd-accent), -1px 0 var(--nd-info); }
+@keyframes cp-glitch {
+  0%, 92%, 100% { -webkit-transform: translate(0, 0); transform: translate(0, 0); text-shadow: 1px 0 var(--nd-accent), -1px 0 var(--nd-info); }
+  93% { -webkit-transform: translate(-2px, 0); transform: translate(-2px, 0); text-shadow: 3px 0 var(--nd-accent), -3px 0 var(--nd-info); }
+  95% { -webkit-transform: translate(2px, 1px); transform: translate(2px, 1px); text-shadow: -3px 0 var(--nd-accent), 3px 0 var(--nd-info); }
+  97% { -webkit-transform: translate(-1px, -1px); transform: translate(-1px, -1px); }
+}
+[data-kind="clock"] [data-part="tile-value"] { -webkit-animation: cp-glitch 6s steps(1, end) infinite; animation: cp-glitch 6s steps(1, end) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  [data-kind="clock"] [data-part="tile-value"] { -webkit-animation: none; animation: none; }
+}
+
+/* Standby: a dark scan grid behind the big clock. */
+[data-kind="standby"] {
+  background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}

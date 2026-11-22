@@ -1,0 +1,426 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.catppuccin",
+  "name": "Catppuccin",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck (port of Catppuccin)",
+  "description": "Catppuccin, the soothing pastel theme: Latte, Frappé, Macchiato and Mocha, with a choice of 14 accents.",
+  "preview": "previews/mocha.png",
+  "theme": {
+    "tileStyle": "solid",
+    "radius": 16,
+    "gap": 10
+  },
+  "auto": {
+    "light": "latte",
+    "dark": "mocha"
+  },
+  "variants": [
+    {
+      "id": "latte",
+      "name": "Latte",
+      "mode": "light",
+      "theme": {
+        "accent": "#8839ef",
+        "background": "#eff1f5",
+        "gradient": {
+          "from": "#dce0e8",
+          "to": "#eff1f5",
+          "angle": 180
+        },
+        "tile": "#ccd0da",
+        "text": "#4c4f69",
+        "muted": "#6c6f85",
+        "border": {
+          "width": 1,
+          "color": "#bcc0cc"
+        },
+        "palette": {
+          "ok": "#40a02b",
+          "warn": "#df8e1d",
+          "error": "#d20f39",
+          "info": "#1e66f5"
+        },
+        "chartColors": [
+          "#8839ef",
+          "#1e66f5",
+          "#40a02b",
+          "#fe640b",
+          "#ea76cb",
+          "#179299"
+        ]
+      },
+      "preview": "previews/latte.png"
+    },
+    {
+      "id": "frappe",
+      "name": "Frappé",
+      "mode": "dark",
+      "theme": {
+        "accent": "#ca9ee6",
+        "background": "#303446",
+        "gradient": {
+          "from": "#232634",
+          "to": "#303446",
+          "angle": 180
+        },
+        "tile": "#414559",
+        "text": "#c6d0f5",
+        "muted": "#a5adce",
+        "border": {
+          "width": 1,
+          "color": "#51576d"
+        },
+        "palette": {
+          "ok": "#a6d189",
+          "warn": "#e5c890",
+          "error": "#e78284",
+          "info": "#8caaee"
+        },
+        "chartColors": [
+          "#ca9ee6",
+          "#8caaee",
+          "#a6d189",
+          "#ef9f76",
+          "#f4b8e4",
+          "#81c8be"
+        ]
+      },
+      "preview": "previews/frappe.png"
+    },
+    {
+      "id": "macchiato",
+      "name": "Macchiato",
+      "mode": "dark",
+      "theme": {
+        "accent": "#c6a0f6",
+        "background": "#24273a",
+        "gradient": {
+          "from": "#181926",
+          "to": "#24273a",
+          "angle": 180
+        },
+        "tile": "#363a4f",
+        "text": "#cad3f5",
+        "muted": "#a5adcb",
+        "border": {
+          "width": 1,
+          "color": "#494d64"
+        },
+        "palette": {
+          "ok": "#a6da95",
+          "warn": "#eed49f",
+          "error": "#ed8796",
+          "info": "#8aadf4"
+        },
+        "chartColors": [
+          "#c6a0f6",
+          "#8aadf4",
+          "#a6da95",
+          "#f5a97f",
+          "#f5bde6",
+          "#8bd5ca"
+        ]
+      },
+      "preview": "previews/macchiato.png"
+    },
+    {
+      "id": "mocha",
+      "name": "Mocha",
+      "mode": "dark",
+      "theme": {
+        "accent": "#cba6f7",
+        "background": "#1e1e2e",
+        "gradient": {
+          "from": "#11111b",
+          "to": "#1e1e2e",
+          "angle": 180
+        },
+        "tile": "#313244",
+        "text": "#cdd6f4",
+        "muted": "#a6adc8",
+        "border": {
+          "width": 1,
+          "color": "#45475a"
+        },
+        "palette": {
+          "ok": "#a6e3a1",
+          "warn": "#f9e2af",
+          "error": "#f38ba8",
+          "info": "#89b4fa"
+        },
+        "chartColors": [
+          "#cba6f7",
+          "#89b4fa",
+          "#a6e3a1",
+          "#fab387",
+          "#f5c2e7",
+          "#94e2d5"
+        ]
+      },
+      "preview": "previews/mocha.png"
+    }
+  ],
+  "options": [
+    {
+      "id": "accent",
+      "name": "Accent",
+      "values": [
+        {
+          "id": "rosewater",
+          "name": "Rosewater",
+          "variants": {
+            "latte": {
+              "accent": "#dc8a78"
+            },
+            "frappe": {
+              "accent": "#f2d5cf"
+            },
+            "macchiato": {
+              "accent": "#f4dbd6"
+            },
+            "mocha": {
+              "accent": "#f5e0dc"
+            }
+          }
+        },
+        {
+          "id": "flamingo",
+          "name": "Flamingo",
+          "variants": {
+            "latte": {
+              "accent": "#dd7878"
+            },
+            "frappe": {
+              "accent": "#eebebe"
+            },
+            "macchiato": {
+              "accent": "#f0c6c6"
+            },
+            "mocha": {
+              "accent": "#f2cdcd"
+            }
+          }
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "variants": {
+            "latte": {
+              "accent": "#ea76cb"
+            },
+            "frappe": {
+              "accent": "#f4b8e4"
+            },
+            "macchiato": {
+              "accent": "#f5bde6"
+            },
+            "mocha": {
+              "accent": "#f5c2e7"
+            }
+          }
+        },
+        {
+          "id": "mauve",
+          "name": "Mauve",
+          "variants": {
+            "latte": {
+              "accent": "#8839ef"
+            },
+            "frappe": {
+              "accent": "#ca9ee6"
+            },
+            "macchiato": {
+              "accent": "#c6a0f6"
+            },
+            "mocha": {
+              "accent": "#cba6f7"
+            }
+          }
+        },
+        {
+          "id": "red",
+          "name": "Red",
+          "variants": {
+            "latte": {
+              "accent": "#d20f39"
+            },
+            "frappe": {
+              "accent": "#e78284"
+            },
+            "macchiato": {
+              "accent": "#ed8796"
+            },
+            "mocha": {
+              "accent": "#f38ba8"
+            }
+          }
+        },
+        {
+          "id": "maroon",
+          "name": "Maroon",
+          "variants": {
+            "latte": {
+              "accent": "#e64553"
+            },
+            "frappe": {
+              "accent": "#ea999c"
+            },
+            "macchiato": {
+              "accent": "#ee99a0"
+            },
+            "mocha": {
+              "accent": "#eba0ac"
+            }
+          }
+        },
+        {
+          "id": "peach",
+          "name": "Peach",
+          "variants": {
+            "latte": {
+              "accent": "#fe640b"
+            },
+            "frappe": {
+              "accent": "#ef9f76"
+            },
+            "macchiato": {
+              "accent": "#f5a97f"
+            },
+            "mocha": {
+              "accent": "#fab387"
+            }
+          }
+        },
+        {
+          "id": "yellow",
+          "name": "Yellow",
+          "variants": {
+            "latte": {
+              "accent": "#df8e1d"
+            },
+            "frappe": {
+              "accent": "#e5c890"
+            },
+            "macchiato": {
+              "accent": "#eed49f"
+            },
+            "mocha": {
+              "accent": "#f9e2af"
+            }
+          }
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "variants": {
+            "latte": {
+              "accent": "#40a02b"
+            },
+            "frappe": {
+              "accent": "#a6d189"
+            },
+            "macchiato": {
+              "accent": "#a6da95"
+            },
+            "mocha": {
+              "accent": "#a6e3a1"
+            }
+          }
+        },
+        {
+          "id": "teal",
+          "name": "Teal",
+          "variants": {
+            "latte": {
+              "accent": "#179299"
+            },
+            "frappe": {
+              "accent": "#81c8be"
+            },
+            "macchiato": {
+              "accent": "#8bd5ca"
+            },
+            "mocha": {
+              "accent": "#94e2d5"
+            }
+          }
+        },
+        {
+          "id": "sky",
+          "name": "Sky",
+          "variants": {
+            "latte": {
+              "accent": "#04a5e5"
+            },
+            "frappe": {
+              "accent": "#99d1db"
+            },
+            "macchiato": {
+              "accent": "#91d7e3"
+            },
+            "mocha": {
+              "accent": "#89dceb"
+            }
+          }
+        },
+        {
+          "id": "sapphire",
+          "name": "Sapphire",
+          "variants": {
+            "latte": {
+              "accent": "#209fb5"
+            },
+            "frappe": {
+              "accent": "#85c1dc"
+            },
+            "macchiato": {
+              "accent": "#7dc4e4"
+            },
+            "mocha": {
+              "accent": "#74c7ec"
+            }
+          }
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "variants": {
+            "latte": {
+              "accent": "#1e66f5"
+            },
+            "frappe": {
+              "accent": "#8caaee"
+            },
+            "macchiato": {
+              "accent": "#8aadf4"
+            },
+            "mocha": {
+              "accent": "#89b4fa"
+            }
+          }
+        },
+        {
+          "id": "lavender",
+          "name": "Lavender",
+          "variants": {
+            "latte": {
+              "accent": "#7287fd"
+            },
+            "frappe": {
+              "accent": "#babbf1"
+            },
+            "macchiato": {
+              "accent": "#b7bdf8"
+            },
+            "mocha": {
+              "accent": "#b4befe"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.synthwave-84",
+  "name": "SynthWave '84",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck (port of SynthWave '84 by Robb Owen)",
+  "description": "SynthWave '84: neon pink and cyan on a deep purple night, with a sunset gradient and a perspective grid. Ported from Robb Owen's VS Code theme (MIT). Light on the phone: no animation.",
+  "preview": "previews/classic.png",
+  "css": "theme.css",
+  "theme": {
+    "tileStyle": "solid", "radius": 10, "gap": 10, "shadow": "soft", "numberFont": "pkg:Orbitron",
+    "fonts": [{ "family": "Orbitron", "file": "fonts/Orbitron-Bold.woff2", "weight": 700 }],
+    "border": { "width": 1, "color": "#614d85" }
+  },
+  "variants": [
+    {
+      "id": "classic", "name": "SynthWave '84", "mode": "dark", "preview": "previews/classic.png",
+      "theme": {
+        "accent": "#ff7edb", "background": "#262335", "tile": "#2a2139", "text": "#ffffff", "muted": "#b6b1b1",
+        "gradient": { "from": "#262335", "to": "#34294f", "angle": 180 },
+        "palette": { "ok": "#72f1b8", "warn": "#fede5d", "error": "#fe4450", "info": "#36f9f6" },
+        "chartColors": ["#ff7edb", "#36f9f6", "#fede5d", "#72f1b8", "#f97e72", "#ff8b39"]
+      }
+    },
+    {
+      "id": "midnight", "name": "Midnight drive", "mode": "dark", "preview": "previews/midnight.png",
+      "theme": {
+        "accent": "#36f9f6", "background": "#171520", "tile": "#241b2f", "text": "#ffffff", "muted": "#b6b1b1",
+        "gradient": { "from": "#171520", "to": "#2a1d44", "angle": 180 },
+        "palette": { "ok": "#72f1b8", "warn": "#fede5d", "error": "#fe4450", "info": "#36f9f6" },
+        "chartColors": ["#36f9f6", "#ff7edb", "#fede5d", "#72f1b8", "#f97e72", "#ff8b39"]
+      }
+    }
+  ],
+  "options": [
+    {
+      "id": "accent", "name": "Accent",
+      "values": [
+        { "id": "pink", "name": "Pink", "theme": { "accent": "#ff7edb" } },
+        { "id": "cyan", "name": "Cyan", "theme": { "accent": "#36f9f6" } },
+        { "id": "yellow", "name": "Yellow", "theme": { "accent": "#fede5d" } },
+        { "id": "green", "name": "Green", "theme": { "accent": "#72f1b8" } },
+        { "id": "orange", "name": "Orange", "theme": { "accent": "#ff8b39" } }
+      ]
+    }
+  ]
+}

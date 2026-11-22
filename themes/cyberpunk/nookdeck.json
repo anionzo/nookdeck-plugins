@@ -1,0 +1,46 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.cyberpunk",
+  "name": "Cyberpunk",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck",
+  "description": "An original neon street look: clipped corners, scanlines, a mono display font and a glitching clock. Neon, Acid and Chrome (light). Auto uses Chrome by day and Neon at night. The glitch stops in lite mode and with reduced motion.",
+  "preview": "previews/neon.png",
+  "css": "theme.css",
+  "auto": { "light": "chrome", "dark": "neon" },
+  "theme": {
+    "tileStyle": "solid", "radius": 0, "gap": 8, "font": "pkg:Share Tech Mono", "numberFont": "pkg:Share Tech Mono", "labelWeight": "regular",
+    "fonts": [{ "family": "Share Tech Mono", "file": "fonts/ShareTechMono-Regular.woff2", "weight": 400 }]
+  },
+  "variants": [
+    {
+      "id": "neon", "name": "Neon", "mode": "dark", "preview": "previews/neon.png",
+      "theme": {
+        "accent": "#ff2a6d", "background": "#07060c", "gradient": { "from": "#07060c", "to": "#120a1f", "angle": 180 },
+        "tile": "#100d18", "text": "#e8e6f0", "muted": "#8a84a3", "border": { "width": 1, "color": "#3a1d4a" },
+        "palette": { "ok": "#05d9a0", "warn": "#f9f871", "error": "#ff2a6d", "info": "#01c7ff" },
+        "chartColors": ["#ff2a6d", "#01c7ff", "#f9f871", "#05d9a0", "#b967ff", "#ff9a3c"]
+      }
+    },
+    {
+      "id": "acid", "name": "Acid", "mode": "dark", "preview": "previews/acid.png",
+      "theme": {
+        "accent": "#c6ff00", "background": "#060a06", "gradient": { "from": "#060a06", "to": "#0d1a0a", "angle": 180 },
+        "tile": "#0c130b", "text": "#e6f5d8", "muted": "#7f9a70", "border": { "width": 1, "color": "#2a4020" },
+        "palette": { "ok": "#c6ff00", "warn": "#ffe14d", "error": "#ff4d6d", "info": "#4dd0e1" },
+        "chartColors": ["#c6ff00", "#4dd0e1", "#ffe14d", "#ff4d6d", "#b388ff", "#ffab40"]
+      }
+    },
+    {
+      "id": "chrome", "name": "Chrome", "mode": "light", "preview": "previews/chrome.png",
+      "theme": {
+        "accent": "#d6004c", "background": "#dfe3e8", "gradient": { "from": "#eef0f3", "to": "#cfd4db", "angle": 180 },
+        "tile": "#f6f7f9", "text": "#11131a", "muted": "#5b6270", "border": { "width": 1, "color": "#11131a" },
+        "palette": { "ok": "#00875a", "warn": "#b36b00", "error": "#d6004c", "info": "#0057b8" },
+        "chartColors": ["#d6004c", "#0057b8", "#00875a", "#b36b00", "#6a2fb8", "#11131a"]
+      }
+    }
+  ]
+}

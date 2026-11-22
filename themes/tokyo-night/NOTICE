@@ -1,0 +1,8 @@
+Nookdeck Tokyo Night theme pack
+
+Colour palettes: from folke/tokyonight.nvim (https://github.com/folke/tokyonight.nvim), Apache License 2.0, see LICENSE. The values are copied from
+lua/tokyonight/colors/{storm,night,moon}.lua and extras/lua/tokyonight_day.lua. No code from that project is included.
+
+Original design: Tokyo Night for Visual Studio Code by Enkia (https://github.com/enkia/tokyo-night-vscode-theme), MIT License, see LICENSE-enkia.
+
+This pack is a port by Nookdeck. It is not an official release of either project.

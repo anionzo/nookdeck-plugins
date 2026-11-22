@@ -1,0 +1,173 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "type": "theme",
+  "id": "dev.nookdeck.one-dark-pro",
+  "name": "One Dark Pro",
+  "version": "1.0.0",
+  "nookdeck": ">=0.4.0",
+  "author": "Nookdeck (port of One Dark Pro)",
+  "description": "One Dark Pro: Atom's iconic One Dark, as ported to VS Code. One Dark Pro, Flat, Darker, Mix and Night Flat.",
+  "preview": "previews/one-dark-pro.png",
+  "theme": {
+    "tileStyle": "solid",
+    "radius": 14,
+    "gap": 10
+  },
+  "variants": [
+    {
+      "id": "one-dark-pro",
+      "name": "One Dark Pro",
+      "mode": "dark",
+      "theme": {
+        "accent": "#61afef",
+        "background": "#282c34",
+        "tile": "#2c313a",
+        "text": "#abb2bf",
+        "muted": "#7f848e",
+        "border": {
+          "width": 1,
+          "color": "#3e4452"
+        },
+        "palette": {
+          "ok": "#98c379",
+          "warn": "#e5c07b",
+          "error": "#e06c75",
+          "info": "#61afef"
+        },
+        "chartColors": [
+          "#61afef",
+          "#c678dd",
+          "#98c379",
+          "#d19a66",
+          "#56b6c2",
+          "#e06c75"
+        ]
+      },
+      "preview": "previews/one-dark-pro.png"
+    },
+    {
+      "id": "flat",
+      "name": "Flat",
+      "mode": "dark",
+      "theme": {
+        "accent": "#61afef",
+        "background": "#282c34",
+        "tile": "#2c313a",
+        "text": "#abb2bf",
+        "muted": "#7f848e",
+        "border": {
+          "width": 1,
+          "color": "#3e4452"
+        },
+        "palette": {
+          "ok": "#98c379",
+          "warn": "#e5c07b",
+          "error": "#e06c75",
+          "info": "#61afef"
+        },
+        "chartColors": [
+          "#61afef",
+          "#c678dd",
+          "#98c379",
+          "#d19a66",
+          "#56b6c2",
+          "#e06c75"
+        ]
+      },
+      "preview": "previews/flat.png"
+    },
+    {
+      "id": "darker",
+      "name": "Darker",
+      "mode": "dark",
+      "theme": {
+        "accent": "#61afef",
+        "background": "#23272e",
+        "tile": "#2c313a",
+        "text": "#abb2bf",
+        "muted": "#7f848e",
+        "border": {
+          "width": 1,
+          "color": "#3e4452"
+        },
+        "palette": {
+          "ok": "#98c379",
+          "warn": "#e5c07b",
+          "error": "#e06c75",
+          "info": "#61afef"
+        },
+        "chartColors": [
+          "#61afef",
+          "#c678dd",
+          "#98c379",
+          "#d19a66",
+          "#56b6c2",
+          "#e06c75"
+        ]
+      },
+      "preview": "previews/darker.png"
+    },
+    {
+      "id": "mix",
+      "name": "Mix",
+      "mode": "dark",
+      "theme": {
+        "accent": "#61afef",
+        "background": "#282c34",
+        "tile": "#2c313a",
+        "text": "#abb2bf",
+        "muted": "#7f848e",
+        "border": {
+          "width": 1,
+          "color": "#3e4452"
+        },
+        "palette": {
+          "ok": "#98c379",
+          "warn": "#e5c07b",
+          "error": "#e06c75",
+          "info": "#61afef"
+        },
+        "chartColors": [
+          "#61afef",
+          "#c678dd",
+          "#98c379",
+          "#d19a66",
+          "#56b6c2",
+          "#e06c75"
+        ]
+      },
+      "preview": "previews/mix.png"
+    },
+    {
+      "id": "night-flat",
+      "name": "Night Flat",
+      "mode": "dark",
+      "theme": {
+        "accent": "#61afef",
+        "background": "#16191d",
+        "tile": "#2c313a",
+        "text": "#abb2bf",
+        "muted": "#7f848e",
+        "border": {
+          "width": 1,
+          "color": "#3e4452"
+        },
+        "palette": {
+          "ok": "#98c379",
+          "warn": "#e5c07b",
+          "error": "#e06c75",
+          "info": "#61afef"
+        },
+        "chartColors": [
+          "#61afef",
+          "#c678dd",
+          "#98c379",
+          "#d19a66",
+          "#56b6c2",
+          "#e06c75"
+        ]
+      },
+      "preview": "previews/night-flat.png"
+    }
+  ]
+}
