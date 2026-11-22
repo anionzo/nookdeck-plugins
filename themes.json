@@ -1,0 +1,431 @@
+[
+  {
+    "id": "dev.nookdeck.catppuccin",
+    "name": "Catppuccin",
+    "author": "Nookdeck (port of Catppuccin)",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/catppuccin",
+    "version": "1.0.0",
+    "sha256": "6896f7abc2c2f46d689663af0ccea9672c1e428c843f26efc7174cc73e8c1620",
+    "description": "Catppuccin, the soothing pastel theme: Latte, Frappé, Macchiato and Mocha, with a choice of 14 accents.",
+    "license": "MIT",
+    "credit": "Port of Catppuccin (catppuccin.com)",
+    "variants": [
+      {
+        "id": "latte",
+        "name": "Latte",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/catppuccin/previews/latte.png",
+        "colors": {
+          "bg": "#eff1f5",
+          "tile": "#ccd0da",
+          "accent": "#8839ef",
+          "text": "#4c4f69",
+          "muted": "#6c6f85",
+          "gradient": {
+            "from": "#dce0e8",
+            "to": "#eff1f5",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "frappe",
+        "name": "Frappé",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/catppuccin/previews/frappe.png",
+        "colors": {
+          "bg": "#303446",
+          "tile": "#414559",
+          "accent": "#ca9ee6",
+          "text": "#c6d0f5",
+          "muted": "#a5adce",
+          "gradient": {
+            "from": "#232634",
+            "to": "#303446",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "macchiato",
+        "name": "Macchiato",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/catppuccin/previews/macchiato.png",
+        "colors": {
+          "bg": "#24273a",
+          "tile": "#363a4f",
+          "accent": "#c6a0f6",
+          "text": "#cad3f5",
+          "muted": "#a5adcb",
+          "gradient": {
+            "from": "#181926",
+            "to": "#24273a",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "mocha",
+        "name": "Mocha",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/catppuccin/previews/mocha.png",
+        "colors": {
+          "bg": "#1e1e2e",
+          "tile": "#313244",
+          "accent": "#cba6f7",
+          "text": "#cdd6f4",
+          "muted": "#a6adc8",
+          "gradient": {
+            "from": "#11111b",
+            "to": "#1e1e2e",
+            "angle": 180
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.cyberpunk",
+    "name": "Cyberpunk",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/cyberpunk",
+    "version": "1.0.0",
+    "sha256": "ef7e1f0a7030e74af012c8cb00882ed094bc5a9ea2c815f6b76c88fd16f9e6a9",
+    "description": "An original neon street look: clipped corners, scanlines, a mono display font and a glitching clock. Neon, Acid and Chrome (light). Auto uses Chrome by day and Neon at night. The glitch stops in lite mode and with reduced motion.",
+    "license": "OFL-1.1 (font)",
+    "credit": "Original Nookdeck design",
+    "variants": [
+      {
+        "id": "neon",
+        "name": "Neon",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/cyberpunk/previews/neon.png",
+        "colors": {
+          "bg": "#07060c",
+          "tile": "#100d18",
+          "accent": "#ff2a6d",
+          "text": "#e8e6f0",
+          "muted": "#8a84a3",
+          "gradient": {
+            "from": "#07060c",
+            "to": "#120a1f",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "acid",
+        "name": "Acid",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/cyberpunk/previews/acid.png",
+        "colors": {
+          "bg": "#060a06",
+          "tile": "#0c130b",
+          "accent": "#c6ff00",
+          "text": "#e6f5d8",
+          "muted": "#7f9a70",
+          "gradient": {
+            "from": "#060a06",
+            "to": "#0d1a0a",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "chrome",
+        "name": "Chrome",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/cyberpunk/previews/chrome.png",
+        "colors": {
+          "bg": "#dfe3e8",
+          "tile": "#f6f7f9",
+          "accent": "#d6004c",
+          "text": "#11131a",
+          "muted": "#5b6270",
+          "gradient": {
+            "from": "#eef0f3",
+            "to": "#cfd4db",
+            "angle": 180
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.jellyfish",
+    "name": "JellyFish",
+    "author": "Nookdeck (port of JellyFish)",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/jellyfish",
+    "version": "1.0.0",
+    "sha256": "d822b901f89a83fb183470fca985ca6318e272ef43e6e22f7d1134cd2b7e9315",
+    "description": "JellyFish: deep navy with hot pink and cyan glow, ported from Pawel Borkar's VS Code theme.",
+    "license": "Apache-2.0",
+    "credit": "Port of JellyFish by Pawel Borkar",
+    "variants": [
+      {
+        "id": "jellyfish",
+        "name": "JellyFish",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/jellyfish/previews/jellyfish.png",
+        "colors": {
+          "bg": "#00002c",
+          "tile": "#160021",
+          "accent": "#ff0055",
+          "text": "#ffffff",
+          "muted": "#838383"
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.night-owl",
+    "name": "Night Owl",
+    "author": "Nookdeck (port of Night Owl)",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/night-owl",
+    "version": "1.0.0",
+    "sha256": "584ed481e4acf358eeaf62c5f882f5c26138ca132a84dfe6d422cfba7743c7a2",
+    "description": "Night Owl and Light Owl: a theme for night owls and early birds, ported from Sarah Drasner's VS Code theme.",
+    "license": "MIT",
+    "credit": "Port of Night Owl by Sarah Drasner",
+    "variants": [
+      {
+        "id": "night-owl",
+        "name": "Night Owl",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/night-owl/previews/night-owl.png",
+        "colors": {
+          "bg": "#011627",
+          "tile": "#0b2942",
+          "accent": "#82AAFF",
+          "text": "#d6deeb",
+          "muted": "#637777"
+        }
+      },
+      {
+        "id": "light-owl",
+        "name": "Light Owl",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/night-owl/previews/light-owl.png",
+        "colors": {
+          "bg": "#FBFBFB",
+          "tile": "#F0F0F0",
+          "accent": "#2AA298",
+          "text": "#403f53",
+          "muted": "#989fb1"
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.one-dark-pro",
+    "name": "One Dark Pro",
+    "author": "Nookdeck (port of One Dark Pro)",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/one-dark-pro",
+    "version": "1.0.0",
+    "sha256": "cefb3770e48a50180a5a2b32baada3e8d6ba43f05fa627d3489ff75a78ff1d21",
+    "description": "One Dark Pro: Atom's iconic One Dark, as ported to VS Code. One Dark Pro, Flat, Darker, Mix and Night Flat.",
+    "license": "MIT",
+    "credit": "Port of One Dark Pro by Binaryify",
+    "variants": [
+      {
+        "id": "one-dark-pro",
+        "name": "One Dark Pro",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/one-dark-pro/previews/one-dark-pro.png",
+        "colors": {
+          "bg": "#282c34",
+          "tile": "#2c313a",
+          "accent": "#61afef",
+          "text": "#abb2bf",
+          "muted": "#7f848e"
+        }
+      },
+      {
+        "id": "flat",
+        "name": "Flat",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/one-dark-pro/previews/flat.png",
+        "colors": {
+          "bg": "#282c34",
+          "tile": "#2c313a",
+          "accent": "#61afef",
+          "text": "#abb2bf",
+          "muted": "#7f848e"
+        }
+      },
+      {
+        "id": "darker",
+        "name": "Darker",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/one-dark-pro/previews/darker.png",
+        "colors": {
+          "bg": "#23272e",
+          "tile": "#2c313a",
+          "accent": "#61afef",
+          "text": "#abb2bf",
+          "muted": "#7f848e"
+        }
+      },
+      {
+        "id": "mix",
+        "name": "Mix",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/one-dark-pro/previews/mix.png",
+        "colors": {
+          "bg": "#282c34",
+          "tile": "#2c313a",
+          "accent": "#61afef",
+          "text": "#abb2bf",
+          "muted": "#7f848e"
+        }
+      },
+      {
+        "id": "night-flat",
+        "name": "Night Flat",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/one-dark-pro/previews/night-flat.png",
+        "colors": {
+          "bg": "#16191d",
+          "tile": "#2c313a",
+          "accent": "#61afef",
+          "text": "#abb2bf",
+          "muted": "#7f848e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.synthwave-84",
+    "name": "SynthWave '84",
+    "author": "Nookdeck (port of SynthWave '84 by Robb Owen)",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/synthwave-84",
+    "version": "1.0.0",
+    "sha256": "8326e00cbc679ec46da64c34b1f1b9ba833d9465c45dc94d16ba08b40982f831",
+    "description": "SynthWave '84: neon pink and cyan on a deep purple night, with a sunset gradient and a perspective grid. Ported from Robb Owen's VS Code theme (MIT). Light on the phone: no animation.",
+    "license": "MIT",
+    "credit": "Port of SynthWave '84 by Robb Owen",
+    "variants": [
+      {
+        "id": "classic",
+        "name": "SynthWave '84",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/synthwave-84/previews/classic.png",
+        "colors": {
+          "bg": "#262335",
+          "tile": "#2a2139",
+          "accent": "#ff7edb",
+          "text": "#ffffff",
+          "muted": "#b6b1b1",
+          "gradient": {
+            "from": "#262335",
+            "to": "#34294f",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "midnight",
+        "name": "Midnight drive",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/synthwave-84/previews/midnight.png",
+        "colors": {
+          "bg": "#171520",
+          "tile": "#241b2f",
+          "accent": "#36f9f6",
+          "text": "#ffffff",
+          "muted": "#b6b1b1",
+          "gradient": {
+            "from": "#171520",
+            "to": "#2a1d44",
+            "angle": 180
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dev.nookdeck.tokyo-night",
+    "name": "Tokyo Night",
+    "author": "Nookdeck (port of Tokyo Night)",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/tokyo-night",
+    "version": "1.0.0",
+    "sha256": "dff89567070b4bb51337234bbd431bd028f8478d340dff2e24779355f1e07e74",
+    "description": "Tokyo Night: a clean dark theme that celebrates the lights of downtown Tokyo. Night, Storm, Moon and a light Day.",
+    "license": "Apache-2.0 and MIT",
+    "credit": "Port of Tokyo Night by enkia and folke",
+    "variants": [
+      {
+        "id": "night",
+        "name": "Night",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/tokyo-night/previews/night.png",
+        "colors": {
+          "bg": "#1a1b26",
+          "tile": "#292e42",
+          "accent": "#7aa2f7",
+          "text": "#c0caf5",
+          "muted": "#565f89",
+          "gradient": {
+            "from": "#16161e",
+            "to": "#1a1b26",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "storm",
+        "name": "Storm",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/tokyo-night/previews/storm.png",
+        "colors": {
+          "bg": "#24283b",
+          "tile": "#292e42",
+          "accent": "#7aa2f7",
+          "text": "#c0caf5",
+          "muted": "#565f89",
+          "gradient": {
+            "from": "#1f2335",
+            "to": "#24283b",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "moon",
+        "name": "Moon",
+        "mode": "dark",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/tokyo-night/previews/moon.png",
+        "colors": {
+          "bg": "#222436",
+          "tile": "#2f334d",
+          "accent": "#82aaff",
+          "text": "#c8d3f5",
+          "muted": "#636da6",
+          "gradient": {
+            "from": "#1e2030",
+            "to": "#222436",
+            "angle": 180
+          }
+        }
+      },
+      {
+        "id": "day",
+        "name": "Day",
+        "mode": "light",
+        "preview": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/03d211a7fcae588fc31726fc01eb50e47b574a34/themes/tokyo-night/previews/day.png",
+        "colors": {
+          "bg": "#e1e2e7",
+          "tile": "#c4c8da",
+          "accent": "#2e7de9",
+          "text": "#3760bf",
+          "muted": "#68709a",
+          "gradient": {
+            "from": "#d0d5e3",
+            "to": "#e1e2e7",
+            "angle": 180
+          }
+        }
+      }
+    ]
+  }
+]
