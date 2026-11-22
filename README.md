@@ -1,6 +1,13 @@
-# Nookdeck plugins
+# Nookdeck plugins and themes
 
-The community plugin registry for [Nookdeck](https://nookdeck.app) (formerly PhoneDesk). The Nookdeck Store, coming in a later release, lists the plugins in [`plugins.json`](plugins.json).
+The community registry for [Nookdeck](https://nookdeck.app) (formerly PhoneDesk). It has two lists:
+
+| | What it adds | List | Folder | Browse |
+|---|---|---|---|---|
+| **Plugins** | Tiles and buttons, with the permissions they need | [`plugins.json`](plugins.json) | [`plugins/`](plugins) | [nookdeck.app/plugins](https://nookdeck.app/plugins) |
+| **Themes** | A whole look for the deck: colours, corners, fonts, one or more variants | [`themes.json`](themes.json) | [`themes/`](themes) | [nookdeck.app/themes](https://nookdeck.app/themes) |
+
+Both install from Nookdeck's management page (**Plugins** or **Theme** → **Packs**), or from a website's "Open in Nookdeck" button. Nothing is applied until you press the button in the app.
 
 ## Add your plugin
 
@@ -37,6 +44,37 @@ You don't have to be listed here to share a plugin: anyone can install from a Gi
 | [Uptime ping](plugins/uptime-ping) | Is a website up, and how fast (runs code) | network: nookdeck.app |
 
 Plugins that run code need Nookdeck 0.3.1 or later.
+
+## Add your theme
+
+A theme pack is a folder with a `nookdeck.json` (`"type": "theme"`) and one or more variants, plus optional `theme.css`, fonts and `previews/<variant>.png`. Build and try it in Nookdeck first (**Theme** → **Customize** → **Export this look** gives you the files).
+
+1. Put the pack in `themes/<name>/`, with a `README.md` and a `LICENSE` (and the font's licence if it ships one).
+2. Add one entry to `themes.json`, sorted by `id` (ids look like `dev.yourname.<name>`):
+
+```json
+{
+  "id": "dev.yourname.sunset",
+  "name": "Sunset",
+  "author": "yourname",
+  "repo": "https://github.com/yourname/nookdeck-sunset/tree/<commit>/themes/sunset",
+  "version": "1.0.0",
+  "sha256": "<the value shown after install>",
+  "description": "Warm orange on dusk blue",
+  "license": "MIT",
+  "credit": "Original design",
+  "variants": [
+    { "id": "dusk", "name": "Dusk", "mode": "dark", "preview": "https://raw.githubusercontent.com/.../previews/dusk.png",
+      "colors": { "bg": "#14161f", "tile": "#1e2230", "accent": "#ff8a4c", "text": "#f2f0ea", "muted": "#9aa0b4" } }
+  ]
+}
+```
+
+- `repo` is pinned to a commit, so what was reviewed is what installs. A new version is a new PR.
+- `license` and `credit` are shown on the website. Say plainly if it is a port of someone else's theme, and keep their licence.
+- `colors` drive the website's swatches; `preview` is a screenshot of the deck in that variant.
+
+The listed themes: Catppuccin, Cyberpunk, JellyFish, Night Owl, One Dark Pro, SynthWave '84 and Tokyo Night. Nookdeck 0.4.0 or later. Two more packs, Nookdeck and Nookdeck Classic, ship inside the app and are not listed here.
 
 ## Checks
 
