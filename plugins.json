@@ -1,5 +1,18 @@
 [
   {
+    "id": "dev.nookdeck.clipboard-snippets",
+    "name": "Clipboard snippets",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/clipboard-snippets",
+    "version": "1.0.0",
+    "sha256": "37c89372c220bfe71d306bd2fe71c66bbb06c040e4483d5813f47b0782f9ca4f",
+    "description": "Buttons that copy a saved piece of text to the clipboard",
+    "permissions": {
+      "network": [],
+      "shell": true
+    }
+  },
+  {
     "id": "dev.nookdeck.crypto-price",
     "name": "Crypto price",
     "author": "Nookdeck",
@@ -7,6 +20,10 @@
     "version": "1.0.1",
     "sha256": "7233e20250c8482192e730c1cfc2c284c8613172762e0d13e3a357034957be5f",
     "description": "Live price of a coin from CoinGecko, as a stat tile",
-    "permissions": { "network": ["api.coingecko.com"] }
+    "permissions": {
+      "network": [
+        "api.coingecko.com"
+      ]
+    }
   }
 ]
