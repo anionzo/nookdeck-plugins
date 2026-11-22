@@ -25,5 +25,34 @@
         "api.coingecko.com"
       ]
     }
+  },
+  {
+    "id": "dev.nookdeck.github-stars",
+    "name": "GitHub stars",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/github-stars",
+    "version": "1.0.0",
+    "sha256": "cd8695c286916d3f3aba244807c8f6d82d2dd5c3e90f8af8dc88ed5e40ca1521",
+    "description": "Star count of a GitHub repository, with a short history",
+    "permissions": {
+      "network": [
+        "api.github.com"
+      ],
+      "storage": true
+    }
+  },
+  {
+    "id": "dev.nookdeck.uptime-ping",
+    "name": "Uptime ping",
+    "author": "Nookdeck",
+    "repo": "https://github.com/howznguyen/nookdeck/tree/main/examples/plugins/uptime-ping",
+    "version": "1.0.0",
+    "sha256": "55e6af52f5004c90ff86e0b2106257825a85656055f804e4145c79455fcbc4c6",
+    "description": "Checks whether a web address answers, and how fast",
+    "permissions": {
+      "network": [
+        "nookdeck.app"
+      ]
+    }
   }
 ]
