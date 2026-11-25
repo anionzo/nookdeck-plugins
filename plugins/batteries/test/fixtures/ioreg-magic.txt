@@ -1,0 +1,20 @@
++-o AppleDeviceManagementHIDEventService  <class AppleDeviceManagementHIDEventService, id 0x100000ae1, registered, matched, active, busy 0 (204 ms), retain 9>
+  | {
+  |   "Built-In" = Yes
+  |   "Product" = "Apple Internal Keyboard / Trackpad"
+  |   "Transport" = "SPI"
+  | }
+  +-o IOHIDEventServiceUserClient  <class IOHIDEventServiceUserClient, id 0x100000e3b, !registered, !matched, active, busy 0, retain 6>
++-o AppleDeviceManagementHIDEventService  <class AppleDeviceManagementHIDEventService, id 0x100001000, registered, matched, active, busy 0 (2 ms), retain 8>
+  | {
+  |   "BatteryPercent" = 62
+  |   "BatteryStatusFlags" = 0
+  |   "Product" = "Magic Keyboard"
+  |   "Transport" = "Bluetooth"
+  | }
++-o AppleDeviceManagementHIDEventService  <class AppleDeviceManagementHIDEventService, id 0x100001001, registered, matched, active, busy 0 (2 ms), retain 8>
+  | {
+  |   "BatteryPercent" = 9
+  |   "Product" = "Magic Trackpad"
+  |   "Transport" = "Bluetooth"
+  | }

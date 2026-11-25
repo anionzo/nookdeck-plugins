@@ -1,0 +1,9 @@
++-o AppleDeviceManagementHIDEventService  <class AppleDeviceManagementHIDEventService, id 0x100000ae1, registered, matched, active, busy 0 (204 ms), retain 9>
+  | {
+  |   "VendorID" = 1452
+  |   "Built-In" = Yes
+  |   "Product" = "Apple Internal Keyboard / Trackpad"
+  |   "Transport" = "SPI"
+  |   "ProductID" = 834
+  | }
+  +-o IOHIDEventServiceUserClient  <class IOHIDEventServiceUserClient, id 0x100000e3b, !registered, !matched, active, busy 0, retain 6>

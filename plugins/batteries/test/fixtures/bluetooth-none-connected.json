@@ -1,0 +1,34 @@
+{
+ "SPBluetoothDataType": [
+  {
+   "device_not_connected": [
+    {
+     "AirPods Pro": {
+      "device_minorType": "Headphones"
+     }
+    },
+    {
+     "Example Mouse": {
+      "device_minorType": "Mouse"
+     }
+    },
+    {
+     "Studio Buds": {
+      "device_minorType": "Headphones"
+     }
+    },
+    {
+     "AirPods Max": {
+      "device_minorType": "Headphones"
+     }
+    },
+    {
+     "Example Watch": {}
+    },
+    {
+     "Example Phone": {}
+    }
+   ]
+  }
+ ]
+}

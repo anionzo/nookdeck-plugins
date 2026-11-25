@@ -1,0 +1,9 @@
+{ "SPBluetoothDataType": [ {
+  "device_connected": [
+    { "Magic Keyboard": { "device_minorType": "Keyboard", "device_batteryLevelMain": "61%" } },
+    { "AirPods Pro": { "device_minorType": "Headphones", "device_batteryLevelLeft": "95%", "device_batteryLevelRight": "18%", "device_batteryLevelCase": "40%" } },
+    { "Case Only Buds": { "device_minorType": "Headphones", "device_batteryLevelCase": "55%" } },
+    { "Speaker without a level": { "device_minorType": "Speaker" } }
+  ],
+  "device_not_connected": [ { "Old AirPods": { "device_batteryLevelLeft": "50%" } } ]
+} ] }
