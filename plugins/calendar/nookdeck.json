@@ -1,0 +1,40 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "id": "dev.nookdeck.calendar",
+  "name": "Calendar",
+  "version": "1.0.0",
+  "nookdeck": ">=0.5.0",
+  "author": "Nookdeck",
+  "description": "Your next events from Google, iCloud and Outlook calendar links",
+  "icon": "calendar",
+  "permissions": { "network": ["calendar.google.com", "*.icloud.com", "outlook.live.com", "outlook.office365.com", "outlook.office.com"] },
+  "settings": [
+    { "key": "link1", "type": "secret", "label": "Calendar 1: ICS link" },
+    { "key": "link2", "type": "secret", "label": "Calendar 2: ICS link" },
+    { "key": "link3", "type": "secret", "label": "Calendar 3: ICS link" },
+    { "key": "link4", "type": "secret", "label": "Calendar 4: ICS link" },
+    { "key": "days", "type": "number", "label": "Days ahead (1 is today only)", "default": 7 },
+    { "key": "firstDay", "type": "select", "label": "First day of the week", "options": ["Monday", "Sunday"], "default": "Monday" },
+    { "key": "hour24", "type": "boolean", "label": "24-hour clock", "default": true }
+  ],
+  "widgets": [
+    {
+      "id": "agenda",
+      "name": "Calendar",
+      "render": "card",
+      "sizes": ["2x1", "2x2", "4x2"],
+      "preview": { "root": { "t": "col", "gap": 1, "children": [
+        { "t": "text", "text": "Today", "size": "s", "tone": "muted", "bold": true },
+        { "t": "row", "gap": 2, "align": "center", "children": [ { "t": "pill", "text": "Now", "tone": "accent" }, { "t": "text", "text": "Design review", "size": "s" } ] },
+        { "t": "row", "gap": 2, "align": "center", "children": [ { "t": "pill", "text": "16:30", "tone": "ok" }, { "t": "text", "text": "Pick up the parcel", "size": "s" } ] },
+        { "t": "text", "text": "Tomorrow", "size": "s", "tone": "muted", "bold": true },
+        { "t": "row", "gap": 2, "align": "center", "children": [ { "t": "pill", "text": "All day", "tone": "accent" }, { "t": "text", "text": "Release day", "size": "s" } ] }
+      ] } },
+      "settings": [
+        { "key": "rows", "type": "number", "label": "Events on the tile (1 to 8)", "default": 4 }
+      ],
+      "source": { "agent": { "every": 60 } }
+    }
+  ],
+  "main": "src/index.ts"
+}

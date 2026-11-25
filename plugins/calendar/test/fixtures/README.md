@@ -1,0 +1,2 @@
+- `google-holidays.ics`: **recorded** on 2026-11-25 from Google's public "Holidays in Vietnam" calendar (no personal data).
+- `google-format.ics`, `outlook-format.ics`, `icloud-format.ics`: **written by hand** in the shape of each service's export, because real recurring events only exist in private calendars. All names are made up.
