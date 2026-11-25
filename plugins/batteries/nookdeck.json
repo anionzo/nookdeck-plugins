@@ -3,7 +3,7 @@
   "id": "dev.nookdeck.batteries",
   "name": "Batteries",
   "version": "1.0.0",
-  "nookdeck": ">=0.5.0",
+  "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "Battery of your Mac, Magic keyboard, mouse and trackpad, and AirPods",
   "os": ["darwin"],
@@ -32,7 +32,7 @@
         ] }
       ] } },
       "settings": [
-        { "key": "style", "type": "select", "label": "Style: details, compact (2x1), or only the lowest battery (1x1)", "options": ["details", "compact", "lowest"], "default": "details" },
+        { "key": "style", "type": "select", "label": "Style (auto: by the tile size)", "options": ["auto", "rings", "row", "list", "lowest"], "default": "auto" },
         { "key": "showMac", "type": "boolean", "label": "Show this Mac's battery", "default": true }
       ]
     }

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import { createPlugin } from "../src/index";
-import { IOREG, PMSET, PROFILER, STYLES, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, shortName, budsNote, toneFor } from "../src/lib";
+import { IOREG, PMSET, PROFILER, STYLES, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, shortName, budsNote, toneFor, lookFor, BOLT } from "../src/lib";
 
 const fx = (f: string) => Bun.file(join(import.meta.dir, "fixtures", f)).text();
 const [pm, ioNone, ioMagic, btNone, btOn, pods] = await Promise.all(["pmset-discharging.txt", "ioreg-internal-only.txt", "ioreg-magic.txt", "bluetooth-none-connected.json", "bluetooth-connected.json", "bluetooth-airpods.json"].map(fx));
@@ -38,7 +38,7 @@ describe("Bluetooth devices", () => {
   });
   test("AirPods show the lower side, with each side and the case", () => {
     const pods = parseBluetooth(btOn!).find((d) => d.name === "AirPods Pro")!;
-    expect(pods).toEqual({ name: "AirPods Pro", icon: "headphones", percent: 18, note: "L 95 · R 18 · Case 40" });
+    expect(pods).toEqual({ name: "AirPods Pro", icon: "headphones", percent: 18, note: "L 95 · R 18 · Case 40", caseLevel: 40 });
     expect(parseBluetooth(btOn!).find((d) => d.name === "Case Only Buds")).toMatchObject({ percent: 55, note: "Case" });
   });
   test("a device both tools report is shown once; the Mac stays on top, then lowest first", () => {
@@ -54,7 +54,7 @@ describe("Bluetooth devices", () => {
 
 describe("AirPods, as recorded on a Mac", () => {
   test("one device: the case's own Bluetooth LE beacon is not a second row", () => {
-    expect(parseBluetooth(pods!)).toEqual([{ name: "AirPods Pro", icon: "headphones", percent: 100, note: "L+R 100 · Case 88" }]);
+    expect(parseBluetooth(pods!)).toEqual([{ name: "AirPods Pro", icon: "headphones", percent: 100, note: "L+R 100 · Case 88", caseLevel: 88 }]);
   });
   test("the beacon alone is shown as the earbuds case", () => {
     const only = JSON.parse(pods!);
@@ -65,6 +65,10 @@ describe("AirPods, as recorded on a Mac", () => {
     expect(budsNote(64, 71, 40)).toBe("L 64 · R 71 · Case 40");
     expect(budsNote(100, 99, 100)).toBe("L100 · R99 · Case 100");
     expect(budsNote(null, 100, null)).toBe("R 100");
+  });
+  test("the nameless entry with all three levels reads as earbuds", () => {
+    const json = JSON.stringify({ SPBluetoothDataType: [{ device_connected: [{ "Bluetooth Device": { device_batteryLevelLeft: "100%", device_batteryLevelRight: "100%", device_batteryLevelCase: "88%" } }] }] });
+    expect(parseBluetooth(json)).toEqual([{ name: "Earbuds", icon: "headphones", percent: 100, note: "L+R 100 · Case 88", caseLevel: 88 }]);
   });
   test("one bud in, and no case level", () => {
     const one = JSON.stringify({ SPBluetoothDataType: [{ device_connected: [{ "AirPods Pro": { device_minorType: "Headphones", device_batteryLevelRight: "73%" } }] }] });
@@ -81,15 +85,44 @@ describe("AirPods, as recorded on a Mac", () => {
 });
 
 describe("the card", () => {
-  test("compact has no second lines; lowest shows only the lowest battery", () => {
-    const list = [{ name: "This Mac", icon: "device-laptop", percent: 80, note: "Charging" }, { name: "Mouse", icon: "mouse", percent: 9 }];
-    expect(JSON.stringify(buildCard(list, "compact"))).not.toContain("Charging");
-    const low = JSON.stringify(buildCard(list, "lowest"));
-    expect(low).toContain('"value":"9%"');
-    expect(low).not.toContain("This Mac");
+  const ringsOf = (card: any): any[] => { const out: any[] = []; const walk = (x: any) => { if (x.t === "ring") out.push(x); for (const c of x.children ?? []) walk(c); }; walk(card.root); return out; };
+  const some = [
+    { name: "This Mac", icon: "device-laptop", percent: 80, charging: true, mac: true, note: "Charging" },
+    { name: "Mouse", icon: "mouse", percent: 9 },
+    { name: "AirPods Pro", icon: "headphones", percent: 40, caseLevel: 88 },
+  ];
+  test("rings: icon inside, level under, tone by level, a bolt while charging", () => {
+    expect(ringsOf(buildCard(some.slice(0, 2)))).toEqual([
+      { t: "ring", value: 0.8, tone: "ok", icon: "device-laptop", size: "m", label: `${BOLT} 80%` },
+      { t: "ring", value: 0.09, tone: "bad", icon: "mouse", size: "m", label: "9%" },
+    ]);
+  });
+  test("the earbuds' case has a small ring while there is room, never in place of a device", () => {
+    expect(ringsOf(buildCard(some)).map((r) => [r.icon, r.size])).toEqual([["device-laptop", "m"], ["mouse", "m"], ["headphones", "m"], ["battery-4", "s"]]);
+    const full = [...some, { name: "Keyboard", icon: "keyboard", percent: 60 }];
+    expect(ringsOf(buildCard(full)).map((r) => r.icon)).toEqual(["device-laptop", "mouse", "headphones", "keyboard"]);
+  });
+  test("four rings make a grid, or one row for a wide tile", () => {
+    expect((buildCard(some).root as any).children.map((row: any) => row.children.length)).toEqual([2, 2]);
+    expect((buildCard(some, "row").root as any).children.map((row: any) => row.children.length)).toEqual([4]);
+    expect((buildCard(some.slice(0, 2)).root as any).children).toHaveLength(1);
+  });
+  test("list keeps names and second lines; lowest is the one ring that needs attention", () => {
+    expect(JSON.stringify(buildCard(some, "list"))).toContain("Charging");
+    expect(ringsOf(buildCard(some, "lowest")).map((r) => [r.label, r.size])).toEqual([["9%", "l"]]);
+  });
+  test("auto goes by the tile size; the setting wins over it", () => {
+    const at = (w: number, h: number) => lookFor("auto", { w, h });
+    expect([at(1, 1), at(2, 1), at(4, 2), at(2, 2), at(3, 3)]).toEqual(["lowest", "row", "row", "rings", "rings"]);
+    expect(lookFor(undefined, { w: 1, h: 1 })).toBe("lowest");
+    expect(lookFor("auto")).toBe("rings");
+    expect(lookFor("list", { w: 1, h: 1 })).toBe("list");
+    const five = Array.from({ length: 5 }, (_, i) => ({ name: `D${i}`, icon: "mouse", percent: 50 }));
+    expect(ringsOf(buildCard(five, "row", { w: 2, h: 1 }))).toHaveLength(3);
+    expect(ringsOf(buildCard(five, "row", { w: 4, h: 2 }))).toHaveLength(4);
   });
   test("many devices still fit the card limits", () => {
-    for (const [n, style] of [0, 1, 6, 7, 8, 30].flatMap((n) => STYLES.map((s) => [n, s] as const))) {
+    for (const [n, style] of [0, 1, 6, 7, 8, 30].flatMap((n) => STYLES.map((s) => [n, lookFor(s)] as const))) {
       const card = buildCard(Array.from({ length: n }, (_, i) => ({ name: `Device ${i}`, icon: "bluetooth", percent: 50, note: "note" })), style);
       let nodes = 0, depth = 0;
       const walk = (x: any, d: number) => { nodes++; depth = Math.max(depth, d); for (const c of x.children ?? []) walk(c, d + 1); };
@@ -109,10 +142,10 @@ describe("the plugin", () => {
   const out: Record<string, string> = { [PMSET]: pm!, [IOREG]: ioMagic!, [PROFILER]: btOn! };
   test("one failing tool does not empty the card, and the Mac can be hidden", async () => {
     const p = provider((c) => (c === PROFILER ? { code: 1, stdout: "" } : { code: 0, stdout: out[c]! }));
-    const card = JSON.stringify(await p({}));
+    const card = JSON.stringify(await p({ style: "list" }));
     expect(card).toContain("This Mac");
     expect(card).toContain("Magic Keyboard");
-    expect(JSON.stringify(await p({ showMac: false }))).not.toContain("This Mac");
+    expect(JSON.stringify(await p({ style: "list", showMac: false }))).not.toContain("This Mac");
   });
   test("all three failing is an error", async () => {
     await expect(provider(() => ({ code: 1, stdout: "" }))({})).rejects.toThrow("Could not read any battery");

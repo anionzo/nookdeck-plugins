@@ -8,7 +8,7 @@ export const PROFILER = "/usr/sbin/system_profiler SPBluetoothDataType -json";
 
 export const MAX_DEVICES = 7;
 
-export interface Device { name: string; icon: string; percent: number; charging?: boolean; note?: string; mac?: boolean }
+export interface Device { name: string; icon: string; percent: number; charging?: boolean; note?: string; mac?: boolean; caseLevel?: number }
 
 const clamp = (n: number) => Math.min(100, Math.max(0, Math.round(n)));
 
@@ -57,7 +57,10 @@ const percentOf = (v: unknown): number | null => {
   return m ? clamp(Number(m[1])) : null;
 };
 
-/** macOS also lists the AirPods case as a nameless Bluetooth LE beacon: no type, no product id, only a case level. */
+/**
+ * macOS also lists AirPods as a nameless Bluetooth LE beacon, with no type and no product id: with only the case's level
+ * while they are connected, and sometimes with all three levels when they are not the connected headphones.
+ */
 const isBeacon = (name: string, p: any) => name === "Bluetooth Device" && !p?.device_minorType && !p?.device_productID;
 
 /** "L 64 · R 71 · Case 40", kept short enough for a 2x2 tile when the numbers are long. */
@@ -87,10 +90,13 @@ export function parseBluetooth(json: string): Device[] {
         if (percent === null) continue;
         const name = clean(rawName);
         const caseOnly = !sides.length && main === null;
-        if (caseOnly && isBeacon(name, p)) { beacons.push({ name: "Earbuds case", icon: "headphones", percent }); continue; }
-        if (box !== null) caseSeen = true;
         const note = caseOnly ? "Case" : budsNote(left, right, box);
-        found.push({ name, icon: iconFor(String(p?.device_minorType ?? ""), name), percent, ...(note ? { note } : {}) });
+        if (isBeacon(name, p) && (caseOnly || sides.length)) {
+          beacons.push(caseOnly ? { name: "Earbuds case", icon: "headphones", percent } : { name: "Earbuds", icon: "headphones", percent, note, ...(box !== null ? { caseLevel: box } : {}) });
+          continue;
+        }
+        if (box !== null) caseSeen = true;
+        found.push({ name, icon: iconFor(String(p?.device_minorType ?? ""), name), percent, ...(note ? { note } : {}), ...(box !== null && !caseOnly ? { caseLevel: box } : {}) });
       }
     }
   }
@@ -124,10 +130,23 @@ export function merge(mac: Device | null, bluetooth: Device[], registry: Device[
   return [...(mac ? [mac] : []), ...named];
 }
 
-export const STYLES = ["details", "compact", "lowest"] as const;
+export const STYLES = ["auto", "rings", "row", "list", "lowest"] as const;
 export type Style = (typeof STYLES)[number];
+export type Look = Exclude<Style, "auto">;
+/** The tile's size in grid cells. Nookdeck tells it from 0.5.1. */
+export interface TileSize { w: number; h: number }
+
+/** The setting wins; "auto" goes by the tile: one cell shows the lowest battery, a wide tile one row, others the rings. */
+export function lookFor(style: unknown, tile?: TileSize): Look {
+  if (style !== "auto" && STYLES.includes(style as Style)) return style as Look;
+  if (!tile) return "rings";
+  if (tile.w <= 1 && tile.h <= 1) return "lowest";
+  return tile.w >= 2 * tile.h ? "row" : "rings";
+}
 
 /** green above half, amber from 20 to 50, red below 20 */
+type RingNode = Extract<CardNode, { t: "ring" }>;
+
 export const toneFor = (d: Device): "ok" | "warn" | "bad" => (d.percent > 50 ? "ok" : d.percent >= 20 ? "warn" : "bad");
 
 /** the second line of a row; charging is always said, also by a device that has nothing else to say */
@@ -151,27 +170,60 @@ function row(d: Device, details: boolean): CardNode {
   ] };
 }
 
-/** For a very small tile: the one battery that needs attention first. */
-function lowest(devices: Device[]): CardData {
-  const d = [...devices].sort((a, b) => a.percent - b.percent)[0];
-  if (!d) return { root: { t: "col", align: "center", children: [{ t: "text", text: "No battery to show", size: "s", tone: "muted" }] } };
-  const tone = toneFor(d);
-  return { root: { t: "col", gap: 1, align: "center", children: [
-    { t: "icon", name: d.icon, ...(tone === "ok" ? {} : { tone }) },
-    { t: "number", value: `${d.percent}%`, size: "xl", ...(tone === "ok" ? {} : { tone }) },
-    { t: "text", text: d.name.slice(0, 200), size: "s", tone: "muted" },
-  ] } };
+/** the charging bolt, drawn as text (not as an emoji) */
+export const BOLT = "\u26A1\uFE0E";
+export const MAX_RINGS = 4;
+
+const ring = (d: Device, size: "s" | "m" | "l"): RingNode => ({
+  t: "ring", value: d.percent / 100, tone: toneFor(d), icon: d.icon, size,
+  label: d.charging ? `${BOLT} ${d.percent}%` : `${d.percent}%`,
+});
+
+/**
+ * Like the Batteries widget of iOS: a ring per device, its icon inside and its level under it. Up to four. When there is
+ * room left, the earbuds' case gets a small ring of its own beside them. `oneRow` is for a wide tile; otherwise three or
+ * four rings make a 2x2 grid.
+ */
+function rings(devices: Device[], oneRow: boolean, most: number): CardData {
+  const shown = devices.slice(0, most);
+  let spare = most - shown.length;
+  const dials: RingNode[] = [];
+  for (const d of shown) {
+    dials.push(ring(d, "m"));
+    if (d.caseLevel !== undefined && spare > 0) {
+      spare--;
+      dials.push(ring({ name: `${d.name} case`, icon: "battery-4", percent: d.caseLevel }, "s"));
+    }
+  }
+  const perRow = oneRow || dials.length <= 2 ? MAX_RINGS : 2;
+  const rows: CardNode[] = [];
+  for (let i = 0; i < dials.length; i += perRow) {
+    const cells: CardNode[] = dials.slice(i, i + perRow);
+    // a short last row keeps the width of the rings above it
+    while (i > 0 && cells.length < perRow) cells.push({ t: "col", grow: true, children: [] });
+    rows.push({ t: "row", gap: 2, grow: true, children: cells });
+  }
+  if (devices.length > shown.length) rows.push({ t: "text", text: `+${devices.length - shown.length} more`, size: "s", tone: "muted" });
+  return { root: { t: "col", gap: 2, children: rows } };
 }
 
-export function buildCard(devices: Device[], style: Style = "details"): CardData {
+function lowest(devices: Device[]): CardData {
+  const d = [...devices].sort((a, b) => a.percent - b.percent)[0];
+  return d ? { root: { t: "col", children: [ring(d, "l") as CardNode] } } : empty();
+}
+
+const empty = (): CardData => ({ root: { t: "col", gap: 1, align: "center", children: [{ t: "text", text: "No battery to show", size: "s", tone: "muted" }] } });
+
+export function buildCard(devices: Device[], style: Look = "rings", tile?: TileSize): CardData {
   if (style === "lowest") return lowest(devices);
-  // compact is for a 2x1 tile: two rows, and nothing under them
-  const shown = devices.slice(0, style === "compact" ? 2 : MAX_DEVICES);
+  if (!devices.length) return empty();
+  // a row on a tile two cells wide has room for three rings
+  if (style !== "list") return rings(devices, style === "row", style === "row" && tile && tile.w < 3 ? MAX_RINGS - 1 : MAX_RINGS);
+  const shown = devices.slice(0, MAX_DEVICES);
   // a card holds at most 60 parts: with many devices the second lines are left out
-  const details = style === "details" && shown.length <= 6;
+  const details = shown.length <= 6;
   const children: CardNode[] = shown.map((d) => row(d, details));
-  if (!shown.length) children.push({ t: "text", text: "No battery to show", tone: "muted" });
-  if (style !== "compact" && devices.length > shown.length) children.push({ t: "text", text: `+${devices.length - shown.length} more`, size: "s", tone: "muted" });
+  if (devices.length > shown.length) children.push({ t: "text", text: `+${devices.length - shown.length} more`, size: "s", tone: "muted" });
   // spacers centre the rows from top to bottom; align: "center" on the column would centre every line of text too
   return { root: { t: "col", gap: 2, children: [{ t: "spacer" }, ...children, { t: "spacer" }] } };
 }

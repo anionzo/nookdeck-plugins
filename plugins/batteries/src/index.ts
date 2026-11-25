@@ -1,10 +1,10 @@
 import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
-import { IOREG, PMSET, PROFILER, STYLES, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, type Device, type Style } from "./lib";
+import { IOREG, PMSET, PROFILER, buildCard, lookFor, merge, parseBluetooth, parseIoreg, parsePmset, type Device, type TileSize } from "./lib";
 
 export function createPlugin(): PluginModule {
   return {
     activate(ctx: PluginContext) {
-      ctx.widgets.provide("levels", async (s: Settings) => {
+      ctx.widgets.provide("levels", async (s: Settings, tile?: TileSize) => {
         const shell = ctx.shell;
         if (!shell) throw new Error("Allow this plugin to run commands first");
         let failed = 0;
@@ -26,8 +26,7 @@ export function createPlugin(): PluginModule {
           read<Device[]>(IOREG, parseIoreg, []),
         ]);
         if (failed === 3) throw new Error("Could not read any battery");
-        const style = STYLES.includes(s.style as Style) ? (s.style as Style) : "details";
-        return { render: "card", data: buildCard(merge(s.showMac === false ? null : mac, bluetooth, registry), style) };
+        return { render: "card", data: buildCard(merge(s.showMac === false ? null : mac, bluetooth, registry), lookFor(s.style, tile), tile) };
       }, { every: 60 });
     },
   };
