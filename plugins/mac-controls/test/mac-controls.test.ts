@@ -19,7 +19,7 @@ describe("parsing and commands", () => {
     for (const bad of [0, 1, -5, 2.5]) expect(() => stopCommand(bad)).toThrow();
   });
   test("labels and permission messages", () => {
-    expect(awakeLabel(null, 0)).toBe("Keep awake");
+    expect(awakeLabel(null, 0)).toBe("Stay up");
     expect(awakeLabel({ pid: 9, until: 0 }, 0)).toBe("Awake");
     expect(awakeLabel({ pid: 9, until: 42 * 60_000 }, 0)).toBe("42 min");
     expect(awakeLabel({ pid: 9, until: 150 * 60_000 }, 0)).toBe("2 h 30 m");
@@ -73,7 +73,7 @@ describe("the plugin", () => {
     expect(await h.card()).toContain("10 min");
     await h.act("keep-awake", { minutes: 10 });
     expect(h.alive.size).toBe(0);
-    expect(await h.card()).toContain("Keep awake");
+    expect(await h.card()).toContain("Stay up");
   });
   test("a refresh while caffeinate is still starting does not forget it", async () => {
     const h = harness();
@@ -101,7 +101,7 @@ describe("the plugin", () => {
     const h = harness();
     await h.act("keep-awake", { minutes: 5 });
     h.alive.clear(); // it ended, and the pid may now belong to anything
-    expect(await h.card()).toContain("Keep awake");
+    expect(await h.card()).toContain("Stay up");
     expect(h.store.size).toBe(0);
     await h.act("keep-awake", { minutes: 5 });
     expect(h.calls.some((c) => c.startsWith("kill "))).toBe(false);

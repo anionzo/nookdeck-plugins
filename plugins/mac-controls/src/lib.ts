@@ -50,7 +50,7 @@ export interface Awake { pid: number; /** ms since 1970; 0 = until turned off */
 export const isAwake = (v: unknown): v is Awake => !!v && typeof v === "object" && Number.isInteger((v as Awake).pid) && typeof (v as Awake).until === "number";
 
 export function awakeLabel(a: Awake | null, now: number): string {
-  if (!a) return "Keep awake";
+  if (!a) return "Stay up";
   if (!a.until) return "Awake";
   const min = Math.max(1, Math.ceil((a.until - now) / 60_000));
   return min < 90 ? `${min} min` : `${Math.floor(min / 60)} h ${min % 60} m`;
@@ -68,16 +68,19 @@ export function failure(output: string, fallback: string): string {
 }
 
 
+/** Each button sits in its own growing column, so the two in a row are as wide as each other whatever their words. */
+const cell = (button: CardNode): CardNode => ({ t: "col", grow: true, children: [button] });
+
 export function buildCard(s: { appearance: "Dark" | "Light" | null; awake: Awake | null; minutes: number; now: number; problem?: string }): CardData {
   const dark = s.appearance === "Dark";
   const children: CardNode[] = [
     { t: "row", gap: 1, children: [
-      { t: "button", label: s.appearance === null ? "Dark mode" : dark ? "Dark" : "Light", icon: dark ? "moon" : "sun", action: "dark-mode", args: { mode: "toggle" }, active: dark },
-      { t: "button", label: awakeLabel(s.awake, s.now), icon: "coffee", action: "keep-awake", args: { minutes: s.minutes }, active: !!s.awake },
+      cell({ t: "button", label: s.appearance === null ? "Dark mode" : dark ? "Dark" : "Light", icon: dark ? "moon" : "sun", action: "dark-mode", args: { mode: "toggle" }, active: dark }),
+      cell({ t: "button", label: awakeLabel(s.awake, s.now), icon: "coffee", action: "keep-awake", args: { minutes: s.minutes }, active: !!s.awake }),
     ] },
     { t: "row", gap: 1, children: [
-      { t: "button", label: "Lock", icon: "lock", action: "lock" },
-      { t: "button", label: "Display off", icon: "device-desktop", action: "display-off" },
+      cell({ t: "button", label: "Lock", icon: "lock", action: "lock" }),
+      cell({ t: "button", label: "Display off", icon: "device-desktop", action: "display-off" }),
     ] },
   ];
   // first: when a tile is too small, the deck leaves out the last parts

@@ -65,13 +65,20 @@ export function buildCard(names: string[], o: { columns?: number; max?: number; 
   const usable = names.filter((n) => n.length <= MAX_NAME);
   const shown = usable.slice(0, max);
   const children: CardNode[] = [];
+  // an even grid: each button in its own growing column, and a short last row keeps the same widths. A card holds at most
+  // 60 parts, so a very long list goes without the columns
+  const rows = Math.ceil(shown.length / columns);
+  const even = columns > 1 && rows * (1 + 2 * columns) <= 54;
   for (let i = 0; i < shown.length; i += columns) {
-    children.push({ t: "row", gap: 1, children: shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, action: "run", args: { name } })) });
+    const buttons: CardNode[] = shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, action: "run", args: { name } }));
+    const cells = even ? Array.from({ length: columns }, (_, k): CardNode => ({ t: "col", grow: true, children: buttons[k] ? [buttons[k]] : [] })) : buttons;
+    children.push({ t: "row", gap: 1, children: cells });
   }
   if (!shown.length && !o.missing?.length) children.push({ t: "text", text: "No shortcuts here yet", tone: "muted" });
   if (usable.length > shown.length) children.push({ t: "text", text: `+${usable.length - shown.length} more`, size: "s", tone: "muted" });
   if (o.missing?.length) children.push({ t: "text", text: `Not found: ${o.missing.join(", ")}`.slice(0, 200), size: "s", tone: "warn" });
-  return { root: { t: "col", gap: 1, children } };
+  // spacers centre the list from top to bottom without centring its text
+  return { root: { t: "col", gap: 1, children: [{ t: "spacer" }, ...children, { t: "spacer" }] } };
 }
 
 export const messageCard = (text: string): CardData => ({ root: { t: "col", gap: 1, align: "center", children: [{ t: "text", text: text.slice(0, 200), size: "s", tone: "warn" }] } });
