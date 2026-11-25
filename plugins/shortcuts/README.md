@@ -64,7 +64,7 @@ Each button shows an icon above the name; long names take two lines. macOS does 
 | VPN, Shadowrocket, network, proxy, Wi-Fi, mạng | globe |
 | note, ghi chú | page |
 | script, run, terminal, shell | terminal |
-| open, app, mở, ứng dụng | app window |
+| open, app, mở, ứng dụng | open-link arrow |
 | anything else | bolt |
 
 Needs Nookdeck 0.5.1 or later.

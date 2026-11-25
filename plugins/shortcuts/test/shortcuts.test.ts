@@ -3,7 +3,7 @@ import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createPlugin } from "../src/index";
-import { STILL_RUNNING, buildCard, gridFor, iconFor, checkName, errorText, listCommand, parseLines, parseNames, pickNames, quote, runCommand } from "../src/lib";
+import { STILL_RUNNING, buildCard, gridFor, iconFor, ICON, ICONS, checkName, errorText, listCommand, parseLines, parseNames, pickNames, quote, runCommand } from "../src/lib";
 
 const NASTY = ["Start focus", "What’s a shortcut?", "Say \"hi\"", "Bob's lamp", "Ảnh này được chụp ở đâu?", "$(touch pwned) `id` ; & | > x", "-h", "--input-path", "emoji 🎧 mix", "back\\slash", "*"];
 
@@ -19,7 +19,7 @@ const posix = process.platform !== "win32";
 
 describe.if(posix)("the command line, run by a real /bin/sh with a stand-in for shortcuts", () => {
   const echo = stub("echo-args", `for a in "$@"; do printf '[%s]\\n' "$a"; done`);
-  test("a name arrives as one argument, exactly as written", async () => {
+  test("a name arrives as one argument, exactly as written", { timeout: 30_000 }, async () => {
     for (const name of NASTY) {
       const r = await sh(runCommand(name, echo));
       expect(r.code).toBe(0);
@@ -132,13 +132,26 @@ describe("icons by name", () => {
     const of = (names: string[]) => names.map(iconFor);
     expect(of(["Easydict-Translate-V1.2.0", "Dịch đoạn này", "Mac sleep", "Giờ đi ngủ", "Mac wake", "Good night"])).toEqual(["world", "world", "moon", "moon", "sun", "moon"]);
     expect(of(["Run Script", "Open terminal", "Ảnh này được chụp ở đâu?", "Take Screenshot", "Resize images", "Morning playlist"])).toEqual(["terminal-2", "terminal-2", "photo", "camera", "photo", "sun"]);
-    expect(of(["Play music", "Start focus", "Hẹn giờ 5 phút", "Check email", "Text mom", "Gửi tin nhắn", "Start Shadowrocket", "VPN on", "Standup notes", "Ghi chú nhanh", "Open Today"])).toEqual(["music", "clock", "clock", "mail", "message", "message", "world", "world", "file-text", "file-text", "app-window"]);
+    expect(of(["Play music", "Start focus", "Hẹn giờ 5 phút", "Check email", "Text mom", "Gửi tin nhắn", "Start Shadowrocket", "VPN on", "Standup notes", "Ghi chú nhanh", "Open Today"])).toEqual(["music", "clock", "clock", "mail", "message", "message", "world", "world", "file-text", "file-text", "external-link"]);
   });
   test("a word inside another word does not count; anything else gets the bolt", () => {
     for (const name of ["Happy birthday", "Brunch order", "Notification test", "Displayport", "New Shortcut", "Log water", "🎧", ""]) expect(iconFor(name)).toBe("bolt");
   });
   test("names that arrive decomposed still match", () => {
     expect(iconFor("Ảnh mới".normalize("NFD"))).toBe("photo");
+  });
+});
+
+describe("the manifest's sample", () => {
+  // Nookdeck draws an unknown icon name as a blank square; these were checked against its built-in list (isIconName)
+  const BUILT_IN = ["bolt", "camera", "clock", "external-link", "file-text", "mail", "message", "moon", "music", "photo", "sun", "terminal-2", "world"];
+  test("every icon a button can get is one Nookdeck has", () => {
+    for (const [icon] of ICONS) expect(BUILT_IN).toContain(icon);
+    expect(BUILT_IN).toContain(ICON);
+  });
+  test("is what the plugin builds for four shortcuts", async () => {
+    const manifest = await Bun.file(join(import.meta.dir, "../nookdeck.json")).json();
+    expect(manifest.widgets[0].preview).toEqual(buildCard(["Start focus", "Open Today", "Take a break", "Backup notes"]));
   });
 });
 

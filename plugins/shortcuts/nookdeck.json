@@ -2,7 +2,7 @@
   "$schema": "https://nookdeck.app/schema/plugin.json",
   "id": "dev.nookdeck.shortcuts",
   "name": "Apple Shortcuts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "Run your Apple Shortcuts from the phone",
@@ -17,7 +17,7 @@
       "preview": { "root": { "t": "col", "gap": 1, "children": [
         { "t": "row", "gap": 1, "grow": true, "children": [
           { "t": "button", "label": "Start focus", "icon": "clock", "layout": "tile", "action": "run", "args": { "name": "Start focus" } },
-          { "t": "button", "label": "Open Today", "icon": "app-window", "layout": "tile", "action": "run", "args": { "name": "Open Today" } }
+          { "t": "button", "label": "Open Today", "icon": "external-link", "layout": "tile", "action": "run", "args": { "name": "Open Today" } }
         ] },
         { "t": "row", "gap": 1, "grow": true, "children": [
           { "t": "button", "label": "Take a break", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Take a break" } },

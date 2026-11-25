@@ -79,7 +79,7 @@ export const ICONS: ReadonlyArray<readonly [icon: string, words: string]> = [
   ["world", "vpn|shadowrocket|network|proxy|wifi|mạng"],
   ["file-text", "note|notes|ghi chú"],
   ["terminal-2", "script|scripts|run|terminal|shell"],
-  ["app-window", "open|app|apps|mở|ứng dụng"],
+  ["external-link", "open|app|apps|mở|ứng dụng"],
 ];
 
 /** the words of a name, one space around each, so a word is only ever matched whole */
