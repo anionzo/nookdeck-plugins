@@ -7,6 +7,8 @@ import {
 const KEY = "awake";
 /** How long a refused permission stays written on the card. */
 export const PROBLEM_MS = 60_000;
+/** A new caffeinate takes a moment to show up in the system's list: how often it is looked for, 0.1 s apart. */
+export const START_TRIES = 30;
 
 export function createPlugin(now: () => number = Date.now): PluginModule {
   return {
@@ -56,6 +58,16 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         await run(DARK_MODE[mode], "Could not change the appearance");
       });
 
+      /** Waits until the system lists the new caffeinate. It is saved only then, so a refresh in between cannot forget it. */
+      async function listed(pid: number): Promise<boolean> {
+        for (let i = 0; i < START_TRIES; i++) {
+          const r = await shell(ASSERTIONS);
+          if (r.code !== 0 || displayCaffeinates(r.stdout).includes(pid)) return true;
+          await new Promise((done) => setTimeout(done, 100));
+        }
+        return false;
+      }
+
       // two quick taps must not start two caffeinates
       let queue: Promise<unknown> = Promise.resolve();
       ctx.actions.handle("keep-awake", (s: Settings) => {
@@ -69,6 +81,10 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
           const minutes = checkMinutes(s.minutes);
           const pid = Number((await run(awakeCommand(minutes), "Could not keep the Mac awake")).trim());
           if (!Number.isInteger(pid) || pid <= 1) throw new Error("Could not keep the Mac awake");
+          if (!(await listed(pid))) {
+            await shell(stopCommand(pid));
+            throw new Error("Could not keep the Mac awake");
+          }
           await ctx.storage.set(KEY, { pid, until: minutes ? now() + minutes * 60_000 : 0 } satisfies Awake);
         });
         queue = next.catch(() => {});

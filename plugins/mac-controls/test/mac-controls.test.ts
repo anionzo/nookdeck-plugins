@@ -43,6 +43,8 @@ describe("the plugin", () => {
     const providers: Record<string, any> = {}, handlers: Record<string, any> = {};
     let clock = 1_000_000, nextPid = 100;
     let refuse = "";
+    /** how many looks at the system's list a new caffeinate stays missing from it */
+    let slow = 0, missing = 0;
     const ctx: any = {
       log() {},
       storage: { get: async (k: string) => store.get(k) ?? null, set: async (k: string, v: unknown) => { if (v == null) store.delete(k); else store.set(k, v); } },
@@ -50,8 +52,9 @@ describe("the plugin", () => {
         run: async (cmd: string) => {
           calls.push(cmd);
           if (refuse && cmd.includes("System Events")) return { code: 1, stdout: refuse };
+          if (cmd === ASSERTIONS && missing > 0) { missing--; return { code: 0, stdout: "" }; }
           if (cmd === ASSERTIONS) return { code: 0, stdout: [...alive].map((p) => `   pid ${p}(caffeinate): [0x1] 00:00:01 PreventUserIdleDisplaySleep named: "caffeinate command-line tool"`).join("\n") };
-          if (cmd.startsWith("nohup")) { alive.add(++nextPid); return { code: 0, stdout: `${nextPid}\n` }; }
+          if (cmd.startsWith("nohup")) { missing = slow; alive.add(++nextPid); return { code: 0, stdout: `${nextPid}\n` }; }
           if (cmd.startsWith("kill ")) { alive.delete(Number(cmd.split(" ")[1])); return { code: 0, stdout: "" }; }
           if (cmd.includes("AppleInterfaceStyle")) return { code: 0, stdout: "Light\n" };
           return { code: 0, stdout: "" };
@@ -61,7 +64,7 @@ describe("the plugin", () => {
       actions: { handle: (id: string, fn: unknown) => { handlers[id] = fn; } },
     };
     createPlugin(() => clock).activate(ctx);
-    return { calls, store, alive, act: (id: string, s: object = {}) => handlers[id](s), card: async () => JSON.stringify(await providers.controls({})), tick: (ms: number) => { clock += ms; }, refuse: (s: string) => { refuse = s; } };
+    return { calls, store, alive, act: (id: string, s: object = {}) => handlers[id](s), card: async () => JSON.stringify(await providers.controls({})), tick: (ms: number) => { clock += ms; }, refuse: (s: string) => { refuse = s; }, slow: (n: number) => { slow = n; } };
   };
 
   test("keep awake turns on and off", async () => {
@@ -72,6 +75,22 @@ describe("the plugin", () => {
     expect(h.alive.size).toBe(0);
     expect(await h.card()).toContain("Keep awake");
   });
+  test("a refresh while caffeinate is still starting does not forget it", async () => {
+    const h = harness();
+    h.slow(3);
+    const started = h.act("keep-awake", { minutes: 10 });
+    await h.card();
+    await started;
+    expect(await h.card()).toContain("Awake 10 min");
+    expect(h.alive.size).toBe(1);
+  });
+  test("one that never shows up is stopped and reported", async () => {
+    const h = harness();
+    h.slow(999);
+    await expect(h.act("keep-awake", { minutes: 10 })).rejects.toThrow("Could not keep the Mac awake");
+    expect(h.alive.size).toBe(0);
+    expect(h.store.size).toBe(0);
+  }, 10_000);
   test("two quick taps do not start two", async () => {
     const h = harness();
     await Promise.all([h.act("keep-awake", { minutes: 0 }), h.act("keep-awake", { minutes: 0 })]);
