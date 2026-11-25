@@ -52,10 +52,10 @@ describe("the timer", () => {
   });
   test("the card says what the buttons will do", () => {
     const find = (s: State) => JSON.stringify(buildCard(s, { "2026-11-25": 3 }, len, at(25, 9)));
-    expect(find(START)).toContain('"label":"Start"');
+    expect(find(START)).toContain('"icon":"player-play","action":"toggle"');
     expect(find(START)).toContain('"text":"3 today"');
-    expect(find(toggle(START, len, at(25, 9)))).toContain('"label":"Pause"');
-    expect(find({ phase: "break", status: "paused", left: MIN, total: 5 * MIN })).toContain('"label":"Resume"');
+    expect(find(toggle(START, len, at(25, 9)))).toContain('"icon":"player-pause","action":"toggle","active":true');
+    expect(find({ phase: "break", status: "paused", left: MIN, total: 5 * MIN })).toContain('"tone":"muted"},{"t":"button","label":"","icon":"player-play"');
   });
 });
 

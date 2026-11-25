@@ -100,10 +100,14 @@ export function buildCard(state: State, days: Days, len: Lengths, now: number) {
         { t: "pill", text: state.phase === "focus" ? "Focus" : "Break", tone },
         { t: "text", text: `${days[dayKey(now)] ?? 0} today`, size: "s", tone: "muted" },
       ] },
-      { t: "number", value: clock(left), size: "xl", ...(state.status === "paused" ? { tone: "muted" } : {}) },
+      // A short tile drops the end of a column first (a 2x1 shows down to about here): the time and its main button come early,
+      // and the main button is an icon so it fits beside the time.
+      { t: "row", gap: 2, align: "between", children: [
+        { t: "number", value: clock(left), size: "xl", ...(state.status === "paused" ? { tone: "muted" } : {}) },
+        { t: "button", label: "", icon: running ? "player-pause" : "player-play", action: "toggle", ...(running ? { active: true } : {}) },
+      ] },
       { t: "progress", value: Math.round(Math.min(1, Math.max(0, 1 - left / total)) * 1000) / 1000, tone },
       { t: "row", gap: 1, children: [
-        { t: "button", label: running ? "Pause" : state.status === "paused" ? "Resume" : "Start", icon: running ? "player-pause" : "player-play", action: "toggle", ...(running ? { active: true } : {}) },
         { t: "button", label: "Skip", icon: "player-skip-forward", action: "skip" },
         { t: "button", label: "Reset", icon: "refresh", action: "reset" },
       ] },

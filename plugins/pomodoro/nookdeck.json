@@ -23,10 +23,12 @@
           { "t": "pill", "text": "Focus", "tone": "accent" },
           { "t": "text", "text": "3 today", "size": "s", "tone": "muted" }
         ] },
-        { "t": "number", "value": "18:24", "size": "xl" },
+        { "t": "row", "gap": 2, "align": "between", "children": [
+          { "t": "number", "value": "18:24", "size": "xl" },
+          { "t": "button", "label": "", "icon": "player-pause", "action": "toggle", "active": true }
+        ] },
         { "t": "progress", "value": 0.26, "tone": "accent" },
         { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Pause", "icon": "player-pause", "action": "toggle", "active": true },
           { "t": "button", "label": "Skip", "icon": "player-skip-forward", "action": "skip" },
           { "t": "button", "label": "Reset", "icon": "refresh", "action": "reset" }
         ] }
