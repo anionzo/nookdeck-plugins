@@ -1,9 +1,11 @@
 import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
-import { buildCard, windowEnd, type View } from "./card";
+import { buildCard, setupCard, windowEnd, type View } from "./card";
 import { expand, type Occurrence } from "./events";
 import { parseEvents, type VEvent } from "./ics";
 import { MAX_LINKS, checkLink, fetchProblem, statusProblem } from "./links";
 
+/** How far the tile looks for the next event when the days it shows are empty. */
+export const LOOK_AHEAD_DAYS = 366;
 export const FETCH_EVERY_MS = 10 * 60_000;
 /** A failed link is tried again sooner, but not on every refresh of the tile. */
 export const RETRY_MS = 60_000;
@@ -49,7 +51,7 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         const links = Array.from({ length: MAX_LINKS }, (_, i) => ({ i, label: `Calendar ${i + 1}`, raw: String(secrets[`link${i + 1}`] ?? "").trim() }))
           .filter((l) => l.raw)
           .map((l) => ({ ...l, check: checkLink(l.raw) }));
-        if (!links.length) return { render: "card", data: { root: { t: "col", gap: 1, children: [{ t: "text", text: "Add a calendar link in the plugin's settings on your computer", tone: "muted" }] } } };
+        if (!links.length) return { render: "card", data: setupCard(now()) };
 
         // links that were removed or changed are forgotten
         const wanted = new Set(links.flatMap((l) => ("url" in l.check ? [l.check.url] : [])));
@@ -62,9 +64,11 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
           firstDay: s.firstDay === "Sunday" ? 0 : 1,
           hour24: s.hour24 !== false,
           rows: int(s.rows, 4, 1, 8),
+          days: int(s.days, 7, 1, 31),
         };
-        const to = windowEnd(view.now, int(s.days, 7, 1, 31));
+        const to = windowEnd(view.now, view.days);
         const events: Occurrence[] = [];
+        const read: { events: VEvent[]; calendar: number }[] = [];
         const notes: string[] = [];
         let loaded = 0;
         for (const l of links) {
@@ -72,13 +76,17 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
           const c = copies.get(l.check.url);
           if (c?.events) {
             loaded++;
+            read.push({ events: c.events, calendar: l.i });
             events.push(...expand(c.events, view.now, to, l.i));
           }
           if (c?.error) notes.push(`${l.label}: ${c.error}${c.events ? " (showing the last copy)" : ""}`);
         }
         if (!loaded) throw new Error(notes[0] ?? "Could not load any calendar");
         events.sort((a, b) => a.start - b.start || Number(b.allDay) - Number(a.allDay));
-        return { render: "card", data: buildCard(events, view, notes) };
+        // days with nothing in them still say when the next event is
+        const next = events.length ? undefined
+          : read.flatMap((r) => expand(r.events, view.now, windowEnd(view.now, LOOK_AHEAD_DAYS), r.calendar)).sort((a, b) => a.start - b.start)[0];
+        return { render: "card", data: buildCard(events, view, notes, next) };
       }, { every: 60 });
     },
   };

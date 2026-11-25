@@ -122,7 +122,7 @@ describe("links", () => {
 });
 
 describe("the tile", () => {
-  const view = { now: NOW, firstDay: 1 as const, hour24: true, rows: 4 };
+  const view = { now: NOW, firstDay: 1 as const, hour24: true, rows: 4, days: 7 };
 
   test("the first day of the week decides where next week begins", () => {
     expect(nextWeekStart(NOW, 1)).toBe(local(11, 30)); // Monday
@@ -136,14 +136,56 @@ describe("the tile", () => {
     expect([timeText(local(11, 25, 0, 5), true), timeText(local(11, 25, 14), true)]).toEqual(["00:05", "14:00"]);
     expect([timeText(local(11, 25, 0, 5), false), timeText(local(11, 25, 14), false), timeText(local(11, 25, 12, 30), false)]).toEqual(["12:05 AM", "2 PM", "12:30 PM"]);
   });
-  test("what the pill says", () => {
-    const o = (start: number, allDay = false): Occurrence => ({ title: "x", start, end: start + 3_600_000, allDay, calendar: 0 });
+  const o = (start: number, allDay = false, calendar = 0, title = "x"): Occurrence => ({ title, start, end: start + 3_600_000, allDay, calendar });
+  /** the words of each line of the card, left to right; a heading's group is opened up */
+  const words = (n: any): string[] => (n.children ? n.children.flatMap(words) : [n.t === "icon" ? n.name : n.text]);
+  const lines = (card: { root: unknown }) => (card.root as any).children.flatMap((n: any) => (n.t === "col" ? n.children : [n])).map((n: any) => words(n).join(" | "));
+
+  test("what the right-hand column says", () => {
     expect(whenText(o(local(11, 25, 7, 30)), "Today", view)).toBe("Now");
     expect(whenText(o(local(11, 25), true), "Today", view)).toBe("All day");
     expect(whenText(o(local(11, 26, 16, 30)), "Tomorrow", view)).toBe("16:30");
     expect(whenText(o(local(11, 27, 9)), "This week", view)).toBe("Fri 09:00");
     expect(whenText(o(local(11, 28), true), "This week", view)).toBe("Sat");
     expect(whenText(o(local(12, 24, 9)), "Later", view)).toBe("24 Dec 09:00");
+  });
+  test("today's date on top, a dot and a title for each event, pills for all-day ones", () => {
+    const card = buildCard([o(local(11, 25), true, 1, "Holiday"), o(local(11, 25, 7, 30), false, 0, "Standup"), o(local(11, 26, 12), false, 2, "Lunch"), o(local(11, 28), true, 0, "Trip")], view);
+    expect(lines(card)).toEqual([
+      "Today | Wed 25 Nov",
+      "● | Holiday | All day",
+      "● | Standup | Now",
+      "Tomorrow",
+      "● | Lunch | 12:00",
+      "This week",
+      "● | Trip | Sat",
+    ]);
+    expect(JSON.stringify(card)).toContain('{"t":"pill","text":"All day","tone":"ok"}');
+    expect(JSON.stringify(card)).toContain('{"t":"text","text":"●","size":"s","tone":"warn"}');
+  });
+  test("a heading stays with its first event, and few events get two lines each", () => {
+    const two = [o(local(12, 24), true, 0, "Christmas Eve"), o(local(12, 25), true, 0, "Christmas Day")];
+    const parts = (buildCard(two, { ...view, days: 31 }).root as any).children;
+    // "Next in 29 days" stands alone; a plain heading is tied to its event
+    expect(parts.map((n: any) => n.t)).toEqual(["row", "row", "text", "row", "row"]);
+    expect(words((buildCard([o(local(11, 26, 12), false, 0, "Lunch")], view).root as any).children[2])).toEqual(["Tomorrow", "●", "Lunch", "12:00"]);
+    expect(parts[4].children[1]).toMatchObject({ t: "col", children: [{ text: "Christmas Day" }, { t: "pill", text: "25 Dec" }] });
+    const three = (buildCard([...two, o(local(12, 26), true)], { ...view, days: 40 }).root as any).children[4];
+    expect(three.align).toBe("between");
+  });
+  test("a free day says so, and how far the next event is", () => {
+    expect(lines(buildCard([o(local(11, 26, 12), false, 0, "Lunch")], view))).toEqual([
+      "Today | Wed 25 Nov", "calendar | Nothing today", "Tomorrow", "● | Lunch | 12:00",
+    ]);
+    expect(lines(buildCard([o(local(12, 24), true, 0, "Christmas Eve")], { ...view, days: 31 }))).toEqual([
+      "Today | Wed 25 Nov", "calendar | Nothing today", "Next in 29 days", "● | Christmas Eve | 24 Dec",
+    ]);
+    // nothing in the days it looks at: the first event after them, alone
+    expect(lines(buildCard([], view, [], o(local(12, 24), true, 0, "Christmas Eve")))).toEqual([
+      "Today | Wed 25 Nov", "calendar | Nothing today", "Next in 29 days", "● | Christmas Eve | 24 Dec",
+    ]);
+    expect(lines(buildCard([], view))).toEqual(["Today | Wed 25 Nov", "calendar | Nothing today", "Nothing in the next 7 days"]);
+    expect(lines(buildCard([], { ...view, days: 1 }))[2]).toBe("The day is yours");
   });
   test("a full tile stays inside the card limits and counts the rest", () => {
     const many = Array.from({ length: 40 }, (_, i): Occurrence => ({ title: "t".repeat(500), start: NOW + i * 40 * 3_600_000, end: NOW + i * 40 * 3_600_000 + 1, allDay: false, calendar: i % 6 }));
@@ -233,9 +275,17 @@ describe("the plugin", () => {
 
   test("days ahead, first day and the clock come from the settings", async () => {
     const h = harness({ link1: LINK }, ok);
-    expect(await h.tile({ days: 1, rows: 8 })).not.toContain("Tomorrow");
+    expect(await h.tile({ days: 1, rows: 8 })).not.toContain('"Tomorrow"');
     expect(await h.tile({ days: 7, rows: 8, firstDay: "Monday" })).toContain("Next week");
     expect(await h.tile({ days: 7, rows: 8, hour24: false })).toContain("9 AM");
+  });
+
+  test("an empty week still names the next event, and only that one", async () => {
+    const h = harness({ link1: LINK }, () => new Response(holidays!));
+    const tile = await h.tile({ days: 7, rows: 8 });
+    expect(tile).toContain("Next in 29 days");
+    expect(tile).toContain("Christmas Eve");
+    expect(tile).not.toContain("Christmas Day");
   });
 
   test("tiles that ask at once share one fetch", async () => {
