@@ -2,7 +2,8 @@ import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
 import { buildCard, setupCard, windowEnd, type View } from "./card";
 import { expand, type Occurrence } from "./events";
 import { parseEvents, type VEvent } from "./ics";
-import { isWeek, listRows, type Tile } from "./layout";
+import { buildAgenda, monthRange } from "./agenda";
+import { isAgenda, isWeek, listRows, type Tile } from "./layout";
 import { MAX_LINKS, checkLink, fetchProblem, statusProblem } from "./links";
 import { buildWeek, weekDays } from "./week";
 
@@ -91,10 +92,17 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         }
         if (!loaded) throw new Error(notes[0] ?? "Could not load any calendar");
         events.sort((a, b) => a.start - b.start || Number(b.allDay) - Number(a.allDay));
-        if (week) return { render: "card", data: buildWeek(events, view, tile!, notes) };
+        const between = (a: number, b: number) => read.flatMap((r) => expand(r.events, a, b, r.calendar)).sort((x, y) => x.start - y.start || Number(y.allDay) - Number(x.allDay));
+        const ahead = () => between(view.now, windowEnd(view.now, LOOK_AHEAD_DAYS));
+        if (week) return { render: "card", data: buildWeek(events, view, notes, events.some((o) => o.end > view.now) ? undefined : ahead().find((o) => o.start >= to)) };
+        if (isAgenda(tile)) {
+          // a list that the days ahead do not fill goes on past them
+          const later = events.length < view.rows ? ahead().filter((o) => o.start >= to) : [];
+          const month = monthRange(view.now);
+          return { render: "card", data: buildAgenda(events, later, between(month.from, month.to - 1), view, notes) };
+        }
         // days with nothing in them still say when the next event is
-        const next = events.length ? undefined
-          : read.flatMap((r) => expand(r.events, view.now, windowEnd(view.now, LOOK_AHEAD_DAYS), r.calendar)).sort((a, b) => a.start - b.start)[0];
+        const next = events.length ? undefined : ahead()[0];
         return { render: "card", data: buildCard(events, view, notes, next) };
       }, { every: 60 });
     },

@@ -6,8 +6,9 @@ import { expand, type Occurrence } from "../src/events";
 import { parseEvents } from "../src/ics";
 import { createPlugin, FETCH_EVERY_MS, RETRY_MS } from "../src/index";
 import { HOSTS, UNSUPPORTED, checkLink, fetchProblem } from "../src/links";
-import { dayLines, isWeek, listRows } from "../src/layout";
-import { buildWeek, dayItems, weekDays } from "../src/week";
+import { isAgenda, isWeek, listRows } from "../src/layout";
+import { buildAgenda, monthMarks } from "../src/agenda";
+import { WEEK_EVENTS, buildWeek, dayItems, weekDays } from "../src/week";
 
 process.env.TZ = "Asia/Ho_Chi_Minh"; // the computer's zone in these tests, UTC+7 with no summer time
 
@@ -219,6 +220,7 @@ describe("tile sizes", () => {
     expect([1, 2, 3, 4, 6].map((h) => listRows({ w: 4, h }, 10))).toEqual([2, 4, 7, 10, 10]);
     expect(listRows({ w: 4, h: 4 }, 3)).toBe(3);
     expect(listRows(undefined, 10)).toBe(4);
+    expect([[4, 3], [4, 4], [4, 2], [2, 4], [6, 3]].map(([w, h]) => isAgenda({ w: w!, h: h! }))).toEqual([true, true, false, false, false]);
   });
   test("a long list stays inside the card's limits, with headings, notes and a count", () => {
     const many = Array.from({ length: 30 }, (_, i) => ev(`event ${i}`, NOW + i * 11 * 3_600_000 + 3_600_000, 1, { calendar: i % 4 }));
@@ -234,53 +236,88 @@ describe("tile sizes", () => {
 });
 
 describe("the week", () => {
-  const view = { now: NOW, firstDay: 1 as const, hour24: true }; // Wednesday 25 November, 08:00
-  const columns = (card: { root: unknown }) => (card.root as any).children[0].children as any[];
+  const view = { now: NOW, firstDay: 1 as const, hour24: true, rows: 10, days: 7 }; // Wednesday 25 November, 08:00
+  const week = (card: { root: unknown }) => { const r = card.root as any; return r.t === "week" ? r : r.children[0]; };
 
   test("seven days from the first day of the week", () => {
     expect(weekDays(NOW, 1)).toEqual([23, 24, 25, 26, 27, 28, 29].map((d) => local(11, d)));
     expect(weekDays(NOW, 0)).toEqual([22, 23, 24, 25, 26, 27, 28].map((d) => local(11, d)));
     expect(weekDays(local(1, 1, 12), 1)[0]).toBe(local(12, 29, 0, 0, 2025));
   });
-  test("equal columns, today's date marked", () => {
-    const cols = columns(buildWeek([], view, { w: 8, h: 3 }));
-    expect(cols.every((c) => c.t === "col" && c.grow === true)).toBe(true);
-    expect(cols.map((c) => c.children[0].text)).toEqual(["Mon 23", "Tue 24", "Wed 25", "Thu 26", "Fri 27", "Sat 28", "Sun 29"]);
-    expect(cols.map((c) => c.children[0].t)).toEqual(["text", "text", "pill", "text", "text", "text", "text"]);
-    expect(columns(buildWeek([], { ...view, firstDay: 0 }, { w: 8, h: 3 }))[0].children[0].text).toBe("Sun 22");
+  test("the week part, with today and now from the computer", () => {
+    expect(week(buildWeek([], view))).toEqual({ t: "week", start: "2026-11-23", today: "2026-11-25", now: "08:00", hour24: true, events: [] });
+    expect(week(buildWeek([], { ...view, firstDay: 0, hour24: false }))).toMatchObject({ start: "2026-11-22", hour24: false });
   });
-  test("all-day first, events over several days on each, past ones grey", () => {
-    const events = [ev("Standup", local(11, 24, 9)), ev("Lunch", local(11, 26, 12)), allDayEv("Trip", 11, 26, 3), ev("Night shift", local(11, 27, 22), 5)];
-    const cols = columns(buildWeek(events, view, { w: 8, h: 4 }));
-    expect(cols.map((c) => text(c).slice(1))).toEqual([
-      [], ["09:00", "Standup"], [], ["Trip", "12:00", "Lunch"], ["Trip", "22:00", "Night shift"], ["Trip", "to 03:00", "Night shift"], [],
+  test("events split by day, past ones grey", () => {
+    const events = [ev("Standup", local(11, 24, 9)), ev("Lunch", local(11, 26, 12), 1, { calendar: 1 }), allDayEv("Trip", 11, 26, 3), ev("Night shift", local(11, 27, 22), 5)];
+    expect(week(buildWeek(events, view)).events).toEqual([
+      { day: 1, title: "Standup", tone: "muted", start: "09:00", end: "10:00" },
+      { day: 3, title: "Lunch", tone: "ok", start: "12:00", end: "13:00" },
+      { day: 3, title: "Trip", tone: "accent", allDay: true },
+      { day: 4, title: "Trip", tone: "accent", allDay: true },
+      { day: 4, title: "Night shift", tone: "accent", start: "22:00", end: "24:00" },
+      { day: 5, title: "Trip", tone: "accent", allDay: true },
+      { day: 5, title: "Night shift", tone: "accent", start: "00:00", end: "03:00" },
     ]);
-    expect(cols[1].children[1].children[0].tone).toBe("muted");
-    expect(cols[3].children[1]).toEqual({ t: "pill", text: "Trip", tone: "accent" });
-    // a timed event that covers a whole day reads as all day on it
-    expect(dayItems([ev("Conference", local(11, 24, 9), 60)], local(11, 25), view)[0]!.timed).toBe(false);
-    // one that ends at midnight is not on the next day
-    expect(dayItems([ev("Late", local(11, 24, 22), 2)], local(11, 25), view)).toEqual([]);
+    // a timed event that covers a whole day reads as all day on it; one that ends at midnight is not on the next
+    expect(dayItems([ev("Conference", local(11, 24, 9), 60)], local(11, 25), 2, NOW)[0]).toMatchObject({ allDay: true });
+    expect(dayItems([ev("Late", local(11, 24, 22), 2)], local(11, 25), 2, NOW)).toEqual([]);
+    // no length: no end
+    expect(dayItems([ev("Reminder", local(11, 25, 9), 0)], local(11, 25), 2, NOW)[0]).toEqual({ day: 2, title: "Reminder", tone: "accent", start: "09:00" });
   });
-  test("a day with too much says +n, and today keeps what is still to come", () => {
-    const events = Array.from({ length: 9 }, (_, i) => ev(`t${i}`, local(11, 25, 5 + i), 0.5));
-    const today = columns(buildWeek(events, view, { w: 8, h: 3 }))[2];
-    const shown = today.children.filter((c: any) => c.t === "col");
-    expect(shown.length * 2 + 1).toBeLessThanOrEqual(dayLines(3));
-    expect(shown.map((c: any) => c.children[1].text)).toEqual(["t3", "t4", "t5"]);
-    expect(today.children.at(-1).text).toBe("+6");
+  test("40 events shared between the days, and more counts the rest", () => {
+    const events = Array.from({ length: 70 }, (_, i) => ev(`e${i}`, local(11, 23 + (i % 7), 9 + Math.floor(i / 7), 0)));
+    const part = week(buildWeek(events, view));
+    expect(part.events).toHaveLength(WEEK_EVENTS);
+    const shown = [0, 1, 2, 3, 4, 5, 6].map((d) => part.events.filter((e: any) => e.day === d).length);
+    expect(Math.max(...shown) - Math.min(...shown)).toBeLessThanOrEqual(1);
+    expect(part.more.map((n: number, d: number) => n + shown[d]!)).toEqual(Array(7).fill(10));
+    const busy = Array.from({ length: 45 }, (_, i) => ev(`b${i}`, local(11, 25, 1, i * 20)));
+    const kept = week(buildWeek(busy, view)).events;
+    expect(kept.filter((e: any) => e.tone === "muted").length).toBeLessThan(21);
+    expect(kept.map((e: any) => e.title)).toContain("b44");
   });
-  test("a packed week shares the 60 parts between the days", () => {
-    const events = Array.from({ length: 70 }, (_, i) => ev(`e${i}`, local(11, 23 + (i % 7), 9 + Math.floor(i / 7)), 1, { calendar: i % 4 }));
-    for (const h of [3, 4]) {
-      const root = buildWeek(events, view, { w: 8, h }, ["Calendar 2: could not load it"]).root as any;
-      expect(parts(root)).toBeLessThanOrEqual(60);
-      expect(depth(root)).toBeLessThanOrEqual(6);
-      const per = columns({ root }).map((c: any) => c.children.filter((x: any) => x.t === "col").length);
-      expect(Math.min(...per)).toBeGreaterThanOrEqual(1);
-      expect(Math.max(...per) - Math.min(...per)).toBeLessThanOrEqual(1);
-      expect(columns({ root }).every((c: any) => /^\+\d+$/.test(c.children.at(-1).text))).toBe(true);
-    }
+  test("a week with nothing left says what is next, and a note goes under the week", () => {
+    const next = ev("Christmas Eve", local(12, 24), 24, { allDay: true });
+    const root = buildWeek([ev("Past", local(11, 23, 9))], view, [], next).root as any;
+    expect(text(root.children[1] ? { children: [root.children[1]] } : root)).toEqual(["Nothing more this week. Next: Christmas Eve, Thu 24 Dec"]);
+    expect((buildWeek([ev("Soon", local(11, 26, 9))], view, [], next).root as any).t).toBe("week");
+    expect(text({ children: [(buildWeek([], view, ["Calendar 2: could not load it"]).root as any).children[1]] })).toEqual(["Calendar 2: could not load it"]);
+  });
+});
+
+describe("the month beside the list", () => {
+  const view = { now: NOW, firstDay: 1 as const, hour24: true, rows: 10, days: 7 };
+  const parts2 = (card: { root: unknown }) => { const [month, list] = (card.root as any).children; return { month, list }; };
+
+  test("today first, then the days ahead, with a time column", () => {
+    const events = [ev("Now thing", local(11, 25, 7, 30), 1), ev("Parcel", local(11, 25, 16, 45)), allDayEv("Release", 11, 26), ev("Demo", local(11, 28, 14), 1, { calendar: 1 })];
+    const { month, list } = parts2(buildAgenda(events, [], events, view));
+    expect(text(list)).toEqual(["Wed 25 Nov", "2 events today", "Now", "Now thing", "16:45", "Parcel", "Tomorrow", "all day", "Release", "This week", "Sat 28", "Demo"]);
+    expect(month).toMatchObject({ t: "month", month: "2026-11", today: "2026-11-25", selected: "2026-11-25", weekStart: 1 });
+    expect(month.marks).toEqual([{ date: "2026-11-25", tone: "accent" }, { date: "2026-11-26", tone: "accent" }, { date: "2026-11-28", tone: "ok" }]);
+    // in a longer list the title has a growing box of its own, so the time keeps its width
+    expect(list.children[2]).toMatchObject({ t: "row", children: [{ text: "Now" }, { t: "col", grow: true, children: [{ text: "Now thing" }] }] });
+  });
+  test("few events: the list goes on past the days ahead, and says how far the next one is", () => {
+    const later = [allDayEv("Christmas Eve", 12, 24), allDayEv("Christmas Day", 12, 25)];
+    const { month, list } = parts2(buildAgenda([], later, [ev("Old", local(11, 20, 9))], view));
+    expect(text(list)).toEqual(["Wed 25 Nov", "Nothing today", "Next in 29 days", "Christmas Eve", "24 Dec", "Christmas Day", "25 Dec"]);
+    expect(month.selected).toBeUndefined(); // the next day listed is in another month
+    expect(month.marks).toEqual([{ date: "2026-11-20", tone: "accent" }]);
+    expect(text(parts2(buildAgenda([], [], [], view)).list)).toEqual(["Wed 25 Nov", "Nothing coming up"]);
+    expect(parts2(buildAgenda([ev("Fri", local(11, 27, 9))], [], [], view)).month.selected).toBe("2026-11-27");
+  });
+  test("ten events with headings and notes stay within 60 parts; dots within 62, a day each first", () => {
+    const many = Array.from({ length: 30 }, (_, i) => ev(`event ${i}`, NOW + 3_600_000 + i * 11 * 3_600_000, 1, { calendar: i % 4 }));
+    const root = buildAgenda(many, [], many, view, ["a", "b"]).root as any;
+    expect(parts(root)).toBeLessThanOrEqual(60);
+    expect(depth(root)).toBeLessThanOrEqual(6);
+    expect(text(root.children[1])).toContain("+20 more");
+    const full = Array.from({ length: 30 }, (_, d) => [0, 1, 2].map((c) => ev("x", local(11, d + 1, 9 + c), 1, { calendar: c }))).flat();
+    const marks = monthMarks(full, NOW);
+    expect(marks).toHaveLength(62);
+    expect(new Set(marks.slice(0, 30).map((m) => m.date)).size).toBe(30);
   });
 });
 
@@ -377,9 +414,10 @@ describe("the plugin", () => {
   test("the tile's size chooses the view", async () => {
     const h = harness({ link1: LINK }, () => new Response(google!));
     const week = await h.tile({}, { w: 8, h: 4 });
-    expect(week).toContain('"Mon 23"');
+    expect(week).toContain('"t":"week"');
     expect(week).not.toContain('"Today"');
-    expect(await h.tile({}, { w: 4, h: 4 })).toContain('"Today"');
+    expect(await h.tile({}, { w: 4, h: 4 })).toContain('"t":"month"');
+    expect(await h.tile({}, { w: 4, h: 2 })).toContain('"Today"');
     expect(await h.tile()).toContain('"Today"');
     expect(h.fetched).toHaveLength(1);
   });
