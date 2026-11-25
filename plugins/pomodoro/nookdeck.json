@@ -29,8 +29,8 @@
         ] },
         { "t": "progress", "value": 0.26, "tone": "accent" },
         { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Skip", "icon": "player-skip-forward", "action": "skip" },
-          { "t": "button", "label": "Reset", "icon": "refresh", "action": "reset" }
+          { "t": "button", "label": "Skip", "action": "skip" },
+          { "t": "button", "label": "Reset", "action": "reset" }
         ] }
       ] } },
       "settings": [],

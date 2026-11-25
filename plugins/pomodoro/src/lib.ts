@@ -108,8 +108,8 @@ export function buildCard(state: State, days: Days, len: Lengths, now: number) {
       ] },
       { t: "progress", value: Math.round(Math.min(1, Math.max(0, 1 - left / total)) * 1000) / 1000, tone },
       { t: "row", gap: 1, children: [
-        { t: "button", label: "Skip", icon: "player-skip-forward", action: "skip" },
-        { t: "button", label: "Reset", icon: "refresh", action: "reset" },
+        { t: "button", label: "Skip", action: "skip" },
+        { t: "button", label: "Reset", action: "reset" },
       ] },
     ] },
   };
