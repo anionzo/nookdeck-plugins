@@ -6,6 +6,8 @@ import { expand, type Occurrence } from "../src/events";
 import { parseEvents } from "../src/ics";
 import { createPlugin, FETCH_EVERY_MS, RETRY_MS } from "../src/index";
 import { HOSTS, UNSUPPORTED, checkLink, fetchProblem } from "../src/links";
+import { dayLines, isWeek, listRows } from "../src/layout";
+import { buildWeek, dayItems, weekDays } from "../src/week";
 
 process.env.TZ = "Asia/Ho_Chi_Minh"; // the computer's zone in these tests, UTC+7 with no summer time
 
@@ -204,6 +206,84 @@ describe("the tile", () => {
   });
 });
 
+const parts = (n: any): number => 1 + (n.children ?? []).reduce((a: number, c: any) => a + parts(c), 0);
+const depth = (n: any): number => 1 + Math.max(0, ...(n.children ?? []).map(depth));
+const text = (n: any): string[] => (n.children ? n.children.flatMap(text) : [n.text ?? n.name]);
+const ev = (title: string, start: number, hours = 1, more: Partial<Occurrence> = {}): Occurrence => ({ title, start, end: start + hours * 3_600_000, allDay: false, calendar: 0, ...more });
+const allDayEv = (title: string, mo: number, d: number, days = 1) => ev(title, local(mo, d), 24 * days, { allDay: true });
+
+describe("tile sizes", () => {
+  test("six or more columns wide is the week; the list grows with the height", () => {
+    expect([[2, 1], [2, 2], [4, 2], [4, 3], [4, 4]].map(([w, h]) => isWeek({ w: w!, h: h! }))).toEqual([false, false, false, false, false]);
+    expect([[6, 3], [8, 3], [8, 4]].map(([w, h]) => isWeek({ w: w!, h: h! }))).toEqual([true, true, true]);
+    expect([1, 2, 3, 4, 6].map((h) => listRows({ w: 4, h }, 10))).toEqual([2, 4, 7, 10, 10]);
+    expect(listRows({ w: 4, h: 4 }, 3)).toBe(3);
+    expect(listRows(undefined, 10)).toBe(4);
+  });
+  test("a long list stays inside the card's limits, with headings, notes and a count", () => {
+    const many = Array.from({ length: 30 }, (_, i) => ev(`event ${i}`, NOW + i * 11 * 3_600_000 + 3_600_000, 1, { calendar: i % 4 }));
+    for (const list of [many, many.map((e) => ({ ...e, start: e.start + 40 * 86_400_000, end: e.end + 40 * 86_400_000 }))]) {
+      const root = buildCard(list, { now: NOW, firstDay: 1, hour24: true, rows: 10, days: 60 }, ["a", "b"]).root as any;
+      expect(parts(root)).toBeLessThanOrEqual(60);
+      expect(depth(root)).toBeLessThanOrEqual(6);
+      const shown = text(root).filter((t) => t.startsWith("event ")).length;
+      expect(shown).toBeGreaterThanOrEqual(8);
+      expect(text(root)).toContain(`+${30 - shown} more`);
+    }
+  });
+});
+
+describe("the week", () => {
+  const view = { now: NOW, firstDay: 1 as const, hour24: true }; // Wednesday 25 November, 08:00
+  const columns = (card: { root: unknown }) => (card.root as any).children[0].children as any[];
+
+  test("seven days from the first day of the week", () => {
+    expect(weekDays(NOW, 1)).toEqual([23, 24, 25, 26, 27, 28, 29].map((d) => local(11, d)));
+    expect(weekDays(NOW, 0)).toEqual([22, 23, 24, 25, 26, 27, 28].map((d) => local(11, d)));
+    expect(weekDays(local(1, 1, 12), 1)[0]).toBe(local(12, 29, 0, 0, 2025));
+  });
+  test("equal columns, today's date marked", () => {
+    const cols = columns(buildWeek([], view, { w: 8, h: 3 }));
+    expect(cols.every((c) => c.t === "col" && c.grow === true)).toBe(true);
+    expect(cols.map((c) => c.children[0].text)).toEqual(["Mon 23", "Tue 24", "Wed 25", "Thu 26", "Fri 27", "Sat 28", "Sun 29"]);
+    expect(cols.map((c) => c.children[0].t)).toEqual(["text", "text", "pill", "text", "text", "text", "text"]);
+    expect(columns(buildWeek([], { ...view, firstDay: 0 }, { w: 8, h: 3 }))[0].children[0].text).toBe("Sun 22");
+  });
+  test("all-day first, events over several days on each, past ones grey", () => {
+    const events = [ev("Standup", local(11, 24, 9)), ev("Lunch", local(11, 26, 12)), allDayEv("Trip", 11, 26, 3), ev("Night shift", local(11, 27, 22), 5)];
+    const cols = columns(buildWeek(events, view, { w: 8, h: 4 }));
+    expect(cols.map((c) => text(c).slice(1))).toEqual([
+      [], ["09:00", "Standup"], [], ["Trip", "12:00", "Lunch"], ["Trip", "22:00", "Night shift"], ["Trip", "to 03:00", "Night shift"], [],
+    ]);
+    expect(cols[1].children[1].children[0].tone).toBe("muted");
+    expect(cols[3].children[1]).toEqual({ t: "pill", text: "Trip", tone: "accent" });
+    // a timed event that covers a whole day reads as all day on it
+    expect(dayItems([ev("Conference", local(11, 24, 9), 60)], local(11, 25), view)[0]!.timed).toBe(false);
+    // one that ends at midnight is not on the next day
+    expect(dayItems([ev("Late", local(11, 24, 22), 2)], local(11, 25), view)).toEqual([]);
+  });
+  test("a day with too much says +n, and today keeps what is still to come", () => {
+    const events = Array.from({ length: 9 }, (_, i) => ev(`t${i}`, local(11, 25, 5 + i), 0.5));
+    const today = columns(buildWeek(events, view, { w: 8, h: 3 }))[2];
+    const shown = today.children.filter((c: any) => c.t === "col");
+    expect(shown.length * 2 + 1).toBeLessThanOrEqual(dayLines(3));
+    expect(shown.map((c: any) => c.children[1].text)).toEqual(["t3", "t4", "t5"]);
+    expect(today.children.at(-1).text).toBe("+6");
+  });
+  test("a packed week shares the 60 parts between the days", () => {
+    const events = Array.from({ length: 70 }, (_, i) => ev(`e${i}`, local(11, 23 + (i % 7), 9 + Math.floor(i / 7)), 1, { calendar: i % 4 }));
+    for (const h of [3, 4]) {
+      const root = buildWeek(events, view, { w: 8, h }, ["Calendar 2: could not load it"]).root as any;
+      expect(parts(root)).toBeLessThanOrEqual(60);
+      expect(depth(root)).toBeLessThanOrEqual(6);
+      const per = columns({ root }).map((c: any) => c.children.filter((x: any) => x.t === "col").length);
+      expect(Math.min(...per)).toBeGreaterThanOrEqual(1);
+      expect(Math.max(...per) - Math.min(...per)).toBeLessThanOrEqual(1);
+      expect(columns({ root }).every((c: any) => /^\+\d+$/.test(c.children.at(-1).text))).toBe(true);
+    }
+  });
+});
+
 const SECRET = "private-9f3c2a-SECRET";
 const LINK = `https://calendar.google.com/calendar/ical/me%40example.com/${SECRET}/basic.ics`;
 
@@ -211,7 +291,7 @@ function harness(settings: Record<string, unknown>, answer: (url: string) => Res
   const clockRef = { now: NOW };
   const fetched: string[] = [];
   const logs: string[] = [];
-  let provide: (s: any) => Promise<any> = async () => null;
+  let provide: (s: any, tile?: any) => Promise<any> = async () => null;
   void createPlugin(() => clockRef.now).activate({
     id: "dev.nookdeck.calendar", log: (...a: unknown[]) => logs.push(a.join(" ")),
     settings: { get: () => settings },
@@ -219,7 +299,7 @@ function harness(settings: Record<string, unknown>, answer: (url: string) => Res
     widgets: { provide: (_id: string, fn: any) => { provide = fn; }, push: () => {} },
     actions: { handle: () => {} },
   } as any);
-  return { clockRef, fetched, logs, tile: async (s: Record<string, unknown> = {}) => JSON.stringify(await provide({ ...settings, ...s })) };
+  return { clockRef, fetched, logs, tile: async (s: Record<string, unknown> = {}, size?: { w: number; h: number }) => JSON.stringify(await provide({ ...settings, ...s }, size)) };
 }
 const ok = () => new Response(google!);
 
@@ -292,6 +372,16 @@ describe("the plugin", () => {
     expect(tile).toContain("Next in 29 days");
     expect(tile).toContain("Christmas Eve");
     expect(tile).not.toContain("Christmas Day");
+  });
+
+  test("the tile's size chooses the view", async () => {
+    const h = harness({ link1: LINK }, () => new Response(google!));
+    const week = await h.tile({}, { w: 8, h: 4 });
+    expect(week).toContain('"Mon 23"');
+    expect(week).not.toContain('"Today"');
+    expect(await h.tile({}, { w: 4, h: 4 })).toContain('"Today"');
+    expect(await h.tile()).toContain('"Today"');
+    expect(h.fetched).toHaveLength(1);
   });
 
   test("tiles that ask at once share one fetch", async () => {

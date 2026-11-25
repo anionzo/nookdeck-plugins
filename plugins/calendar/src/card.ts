@@ -10,6 +10,8 @@ export interface View {
   rows: number;
   /** how far ahead it looks, today included */
   days: number;
+  /** false on a tile one row high, which has no room for a second line */
+  roomy?: boolean;
 }
 
 type Node = Record<string, unknown>;
@@ -71,6 +73,10 @@ const away = (n: number) => (n === 1 ? "tomorrow" : `in ${n} days`);
 const title = (o: Occurrence) => (o.title || "(no title)").slice(0, 200);
 const muted = (text: string, more: Node = {}): Node => ({ t: "text", text, size: "s", tone: "muted", ...more });
 
+/** The card's own limit of parts. */
+const MAX_NODES = 60;
+const count = (n: Node): number => 1 + ((n.children as Node[] | undefined) ?? []).reduce((s, c) => s + count(c), 0);
+
 /** With this many events or fewer there is room for a second line. */
 export const ROOMY_MAX = 2;
 /** About the longest title that fits beside a time on the narrowest tile. A card cannot measure text, so this is a count. */
@@ -98,15 +104,22 @@ export function buildCard(events: Occurrence[], view: View, notes: string[] = []
   const children: Node[] = [header(view.now)];
   const shown = events.length ? events.slice(0, view.rows) : next ? [next] : [];
   const first = shown[0];
+  /** how many events made it onto the card */
+  let placed = 0;
   const free = !first || groupOf(first.start, view) !== "Today";
   if (free) {
     children.push({ t: "row", gap: 2, children: [{ t: "icon", name: "calendar", tone: "accent" }, { t: "text", text: "Nothing today" }] });
     if (!first) children.push(muted(view.days > 1 ? `Nothing in the next ${view.days} days` : "The day is yours"));
   }
   let group: Group = "Today";
+  const after = 1 + Math.min(2, notes.length); // "+n more" and the notes still have to fit
   shown.forEach((o, i) => {
+    if (placed < i) return;
     const g = groupOf(o.start, view);
-    const row = eventRow(o, g, view, shown.length <= ROOMY_MAX);
+    const row = eventRow(o, g, view, view.roomy !== false && shown.length <= ROOMY_MAX);
+    const extra: Node = g === group ? row : { t: "col", children: [muted(g), row] };
+    if (count({ t: "col", children }) + count(extra) + after > MAX_NODES) return;
+    placed++;
     if (g === group) return void children.push(row);
     group = g;
     // after a free day the first heading says how far off the next event is
@@ -116,7 +129,7 @@ export function buildCard(events: Occurrence[], view: View, notes: string[] = []
     if (heading === g) children.push({ t: "col", gap: 1, children: [muted(heading, { bold: true }), row] });
     else children.push(muted(heading, { bold: true }), row);
   });
-  if (events.length > shown.length) children.push(muted(`+${events.length - shown.length} more`));
+  if (events.length > placed) children.push(muted(`+${events.length - placed} more`));
   for (const n of notes.slice(0, 2)) children.push({ t: "text", text: n.slice(0, 200), size: "s", tone: "warn" });
   return { root: { t: "col", gap: 1, children } };
 }

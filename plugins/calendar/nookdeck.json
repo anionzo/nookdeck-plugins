@@ -3,7 +3,7 @@
   "id": "dev.nookdeck.calendar",
   "name": "Calendar",
   "version": "1.0.0",
-  "nookdeck": ">=0.5.0",
+  "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "Your next events from Google, iCloud and Outlook calendar links",
   "icon": "calendar",
@@ -22,10 +22,10 @@
       "id": "agenda",
       "name": "Calendar",
       "render": "card",
-      "sizes": ["2x1", "2x2", "4x2"],
+      "sizes": ["2x1", "2x2", "4x2", "4x3", "4x4", "6x3", "8x3", "8x4"],
       "preview": {"root": {"t": "col", "gap": 1, "children": [{"t": "row", "gap": 2, "align": "between", "children": [{"t": "text", "text": "Today", "bold": true}, {"t": "text", "text": "Wed 25 Nov", "size": "s", "tone": "muted"}]}, {"t": "row", "gap": 2, "align": "between", "children": [{"t": "row", "gap": 1, "grow": true, "children": [{"t": "text", "text": "●", "size": "s", "tone": "accent"}, {"t": "text", "text": "Design review", "size": "s"}]}, {"t": "text", "text": "Now", "size": "s", "tone": "accent", "bold": true}]}, {"t": "row", "gap": 2, "align": "between", "children": [{"t": "row", "gap": 1, "grow": true, "children": [{"t": "text", "text": "●", "size": "s", "tone": "ok"}, {"t": "text", "text": "Pick up parcel", "size": "s"}]}, {"t": "text", "text": "16:30", "size": "s", "tone": "muted"}]}, {"t": "col", "gap": 1, "children": [{"t": "text", "text": "Tomorrow", "size": "s", "tone": "muted", "bold": true}, {"t": "row", "gap": 2, "align": "between", "children": [{"t": "row", "gap": 1, "grow": true, "children": [{"t": "text", "text": "●", "size": "s", "tone": "accent"}, {"t": "text", "text": "Release day", "size": "s"}]}, {"t": "pill", "text": "All day", "tone": "accent"}]}]}]}},
       "settings": [
-        { "key": "rows", "type": "number", "label": "Events on the tile (1 to 8)", "default": 4 }
+        { "key": "rows", "type": "number", "label": "Most events in the list (1 to 10)", "default": 10 }
       ],
       "source": { "agent": { "every": 60 } }
     }

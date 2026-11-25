@@ -9,6 +9,7 @@ Your next events on one tile. Works on macOS, Windows and Linux.
 - A free day says **Nothing today** and how far off the next event is, even when it is beyond the days the tile looks at (up to a year).
 - Up to four calendars. Each has its own colour on the tile: calendar 1 uses the theme's accent colour, 2 its "ok" colour, 3 its "warning" colour and 4 its "bad" colour.
 - Repeating events (with removed, moved and cancelled occurrences), all-day events and events over several days.
+- On a tile six or more columns wide: this week as seven columns, starting on your first day of the week. Today's date is marked, all-day events are on top of each day, past events are grey and a day with more than fits says **+n**. "Days ahead" does not apply to this view.
 - Times are shown in the computer's time zone. The tile is read only.
 
 ## Which links work
@@ -32,7 +33,7 @@ Paste each link into the plugin's settings on your computer.
 | First day of the week (where "Next week" begins) | Monday |
 | 24-hour clock | on |
 
-Each tile also has **Events on the tile** (1 to 8, default 4). Lower it for a small tile.
+Each tile also has **Most events in the list** (1 to 10, default 10). The tile's height already limits the list: 2 on a tile one row high, 4 on two rows, 7 on three, 10 on four.
 
 ## Privacy
 

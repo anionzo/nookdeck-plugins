@@ -2,10 +2,13 @@ import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
 import { buildCard, setupCard, windowEnd, type View } from "./card";
 import { expand, type Occurrence } from "./events";
 import { parseEvents, type VEvent } from "./ics";
+import { isWeek, listRows, type Tile } from "./layout";
 import { MAX_LINKS, checkLink, fetchProblem, statusProblem } from "./links";
+import { buildWeek, weekDays } from "./week";
 
 /** How far the tile looks for the next event when the days it shows are empty. */
 export const LOOK_AHEAD_DAYS = 366;
+export const MAX_EVENTS = 10;
 export const FETCH_EVERY_MS = 10 * 60_000;
 /** A failed link is tried again sooner, but not on every refresh of the tile. */
 export const RETRY_MS = 60_000;
@@ -46,7 +49,8 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         return copy.loading;
       }
 
-      ctx.widgets.provide("agenda", async (s: Settings) => {
+      // `tile` is the size of the tile being drawn, in grid cells; a Nookdeck that does not pass it gets the short list
+      ctx.widgets.provide("agenda", async (s: Settings, tile?: Tile) => {
         const secrets = ctx.settings.get();
         const links = Array.from({ length: MAX_LINKS }, (_, i) => ({ i, label: `Calendar ${i + 1}`, raw: String(secrets[`link${i + 1}`] ?? "").trim() }))
           .filter((l) => l.raw)
@@ -63,10 +67,14 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
           now: now(),
           firstDay: s.firstDay === "Sunday" ? 0 : 1,
           hour24: s.hour24 !== false,
-          rows: int(s.rows, 4, 1, 8),
+          rows: listRows(tile, int(s.rows, MAX_EVENTS, 1, MAX_EVENTS)),
           days: int(s.days, 7, 1, 31),
+          roomy: tile?.h !== 1,
         };
-        const to = windowEnd(view.now, view.days);
+        // the week view shows this whole week, its past days too; "days ahead" is for the list
+        const week = isWeek(tile) ? weekDays(view.now, view.firstDay) : undefined;
+        const from = week ? week[0]! : view.now;
+        const to = week ? windowEnd(week[6]!, 1) : windowEnd(view.now, view.days);
         const events: Occurrence[] = [];
         const read: { events: VEvent[]; calendar: number }[] = [];
         const notes: string[] = [];
@@ -77,12 +85,13 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
           if (c?.events) {
             loaded++;
             read.push({ events: c.events, calendar: l.i });
-            events.push(...expand(c.events, view.now, to, l.i));
+            events.push(...expand(c.events, from, to, l.i));
           }
           if (c?.error) notes.push(`${l.label}: ${c.error}${c.events ? " (showing the last copy)" : ""}`);
         }
         if (!loaded) throw new Error(notes[0] ?? "Could not load any calendar");
         events.sort((a, b) => a.start - b.start || Number(b.allDay) - Number(a.allDay));
+        if (week) return { render: "card", data: buildWeek(events, view, tile!, notes) };
         // days with nothing in them still say when the next event is
         const next = events.length ? undefined
           : read.flatMap((r) => expand(r.events, view.now, windowEnd(view.now, LOOK_AHEAD_DAYS), r.calendar)).sort((a, b) => a.start - b.start)[0];
