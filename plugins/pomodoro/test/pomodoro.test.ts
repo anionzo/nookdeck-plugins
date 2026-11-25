@@ -63,7 +63,7 @@ describe("the timer", () => {
     expect(find(START)).toContain('"label":"Start","action":"toggle","tone":"accent","active":true');
     expect(find(toggle(START, len, at(25, 9)))).toContain('"label":"Pause","action":"toggle"');
     const resting: State = { phase: "break", status: "paused", left: MIN, total: 5 * MIN };
-    expect(find(resting)).toContain('"label":"Start","action":"toggle","tone":"ok"');
+    expect(find(resting)).toContain('"label":"Resume","action":"toggle","tone":"ok"');
     expect(JSON.stringify(buildCard(resting, {}, len, at(25, 9), { w: 4, h: 2 }))).toContain('"label":"Resume","icon":"player-play"');
   });
   test("the tile's size chooses where the ring goes", () => {

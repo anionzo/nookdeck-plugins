@@ -115,6 +115,7 @@ export function buildCard(state: State, days: Days, len: Lengths, now: number, t
   const icon = running ? "player-pause" : "player-play";
   // filled in the phase's colour both ways, so it is the one button that stands out
   const main = (label: string, withIcon = true) => ({ t: "button", label, ...(withIcon ? { icon } : {}), action: "toggle", tone, active: true });
+  // "Resume" in the middle of a block, "Start" only for a fresh one
   const word = running ? "Pause" : paused ? "Resume" : "Start";
   const reset = { t: "button", label: "", icon: "refresh", action: "reset" };
   const skipIt = { t: "button", label: "", icon: "player-skip-forward", action: "skip" };
@@ -122,8 +123,8 @@ export function buildCard(state: State, days: Days, len: Lengths, now: number, t
   if (!tile || tile.w < tile.h * 2) {
     return { root: { t: "col", gap: 1, children: [
       { ...ring, label: said },
-      // between two icon buttons there is room for the word or an icon, not both: "Paused" is said under the ring
-      { t: "row", gap: 1, children: [reset, main(running ? "Pause" : "Start", false), skipIt] },
+      // between two icon buttons there is room for the word or an icon, not both
+      { t: "row", gap: 1, children: [reset, main(word, false), skipIt] },
     ] } };
   }
   const side = tile.h <= 1
