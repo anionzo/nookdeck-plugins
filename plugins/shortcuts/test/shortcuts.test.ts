@@ -3,7 +3,7 @@ import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createPlugin } from "../src/index";
-import { STILL_RUNNING, buildCard, checkName, errorText, listCommand, parseLines, parseNames, pickNames, quote, runCommand } from "../src/lib";
+import { STILL_RUNNING, buildCard, gridFor, checkName, errorText, listCommand, parseLines, parseNames, pickNames, quote, runCommand } from "../src/lib";
 
 const NASTY = ["Start focus", "What’s a shortcut?", "Say \"hi\"", "Bob's lamp", "Ảnh này được chụp ở đâu?", "$(touch pwned) `id` ; & | > x", "-h", "--input-path", "emoji 🎧 mix", "back\\slash", "*"];
 
@@ -106,5 +106,21 @@ describe("the plugin", () => {
     const h = harness({ " run ": { code: 1, stdout: "Error: Couldn’t find shortcut\n" } });
     await expect(h.run({ name: "x" })).rejects.toThrow("Couldn’t find shortcut");
     await expect(h.run({ name: "" })).rejects.toThrow("Choose a shortcut");
+  });
+});
+
+describe("the grid", () => {
+  test("goes by the tile size; settings win", () => {
+    const at = (w: number, h: number, o = {}) => gridFor(o, { w, h });
+    expect([at(2, 1), at(2, 2), at(4, 2), at(8, 4)]).toEqual([{ columns: 2, max: 2 }, { columns: 2, max: 4 }, { columns: 3, max: 6 }, { columns: 6, max: 24 }]);
+    expect(gridFor({})).toEqual({ columns: 2, max: 8 });
+    expect(at(4, 2, { columns: 1, max: 4 })).toEqual({ columns: 1, max: 4 });
+  });
+  test("tile buttons with one icon; the count only on tiles three cells high or more", () => {
+    const names = ["a", "b", "c", "d", "e", "f", "g"];
+    const small = JSON.stringify(buildCard(names, {}, { w: 2, h: 2 }));
+    expect(small).toContain('"icon":"bolt","layout":"tile"');
+    expect(small).not.toContain("more");
+    expect(JSON.stringify(buildCard(names, {}, { w: 2, h: 3 }))).toContain("+1 more");
   });
 });

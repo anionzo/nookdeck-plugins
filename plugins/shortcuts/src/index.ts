@@ -1,5 +1,5 @@
 import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
-import { STILL_RUNNING, buildCard, checkName, errorText, foldersCommand, listCommand, messageCard, parseLines, parseNames, pickNames, runCommand } from "./lib";
+import { STILL_RUNNING, buildCard, checkName, errorText, foldersCommand, listCommand, messageCard, parseLines, parseNames, pickNames, runCommand, type TileSize } from "./lib";
 
 /** The list of shortcuts is read at most once a minute (spec D5). */
 export const LIST_TTL_MS = 60_000;
@@ -25,17 +25,18 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         return value;
       };
 
-      ctx.widgets.provide("list", async (s: Settings) => {
-        const options = { columns: Number(s.columns ?? 2), max: Number(s.max ?? 8) };
+      ctx.widgets.provide("list", async (s: Settings, tile?: TileSize) => {
+        // "auto" and 0 leave it to the tile's size
+        const options = { columns: Number(s.columns) || 0, max: Number(s.max) || 0 };
         const wanted = parseNames(s.names);
         if (wanted.length) {
           const { found, missing } = pickNames(await lines(listCommand()), wanted);
-          return { render: "card", data: buildCard(found, { ...options, missing }) };
+          return { render: "card", data: buildCard(found, { ...options, missing }, tile) };
         }
         const folder = String(s.folder ?? "").trim();
         // `shortcuts list --folder-name <unknown>` prints every shortcut and succeeds, so the folder is checked first
         if (folder && !(await lines(foldersCommand())).includes(folder)) return { render: "card", data: messageCard(`No folder called "${folder}"`) };
-        return { render: "card", data: buildCard(await lines(listCommand(folder || undefined)), options) };
+        return { render: "card", data: buildCard(await lines(listCommand(folder || undefined)), options, tile) };
       }, { every: 60 });
 
       ctx.actions.handle("run", async (s: Settings) => {

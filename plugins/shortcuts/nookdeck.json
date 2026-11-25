@@ -3,7 +3,7 @@
   "id": "dev.nookdeck.shortcuts",
   "name": "Apple Shortcuts",
   "version": "1.0.0",
-  "nookdeck": ">=0.5.0",
+  "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "Run your Apple Shortcuts from the phone",
   "os": ["darwin"],
@@ -15,20 +15,20 @@
       "render": "card",
       "sizes": ["2x1", "2x2", "4x2"],
       "preview": { "root": { "t": "col", "gap": 1, "children": [
-        { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Start focus", "action": "run", "args": { "name": "Start focus" } },
-          { "t": "button", "label": "Open Today", "action": "run", "args": { "name": "Open Today" } }
+        { "t": "row", "gap": 1, "grow": true, "children": [
+          { "t": "button", "label": "Start focus", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Start focus" } },
+          { "t": "button", "label": "Open Today", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Open Today" } }
         ] },
-        { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Take a break", "action": "run", "args": { "name": "Take a break" } },
-          { "t": "button", "label": "Backup notes", "action": "run", "args": { "name": "Backup notes" } }
+        { "t": "row", "gap": 1, "grow": true, "children": [
+          { "t": "button", "label": "Take a break", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Take a break" } },
+          { "t": "button", "label": "Backup notes", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Backup notes" } }
         ] }
       ] } },
       "settings": [
         { "key": "folder", "type": "string", "label": "Folder (empty: all shortcuts)", "default": "" },
         { "key": "names", "type": "string", "label": "Or only these names, separated by commas", "default": "" },
-        { "key": "columns", "type": "select", "label": "Buttons per row", "options": ["1", "2", "3"], "default": "2" },
-        { "key": "max", "type": "number", "label": "Most buttons to show", "default": 8 }
+        { "key": "columns", "type": "select", "label": "Buttons per row (auto: by the tile size)", "options": ["auto", "1", "2", "3", "4", "5", "6"], "default": "auto" },
+        { "key": "max", "type": "number", "label": "Most buttons to show (0: by the tile size)", "default": 0 }
       ]
     }
   ],

@@ -59,26 +59,45 @@ export function pickNames(all: string[], wanted: string[]): { found: string[]; m
 }
 
 
-export function buildCard(names: string[], o: { columns?: number; max?: number; missing?: string[] } = {}): CardData {
-  const columns = Math.min(3, Math.max(1, Math.trunc(o.columns || 2)));
-  const max = Math.min(MAX_BUTTONS, Math.max(1, Math.trunc(o.max || 8)));
+/** The tile's size in grid cells. Nookdeck tells it from 0.5.1. */
+export interface TileSize { w: number; h: number }
+export const ICON = "bolt";
+export const MAX_COLUMNS = 6;
+export const MAX_ROWS = 4;
+
+const within = (n: number, low: number, high: number) => Math.min(high, Math.max(low, Math.trunc(n)));
+
+/**
+ * How many buttons per row and how many in all. Left on automatic, a tile gets one button per cell across, one fewer from
+ * four cells up so that names stay readable, and one row per cell down: two buttons on 2x1, 2 by 2 on 2x2, 3 by 2 on 4x2.
+ * A setting wins over the size.
+ */
+export function gridFor(o: { columns?: number; max?: number }, tile?: TileSize): { columns: number; max: number } {
+  const columns = o.columns ? within(o.columns, 1, MAX_COLUMNS) : tile ? within(tile.w >= 4 ? tile.w - 1 : tile.w, 1, MAX_COLUMNS) : 2;
+  const max = o.max ? within(o.max, 1, MAX_BUTTONS) : tile ? columns * within(tile.h, 1, MAX_ROWS) : 8;
+  return { columns, max };
+}
+
+/** A grid of tile buttons that fills the card: an icon above each name. */
+export function buildCard(names: string[], o: { columns?: number; max?: number; missing?: string[] } = {}, tile?: TileSize): CardData {
+  const { columns, max } = gridFor(o, tile);
   const usable = names.filter((n) => n.length <= MAX_NAME);
-  const shown = usable.slice(0, max);
+  let shown = usable.slice(0, max);
+  // a card holds at most 60 parts
+  const parts = (count: number) => count + Math.ceil(count / columns) * columns;
+  while (parts(shown.length) > 55) shown = shown.slice(0, -1);
   const children: CardNode[] = [];
-  // an even grid: each button in its own growing column, and a short last row keeps the same widths. A card holds at most
-  // 60 parts, so a very long list goes without the columns
-  const rows = Math.ceil(shown.length / columns);
-  const even = columns > 1 && rows * (1 + 2 * columns) <= 54;
   for (let i = 0; i < shown.length; i += columns) {
-    const buttons: CardNode[] = shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, action: "run", args: { name } }));
-    const cells = even ? Array.from({ length: columns }, (_, k): CardNode => ({ t: "col", grow: true, children: buttons[k] ? [buttons[k]] : [] })) : buttons;
-    children.push({ t: "row", gap: 1, children: cells });
+    const cells: CardNode[] = shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, icon: ICON, layout: "tile", action: "run", args: { name } }) as CardNode);
+    // a short last row keeps the width of the buttons above it
+    while (i > 0 && cells.length < columns) cells.push({ t: "col", grow: true, children: [] });
+    children.push({ t: "row", gap: 1, grow: true, children: cells });
   }
   if (!shown.length && !o.missing?.length) children.push({ t: "text", text: "No shortcuts here yet", tone: "muted" });
-  if (usable.length > shown.length) children.push({ t: "text", text: `+${usable.length - shown.length} more`, size: "s", tone: "muted" });
+  // up to two cells high the count would cost the names their second line
+  if (usable.length > shown.length && !(tile && tile.h <= 2)) children.push({ t: "text", text: `+${usable.length - shown.length} more`, size: "s", tone: "muted" });
   if (o.missing?.length) children.push({ t: "text", text: `Not found: ${o.missing.join(", ")}`.slice(0, 200), size: "s", tone: "warn" });
-  // spacers centre the list from top to bottom without centring its text
-  return { root: { t: "col", gap: 1, children: [{ t: "spacer" }, ...children, { t: "spacer" }] } };
+  return { root: { t: "col", gap: 1, children } };
 }
 
 export const messageCard = (text: string): CardData => ({ root: { t: "col", gap: 1, align: "center", children: [{ t: "text", text: text.slice(0, 200), size: "s", tone: "warn" }] } });
