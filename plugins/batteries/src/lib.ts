@@ -25,7 +25,7 @@ export function parsePmset(out: string): Device | null {
   const note = state === "discharging" ? (left ? `${left} left` : "On battery")
     : charging ? (left ? `${left} to full` : "Charging")
     : state === "charged" ? "Charged"
-    : onPower ? "Plugged in, not charging" : "";
+    : onPower ? "Plugged in" : "";
   return { name: "This Mac", icon: "device-laptop", percent: clamp(Number(m[1])), charging, mac: true, ...(note ? { note } : {}) };
 }
 

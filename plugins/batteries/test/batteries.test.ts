@@ -18,7 +18,7 @@ describe("pmset", () => {
     expect(parsePmset(line("charging; 0:41 remaining"))!.note).toBe("41 min to full");
     expect(parsePmset(line("charging; (no estimate)"))!.note).toBe("Charging");
     expect(parsePmset(line("charged; 0:00 remaining"))!.note).toBe("Charged");
-    expect(parsePmset(line("AC attached; not charging"))!.note).toBe("Plugged in, not charging");
+    expect(parsePmset(line("AC attached; not charging"))!.note).toBe("Plugged in");
     expect(parsePmset(line("discharging; (no estimate)", "Battery Power"))!.note).toBe("On battery");
   });
   test("a Mac without a battery", () => {
