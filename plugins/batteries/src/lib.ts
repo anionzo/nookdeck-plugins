@@ -1,5 +1,7 @@
 // Pure logic of the Batteries plugin: reading what pmset, ioreg and system_profiler print, and the card.
 
+import type { CardData, CardNode } from "@nookdeck/plugin";
+
 export const PMSET = "/usr/bin/pmset -g batt";
 export const IOREG = "/usr/sbin/ioreg -r -c AppleDeviceManagementHIDEventService -l";
 export const PROFILER = "/usr/sbin/system_profiler SPBluetoothDataType -json";
@@ -87,21 +89,20 @@ export function merge(mac: Device | null, bluetooth: Device[], registry: Device[
   return [...(mac ? [mac] : []), ...others];
 }
 
-export type Node = Record<string, unknown> & { t: string };
 
 export const toneFor = (d: Device): "ok" | "warn" | "bad" | "default" => (d.charging ? "ok" : d.percent <= 10 ? "bad" : d.percent <= 20 ? "warn" : "default");
 
-export function buildCard(devices: Device[]): { root: Node } {
+export function buildCard(devices: Device[]): CardData {
   const shown = devices.slice(0, MAX_DEVICES);
   // a card holds at most 60 nodes: the second line (time left, each AirPod) is dropped when there are many devices
   const notes = shown.length <= 6;
-  const children: Node[] = shown.map((d) => {
+  const children: CardNode[] = shown.map((d) => {
     const tone = toneFor(d);
     const toned = tone === "default" ? {} : { tone };
-    const middle: Node[] = [
+    const middle: CardNode[] = [
       { t: "text", text: d.name.slice(0, 200), size: "s" },
       { t: "progress", value: d.percent / 100, ...toned },
-      ...(notes && d.note ? [{ t: "text", text: d.note, size: "s", tone: "muted" } as Node] : []),
+      ...(notes && d.note ? [{ t: "text", text: d.note, size: "s", tone: "muted" } as CardNode] : []),
     ];
     return { t: "row", gap: 2, align: "center", children: [
       { t: "icon", name: d.charging ? "bolt" : d.icon, ...toned },

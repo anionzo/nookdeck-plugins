@@ -1,5 +1,7 @@
 // Pure logic of the Apple Shortcuts plugin: command lines, parsing and the card. No Nookdeck or Mac needed to test it.
 
+import type { CardData, CardNode } from "@nookdeck/plugin";
+
 export const SHORTCUTS = "/usr/bin/shortcuts";
 export const MAX_BUTTONS = 24;
 export const MAX_NAME = 200;
@@ -56,14 +58,13 @@ export function pickNames(all: string[], wanted: string[]): { found: string[]; m
   return { found, missing };
 }
 
-export type Node = Record<string, unknown> & { t: string };
 
-export function buildCard(names: string[], o: { columns?: number; max?: number; missing?: string[] } = {}): { root: Node } {
+export function buildCard(names: string[], o: { columns?: number; max?: number; missing?: string[] } = {}): CardData {
   const columns = Math.min(3, Math.max(1, Math.trunc(o.columns || 2)));
   const max = Math.min(MAX_BUTTONS, Math.max(1, Math.trunc(o.max || 8)));
   const usable = names.filter((n) => n.length <= MAX_NAME);
   const shown = usable.slice(0, max);
-  const children: Node[] = [];
+  const children: CardNode[] = [];
   for (let i = 0; i < shown.length; i += columns) {
     children.push({ t: "row", gap: 1, children: shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, icon: "player-play", action: "run", args: { name } })) });
   }
@@ -73,4 +74,4 @@ export function buildCard(names: string[], o: { columns?: number; max?: number; 
   return { root: { t: "col", gap: 1, children } };
 }
 
-export const messageCard = (text: string): { root: Node } => ({ root: { t: "col", gap: 1, align: "center", children: [{ t: "text", text: text.slice(0, 200), size: "s", tone: "warn" }] } });
+export const messageCard = (text: string): CardData => ({ root: { t: "col", gap: 1, align: "center", children: [{ t: "text", text: text.slice(0, 200), size: "s", tone: "warn" }] } });

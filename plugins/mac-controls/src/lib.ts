@@ -1,5 +1,7 @@
 // Pure logic of the Mac controls plugin: every command is a fixed string; the only values that vary are checked numbers.
 
+import type { CardData, CardNode } from "@nookdeck/plugin";
+
 export const MAX_MINUTES = 24 * 60;
 
 /** Reading the appearance needs no permission: it is the user's own preference. Prints "Dark" or "Light". */
@@ -65,11 +67,10 @@ export function failure(output: string, fallback: string): string {
   return permissionError(output) ?? (output.trim().split("\n")[0]?.slice(0, 180) || fallback);
 }
 
-export type Node = Record<string, unknown> & { t: string };
 
-export function buildCard(s: { appearance: "Dark" | "Light" | null; awake: Awake | null; minutes: number; now: number; problem?: string }): { root: Node } {
+export function buildCard(s: { appearance: "Dark" | "Light" | null; awake: Awake | null; minutes: number; now: number; problem?: string }): CardData {
   const dark = s.appearance === "Dark";
-  const children: Node[] = [
+  const children: CardNode[] = [
     { t: "row", gap: 1, children: [
       { t: "button", label: s.appearance === null ? "Dark mode" : dark ? "Dark" : "Light", icon: dark ? "moon" : "sun", action: "dark-mode", args: { mode: "toggle" }, active: dark },
       { t: "button", label: awakeLabel(s.awake, s.now), icon: "coffee", action: "keep-awake", args: { minutes: s.minutes }, active: !!s.awake },
@@ -79,6 +80,7 @@ export function buildCard(s: { appearance: "Dark" | "Light" | null; awake: Awake
       { t: "button", label: "Display off", icon: "device-desktop", action: "display-off" },
     ] },
   ];
-  if (s.problem) children.push({ t: "text", text: s.problem.slice(0, 200), size: "s", tone: "warn" });
+  // first: when a tile is too small, the deck leaves out the last parts
+  if (s.problem) children.unshift({ t: "text", text: s.problem.slice(0, 200), size: "s", tone: "warn" });
   return { root: { t: "col", gap: 1, children } };
 }
