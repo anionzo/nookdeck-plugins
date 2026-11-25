@@ -1,0 +1,39 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "id": "dev.nookdeck.shortcuts",
+  "name": "Apple Shortcuts",
+  "version": "1.0.0",
+  "nookdeck": ">=0.5.0",
+  "author": "Nookdeck",
+  "description": "Run your Apple Shortcuts from the phone",
+  "os": ["darwin"],
+  "permissions": { "shell": true },
+  "widgets": [
+    {
+      "id": "list",
+      "name": "Shortcuts",
+      "render": "card",
+      "sizes": ["2x1", "2x2", "4x2"],
+      "preview": { "root": { "t": "col", "gap": 1, "children": [
+        { "t": "row", "gap": 1, "children": [
+          { "t": "button", "label": "Start focus", "icon": "player-play", "action": "run", "args": { "name": "Start focus" } },
+          { "t": "button", "label": "Open Today", "icon": "player-play", "action": "run", "args": { "name": "Open Today" } }
+        ] },
+        { "t": "row", "gap": 1, "children": [
+          { "t": "button", "label": "Take a break", "icon": "player-play", "action": "run", "args": { "name": "Take a break" } },
+          { "t": "button", "label": "Backup notes", "icon": "player-play", "action": "run", "args": { "name": "Backup notes" } }
+        ] }
+      ] } },
+      "settings": [
+        { "key": "folder", "type": "string", "label": "Folder (empty: all shortcuts)", "default": "" },
+        { "key": "names", "type": "string", "label": "Or only these names, separated by commas", "default": "" },
+        { "key": "columns", "type": "select", "label": "Buttons per row", "options": ["1", "2", "3"], "default": "2" },
+        { "key": "max", "type": "number", "label": "Most buttons to show", "default": 8 }
+      ]
+    }
+  ],
+  "actions": [
+    { "id": "run", "name": "Run a shortcut", "settings": [{ "key": "name", "type": "string", "label": "Shortcut name", "default": "" }] }
+  ],
+  "main": "src/index.ts"
+}
