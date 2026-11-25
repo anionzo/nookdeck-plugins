@@ -63,7 +63,7 @@ export function buildCard(events: Occurrence[], view: View, notes: string[] = []
   for (const o of shown) {
     const g = groupOf(o.start, view);
     if (g !== group) children.push({ t: "text", text: (group = g), size: "s", tone: "muted", bold: true });
-    children.push({ t: "row", gap: 2, align: "center", children: [
+    children.push({ t: "row", gap: 2, children: [
       { t: "pill", text: whenText(o, g, view), tone: TONES[o.calendar % TONES.length] },
       { t: "text", text: (o.title || "(no title)").slice(0, 200), size: "s" },
     ] });

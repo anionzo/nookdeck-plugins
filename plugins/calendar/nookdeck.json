@@ -25,10 +25,10 @@
       "sizes": ["2x1", "2x2", "4x2"],
       "preview": { "root": { "t": "col", "gap": 1, "children": [
         { "t": "text", "text": "Today", "size": "s", "tone": "muted", "bold": true },
-        { "t": "row", "gap": 2, "align": "center", "children": [ { "t": "pill", "text": "Now", "tone": "accent" }, { "t": "text", "text": "Design review", "size": "s" } ] },
-        { "t": "row", "gap": 2, "align": "center", "children": [ { "t": "pill", "text": "16:30", "tone": "ok" }, { "t": "text", "text": "Pick up the parcel", "size": "s" } ] },
+        { "t": "row", "gap": 2, "children": [ { "t": "pill", "text": "Now", "tone": "accent" }, { "t": "text", "text": "Design review", "size": "s" } ] },
+        { "t": "row", "gap": 2, "children": [ { "t": "pill", "text": "16:30", "tone": "ok" }, { "t": "text", "text": "Pick up the parcel", "size": "s" } ] },
         { "t": "text", "text": "Tomorrow", "size": "s", "tone": "muted", "bold": true },
-        { "t": "row", "gap": 2, "align": "center", "children": [ { "t": "pill", "text": "All day", "tone": "accent" }, { "t": "text", "text": "Release day", "size": "s" } ] }
+        { "t": "row", "gap": 2, "children": [ { "t": "pill", "text": "All day", "tone": "accent" }, { "t": "text", "text": "Release day", "size": "s" } ] }
       ] } },
       "settings": [
         { "key": "rows", "type": "number", "label": "Events on the tile (1 to 8)", "default": 4 }

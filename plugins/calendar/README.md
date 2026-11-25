@@ -2,6 +2,8 @@
 
 Your next events on one tile. Works on macOS, Windows and Linux.
 
+<img src="preview.png" width="264" alt="A 2x2 Calendar tile with made-up events under Today and Tomorrow">
+
 - Today's and the next events under **Today**, **Tomorrow**, **This week**, **Next week** and **Later**, each with its time and title.
 - Up to four calendars. Each has its own colour on the tile: calendar 1 uses the theme's accent colour, 2 its "ok" colour, 3 its "warning" colour and 4 its "bad" colour.
 - Repeating events (with removed, moved and cancelled occurrences), all-day events and events over several days.
