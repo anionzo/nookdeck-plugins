@@ -2,6 +2,8 @@
 
 Run your Apple Shortcuts from the phone. macOS only.
 
+<img src="preview.png" width="264" alt="A 2x2 Shortcuts tile with made-up shortcuts, one button per row">
+
 - **Shortcuts** tile (a card): your shortcuts as buttons. Show all of them, one folder, or only the names you list.
 - **Run a shortcut** action: put one shortcut on any normal button. Type its name as it appears in the Shortcuts app.
 
@@ -17,7 +19,7 @@ What a shortcut itself does is up to the shortcut. The first time one needs a pe
 |---|---|
 | Folder | The folder's name in the Shortcuts app. Empty shows all shortcuts. A name that does not exist shows an error. |
 | Or only these names | Separated by commas, shown in this order. This wins over Folder. For a name that contains a comma, use a folder. |
-| Buttons per row | 1, 2 or 3 |
+| Buttons per row | 1, 2 or 3. On a 2x2 tile, 1 keeps long names readable. |
 | Most buttons to show | 8 by default, up to 24. The rest are counted under the buttons. |
 
 The list is read at most once a minute.

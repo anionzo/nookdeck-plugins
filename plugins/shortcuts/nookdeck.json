@@ -16,12 +16,12 @@
       "sizes": ["2x1", "2x2", "4x2"],
       "preview": { "root": { "t": "col", "gap": 1, "children": [
         { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Start focus", "icon": "player-play", "action": "run", "args": { "name": "Start focus" } },
-          { "t": "button", "label": "Open Today", "icon": "player-play", "action": "run", "args": { "name": "Open Today" } }
+          { "t": "button", "label": "Start focus", "action": "run", "args": { "name": "Start focus" } },
+          { "t": "button", "label": "Open Today", "action": "run", "args": { "name": "Open Today" } }
         ] },
         { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Take a break", "icon": "player-play", "action": "run", "args": { "name": "Take a break" } },
-          { "t": "button", "label": "Backup notes", "icon": "player-play", "action": "run", "args": { "name": "Backup notes" } }
+          { "t": "button", "label": "Take a break", "action": "run", "args": { "name": "Take a break" } },
+          { "t": "button", "label": "Backup notes", "action": "run", "args": { "name": "Backup notes" } }
         ] }
       ] } },
       "settings": [

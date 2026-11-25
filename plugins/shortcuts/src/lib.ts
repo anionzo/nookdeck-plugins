@@ -66,7 +66,7 @@ export function buildCard(names: string[], o: { columns?: number; max?: number; 
   const shown = usable.slice(0, max);
   const children: CardNode[] = [];
   for (let i = 0; i < shown.length; i += columns) {
-    children.push({ t: "row", gap: 1, children: shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, icon: "player-play", action: "run", args: { name } })) });
+    children.push({ t: "row", gap: 1, children: shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, action: "run", args: { name } })) });
   }
   if (!shown.length && !o.missing?.length) children.push({ t: "text", text: "No shortcuts here yet", tone: "muted" });
   if (usable.length > shown.length) children.push({ t: "text", text: `+${usable.length - shown.length} more`, size: "s", tone: "muted" });
