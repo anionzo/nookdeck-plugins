@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import { createPlugin } from "../src/index";
-import { ASSERTIONS, DARK_MODE, DISPLAY_OFF, LOCK, awakeCommand, awakeLabel, buildCard, checkMinutes, displayCaffeinates, failure, stopCommand } from "../src/lib";
+import { ASSERTIONS, DARK_MODE, DISPLAY_OFF, LOCK, awakeCommand, awakeLabel, buildCard, ringText, checkMinutes, displayCaffeinates, failure, stopCommand } from "../src/lib";
 
 const assertions = await Bun.file(join(import.meta.dir, "fixtures/assertions.txt")).text();
 
@@ -19,7 +19,7 @@ describe("parsing and commands", () => {
     for (const bad of [0, 1, -5, 2.5]) expect(() => stopCommand(bad)).toThrow();
   });
   test("labels and permission messages", () => {
-    expect(awakeLabel(null, 0)).toBe("Stay up");
+    expect(awakeLabel(null, 0)).toBe("Keep awake");
     expect(awakeLabel({ pid: 9, until: 0 }, 0)).toBe("Awake");
     expect(awakeLabel({ pid: 9, until: 42 * 60_000 }, 0)).toBe("42 min");
     expect(awakeLabel({ pid: 9, until: 150 * 60_000 }, 0)).toBe("2 h 30 m");
@@ -27,9 +27,21 @@ describe("parsing and commands", () => {
     expect(failure("System Events got an error: osascript is not allowed to send keystrokes. (1002)", "x")).toContain("Accessibility");
     expect(failure("", "x")).toBe("x");
   });
+  test("a ring for the time left, only on a wide tile with a timed keep awake", () => {
+    const at = (tile: { w: number; h: number }, until: number, minutes?: number) => JSON.stringify(buildCard({ appearance: "Dark", awake: { pid: 9, until, minutes }, minutes: 60, now: 0, tile }));
+    expect(at({ w: 4, h: 2 }, 42 * 60_000, 60)).toContain('"t":"ring","value":0.7,"tone":"accent","text":"42m"');
+    expect(ringText({ pid: 9, until: 150 * 60_000 }, 0)).toBe("2h30");
+    for (const none of [at({ w: 2, h: 2 }, 42 * 60_000, 60), at({ w: 4, h: 2 }, 0, 0), at({ w: 4, h: 2 }, 42 * 60_000)]) expect(none).not.toContain('"ring"');
+  });
+  test("one cell is one button, the chosen one", () => {
+    const at = (single?: string, problem?: string) => (buildCard({ appearance: "Light", awake: null, minutes: 60, now: 0, tile: { w: 1, h: 1 }, single, problem }).root as any).children;
+    expect(at().map((b: any) => b.action)).toEqual(["dark-mode"]);
+    expect(["dark-mode", "keep-awake", "lock", "display-off"].map((x) => at(x)[0].action)).toEqual(["dark-mode", "keep-awake", "lock", "display-off"]);
+    expect(at("lock", "Allow it")[0].tone).toBe("warn");
+  });
   test("the card shows the state", () => {
     const card = JSON.stringify(buildCard({ appearance: "Dark", awake: { pid: 9, until: 0 }, minutes: 30, now: 0 }));
-    expect(card).toContain('"label":"Dark","icon":"moon"');
+    expect(card).toContain('"label":"Dark","icon":"moon","layout":"tile"');
     expect(card).toContain('"label":"Awake"');
     expect(card).toContain('"minutes":30');
   });
@@ -73,7 +85,7 @@ describe("the plugin", () => {
     expect(await h.card()).toContain("10 min");
     await h.act("keep-awake", { minutes: 10 });
     expect(h.alive.size).toBe(0);
-    expect(await h.card()).toContain("Stay up");
+    expect(await h.card()).toContain("Keep awake");
   });
   test("a refresh while caffeinate is still starting does not forget it", async () => {
     const h = harness();
@@ -101,7 +113,7 @@ describe("the plugin", () => {
     const h = harness();
     await h.act("keep-awake", { minutes: 5 });
     h.alive.clear(); // it ended, and the pid may now belong to anything
-    expect(await h.card()).toContain("Stay up");
+    expect(await h.card()).toContain("Keep awake");
     expect(h.store.size).toBe(0);
     await h.act("keep-awake", { minutes: 5 });
     expect(h.calls.some((c) => c.startsWith("kill "))).toBe(false);

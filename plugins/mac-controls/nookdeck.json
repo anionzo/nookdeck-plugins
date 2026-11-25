@@ -3,7 +3,7 @@
   "id": "dev.nookdeck.mac-controls",
   "name": "Mac controls",
   "version": "1.0.0",
-  "nookdeck": ">=0.5.0",
+  "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "Dark mode, keep awake, display off and lock, from the phone",
   "os": ["darwin"],
@@ -13,19 +13,20 @@
       "id": "controls",
       "name": "Mac controls",
       "render": "card",
-      "sizes": ["2x1", "2x2", "4x2"],
-      "preview": { "root": { "t": "col", "gap": 1, "align": "center", "children": [
-        { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Dark mode", "icon": "moon", "action": "dark-mode", "args": { "mode": "toggle" }, "active": true },
-          { "t": "button", "label": "42 min", "icon": "coffee", "action": "keep-awake", "args": { "minutes": 60 }, "active": true }
+      "sizes": ["1x1", "2x1", "2x2", "4x2"],
+      "preview": { "root": { "t": "col", "gap": 1, "children": [
+        { "t": "row", "gap": 1, "grow": true, "children": [
+          { "t": "button", "layout": "tile", "label": "Dark mode", "icon": "moon", "action": "dark-mode", "args": { "mode": "toggle" }, "active": true },
+          { "t": "button", "layout": "tile", "label": "42 min", "icon": "coffee", "action": "keep-awake", "args": { "minutes": 60 }, "active": true }
         ] },
-        { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Lock", "icon": "lock", "action": "lock" },
-          { "t": "button", "label": "Display off", "icon": "device-desktop", "action": "display-off" }
+        { "t": "row", "gap": 1, "grow": true, "children": [
+          { "t": "button", "layout": "tile", "label": "Lock", "icon": "lock", "action": "lock" },
+          { "t": "button", "layout": "tile", "label": "Display off", "icon": "device-desktop", "action": "display-off" }
         ] }
       ] } },
       "settings": [
-        { "key": "minutes", "type": "number", "label": "Keep awake for (minutes, 0: until turned off)", "default": 60 }
+        { "key": "minutes", "type": "number", "label": "Keep awake for (minutes, 0: until turned off)", "default": 60 },
+        { "key": "single", "type": "select", "label": "On a 1x1 tile, show", "options": ["dark-mode", "keep-awake", "lock", "display-off"], "default": "dark-mode" }
       ]
     }
   ],

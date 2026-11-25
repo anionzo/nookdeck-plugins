@@ -1,7 +1,7 @@
 import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
 import {
   ASSERTIONS, DARK_MODE, DISPLAY_OFF, LOCK, READ_APPEARANCE, awakeCommand, buildCard, checkMinutes, displayCaffeinates, failure,
-  isAwake, permissionError, stopCommand, type Awake,
+  isAwake, permissionError, stopCommand, type Awake, type TileSize,
 } from "./lib";
 
 const KEY = "awake";
@@ -39,7 +39,7 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         return null;
       }
 
-      ctx.widgets.provide("controls", async (s: Settings) => {
+      ctx.widgets.provide("controls", async (s: Settings, tile?: TileSize) => {
         const [look, state] = await Promise.all([shell(READ_APPEARANCE), awake()]);
         const said = look.stdout.trim();
         if (problem && now() - problem.at > PROBLEM_MS) problem = null;
@@ -47,7 +47,7 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
           render: "card",
           data: buildCard({
             appearance: look.code === 0 && (said === "Dark" || said === "Light") ? said : null,
-            awake: state, minutes: checkMinutes(s.minutes), now: now(), problem: problem?.text,
+            awake: state, minutes: checkMinutes(s.minutes), now: now(), problem: problem?.text, tile, single: s.single,
           }),
         };
       }, { every: 5 });
@@ -85,7 +85,7 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
             await shell(stopCommand(pid));
             throw new Error("Could not keep the Mac awake");
           }
-          await ctx.storage.set(KEY, { pid, until: minutes ? now() + minutes * 60_000 : 0 } satisfies Awake);
+          await ctx.storage.set(KEY, { pid, until: minutes ? now() + minutes * 60_000 : 0, minutes } satisfies Awake);
         });
         queue = next.catch(() => {});
         return next;

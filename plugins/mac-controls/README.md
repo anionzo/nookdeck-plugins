@@ -7,7 +7,7 @@ Everyday Mac switches on the phone. macOS only.
 | Button | What it does |
 |---|---|
 | Appearance | Shows Dark or Light; tap to switch. The **Dark mode** action can also set one of them. |
-| Stay up (keep awake) | Keeps the Mac and its display awake for the tile's number of minutes (0: until you turn it off). While it is on, the button shows the time left. Tap again to stop. |
+| Keep awake | Keeps the Mac and its display awake for the tile's number of minutes (0: until you turn it off). While it is on, the button shows the time left, and a 4x2 tile also shows it as a ring. Tap again to stop. |
 | Lock | Locks the screen (the system's Control + Command + Q). |
 | Display off | Puts the display to sleep. |
 
@@ -36,3 +36,7 @@ macOS asks the first time, **on the Mac**. If you do not allow it, the phone sho
 Reading the appearance needs no permission.
 
 If **Lock** only turns the screen off without asking for a password afterwards, set **Require password** under System Settings, Lock Screen.
+
+On a 1x1 tile there is one big button: Dark mode, or the one chosen under **On a 1x1 tile, show**.
+
+Needs Nookdeck 0.5.1 or later.
