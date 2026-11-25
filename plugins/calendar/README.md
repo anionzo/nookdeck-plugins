@@ -9,7 +9,7 @@ Your next events on one tile. Works on macOS, Windows and Linux.
 - A free day says **Nothing today** and how far off the next event is, even when it is beyond the days the tile looks at (up to a year).
 - Up to four calendars. Each has its own colour on the tile: calendar 1 uses the theme's accent colour, 2 its "ok" colour, 3 its "warning" colour and 4 its "bad" colour.
 - Repeating events (with removed, moved and cancelled occurrences), all-day events and events over several days.
-- **4x3 and 4x4:** the month, with a dot for each calendar on a day with events, and beside it today and what comes next. The day shown filled is the first one listed. When the days ahead do not fill the list, it goes on past them.
+- **4x3 and 4x4:** the month, with a dot for each calendar on a day with events, and beside it today and what comes next. The day shown filled is the first one listed. When the days ahead do not fill the list, it goes on under **Later**, up to 90 days from today. With few events, each has two lines so its whole name shows.
 - **Six or more columns wide:** this week, from your first day of the week, with today marked. A tall tile draws it as a time grid with a line for now; a lower one as a list under each day. Past events are grey and a day with more than fits says **+n**. When nothing is left this week, a line under it says what is next. "Days ahead" does not apply to this view.
 - Times are shown in the computer's time zone. The tile is read only.
 

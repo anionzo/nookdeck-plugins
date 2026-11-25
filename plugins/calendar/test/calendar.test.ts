@@ -305,8 +305,26 @@ describe("the month beside the list", () => {
     expect(text(list)).toEqual(["Wed 25 Nov", "Nothing today", "Next in 29 days", "Christmas Eve", "24 Dec", "Christmas Day", "25 Dec"]);
     expect(month.selected).toBeUndefined(); // the next day listed is in another month
     expect(month.marks).toEqual([{ date: "2026-11-20", tone: "accent" }]);
-    expect(text(parts2(buildAgenda([], [], [], view)).list)).toEqual(["Wed 25 Nov", "Nothing coming up"]);
+    expect(text(parts2(buildAgenda([], [], [], view)).list)).toEqual(["Wed 25 Nov", "Nothing in the next 90 days"]);
     expect(parts2(buildAgenda([ev("Fri", local(11, 27, 9))], [], [], view)).month.selected).toBe("2026-11-27");
+  });
+  test("what goes past the days ahead is under Later; few events get two lines, and only as many as fit", () => {
+    const soon = [ev("Soon", local(11, 26, 9))];
+    const later = Array.from({ length: 9 }, (_, i) => allDayEv(`A rather long holiday name ${i}`, 12, 10 + i));
+    const list = parts2(buildAgenda(soon, later, [], view)).list; // rows 10: a 4x4
+    expect(text(list).slice(1, 8)).toEqual(["Nothing today", "Tomorrow", "Soon", "09:00", "Later", "A rather long holiday name 0", "10 Dec"]);
+    expect(text(list).filter((t) => t === "Later")).toHaveLength(1);
+    expect(list.children.filter((c: any) => c.t === "col")).toHaveLength(6);
+    expect(parts2(buildAgenda(soon, later, [], { ...view, rows: 7 })).list.children.filter((c: any) => c.t === "col")).toHaveLength(4);
+    // a window with plenty in it keeps one line each, and its own headings before Later
+    const many = Array.from({ length: 5 }, (_, i) => ev(`m${i}`, local(11, 26 + i, 9)));
+    const busy = text(parts2(buildAgenda(many, later.slice(0, 2), [], view)).list);
+    expect(busy.filter((t) => ["Tomorrow", "This week", "Next week", "Later"].includes(t))).toEqual(["Tomorrow", "This week", "Next week", "Later"]);
+  });
+  test("the dot on 24 November is the calendar's own: Vietnam Culture Day", () => {
+    const all = expand(parseEvents(holidays!), local(11, 1), local(12, 1) - 1, 0);
+    expect(all.map((o) => o.title)).toEqual(["Vietnam Culture Day"]);
+    expect(monthMarks(all, NOW)).toEqual([{ date: "2026-11-24", tone: "accent" }]);
   });
   test("ten events with headings and notes stay within 60 parts; dots within 62, a day each first", () => {
     const many = Array.from({ length: 30 }, (_, i) => ev(`event ${i}`, NOW + 3_600_000 + i * 11 * 3_600_000, 1, { calendar: i % 4 }));

@@ -2,7 +2,7 @@ import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
 import { buildCard, setupCard, windowEnd, type View } from "./card";
 import { expand, type Occurrence } from "./events";
 import { parseEvents, type VEvent } from "./ics";
-import { buildAgenda, monthRange } from "./agenda";
+import { FILL_DAYS, buildAgenda, monthRange } from "./agenda";
 import { isAgenda, isWeek, listRows, type Tile } from "./layout";
 import { MAX_LINKS, checkLink, fetchProblem, statusProblem } from "./links";
 import { buildWeek, weekDays } from "./week";
@@ -97,7 +97,8 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         if (week) return { render: "card", data: buildWeek(events, view, notes, events.some((o) => o.end > view.now) ? undefined : ahead().find((o) => o.start >= to)) };
         if (isAgenda(tile)) {
           // a list that the days ahead do not fill goes on past them
-          const later = events.length < view.rows ? ahead().filter((o) => o.start >= to) : [];
+          const far = windowEnd(view.now, Math.max(FILL_DAYS, view.days));
+          const later = events.length < view.rows ? between(view.now, far).filter((o) => o.start >= to) : [];
           const month = monthRange(view.now);
           return { render: "card", data: buildAgenda(events, later, between(month.from, month.to - 1), view, notes) };
         }

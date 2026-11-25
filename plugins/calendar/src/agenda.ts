@@ -39,8 +39,12 @@ function column(o: Occurrence, group: Group, view: View): string {
   return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
 }
 
-/** With this few events listed, each has two lines: there is height to spare, and a date and a title do not fit side by side. */
-const ROOMY_MAX = 3;
+/** How far a list that the days ahead do not fill goes on past them. */
+export const FILL_DAYS = 90;
+/** With this few events in the days ahead, the list gives each one two lines: its whole title, then when. */
+const FEW = 3;
+/** How many two-line events fit beside the month on a tile of this many rows of events (listRows: 7 on 4x3, 10 on 4x4). */
+const roomyRows = (rows: number): number => (rows >= 10 ? 6 : 4);
 
 function row(o: Occurrence, group: Group, view: View, roomy: boolean): Node {
   const tone = TONES[o.calendar % TONES.length]!;
@@ -54,28 +58,34 @@ function row(o: Occurrence, group: Group, view: View, roomy: boolean): Node {
 const muted = (text: string, bold = false): Node => ({ t: "text", text, size: "s", tone: "muted", ...(bold ? { bold: true } : {}) });
 
 /**
- * `events` are those of the days ahead the person asked for; `later` those after them, used only to fill a short list.
+ * `events` are those of the days ahead the person asked for; `later` those after them (no further than FILL_DAYS), used only
+ * to fill a short list and put under "Later".
  * `month` are this month's, past ones too, for the dots. The day the month shows filled is the first day listed.
  */
 export function buildAgenda(events: Occurrence[], later: Occurrence[], month: Occurrence[], view: View, notes: string[] = []) {
-  const shown = [...events, ...later].slice(0, view.rows);
+  const all = [...events, ...later];
+  // when the days ahead hold little, the rest is only filling: better fewer events with their whole names
+  const roomy = events.length <= FEW;
+  const shown = all.slice(0, roomy ? Math.min(view.rows, roomyRows(view.rows)) : view.rows);
   const today = events.filter((o) => groupOf(o.start, view) === "Today").length;
   const first = shown[0];
   const listed = first ? Math.max(midnight(first.start), midnight(view.now)) : midnight(view.now);
   const inMonth = listed < monthRange(view.now).to;
   const list: Node[] = [
     { t: "text", text: dateText(view.now), bold: true },
-    muted(today ? `${today} ${today === 1 ? "event" : "events"} today` : first ? "Nothing today" : "Nothing coming up"),
+    muted(today ? `${today} ${today === 1 ? "event" : "events"} today` : first ? "Nothing today" : `Nothing in the next ${Math.max(FILL_DAYS, view.days)} days`),
   ];
   let group: Group = "Today";
   shown.forEach((o, i) => {
     const g = groupOf(o.start, view);
-    if (g !== group) {
-      const away = daysAway(o.start, view.now);
-      list.push(muted(i === 0 && away > 1 ? `Next in ${away} days` : g, true));
-      group = g;
-    }
-    list.push(row(o, g, view, shown.length <= ROOMY_MAX));
+    const away = daysAway(o.start, view.now);
+    if (i === 0 && away > 1) list.push(muted(`Next in ${away} days`, true));
+    // where the days ahead end and the filling begins is marked, whatever the dates are
+    else if (i === events.length && i > 0) list.push(muted("Later", true));
+    else if (i < events.length && g !== group) list.push(muted(g, true));
+    else if (i === 0 && g !== group) list.push(muted(g, true));
+    group = g;
+    list.push(row(o, g, view, roomy));
   });
   if (events.length > shown.length) list.push(muted(`+${events.length - shown.length} more`));
   for (const n of notes.slice(0, 2)) list.push({ t: "text", text: n.slice(0, 200), size: "s", tone: "warn" });
