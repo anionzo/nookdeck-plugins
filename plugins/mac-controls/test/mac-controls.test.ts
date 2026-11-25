@@ -33,6 +33,13 @@ describe("parsing and commands", () => {
     expect(ringText({ pid: 9, until: 150 * 60_000 }, 0)).toBe("2h30");
     for (const none of [at({ w: 2, h: 2 }, 42 * 60_000, 60), at({ w: 4, h: 2 }, 0, 0), at({ w: 4, h: 2 }, 42 * 60_000)]) expect(none).not.toContain('"ring"');
   });
+  test("short names on a tile one cell high", () => {
+    const at = (h: number) => JSON.stringify(buildCard({ appearance: "Light", awake: null, minutes: 60, now: 0, tile: { w: 2, h } }));
+    expect(at(1)).toContain('"label":"Awake"');
+    expect(at(1)).toContain('"label":"Screen"');
+    expect(at(2)).toContain('"label":"Keep awake"');
+    expect(at(2)).toContain('"label":"Display off"');
+  });
   test("one cell is one button, the chosen one", () => {
     const at = (single?: string, problem?: string) => (buildCard({ appearance: "Light", awake: null, minutes: 60, now: 0, tile: { w: 1, h: 1 }, single, problem }).root as any).children;
     expect(at().map((b: any) => b.action)).toEqual(["dark-mode"]);

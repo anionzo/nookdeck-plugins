@@ -89,14 +89,17 @@ export function buildCard(s: { appearance: "Dark" | "Light" | null; awake: Awake
   // a wide tile has room to show how much of the keep-awake time is left
   const a = s.awake;
   const timed = !!a && a.until > 0 && !!a.minutes && !!s.tile && s.tile.w >= 4 && s.tile.h >= 2;
+  // a tile one cell high puts each name beside its icon, where only short ones fit
+  const short = !!s.tile && s.tile.h <= 1 && s.tile.w > 1;
+  const idle = short && !s.awake;
   const grid: CardNode[] = [
     { t: "row", gap: 1, grow: true, children: [
       control(s.appearance === null ? "Dark mode" : dark ? "Dark" : "Light", dark ? "moon" : "sun", "dark-mode", { args: { mode: "toggle" }, active: dark }),
-      control(timed ? "Awake" : awakeLabel(s.awake, s.now), "coffee", "keep-awake", { args: { minutes: s.minutes }, active: !!s.awake }),
+      control(timed || idle ? "Awake" : awakeLabel(s.awake, s.now), "coffee", "keep-awake", { args: { minutes: s.minutes }, active: !!s.awake }),
     ] },
     { t: "row", gap: 1, grow: true, children: [
       control("Lock", "lock", "lock"),
-      control("Display off", "device-desktop", "display-off"),
+      control(short ? "Screen" : "Display off", "device-desktop", "display-off"),
     ] },
   ];
   // one cell has no room for four things to tap: it is one big button, chosen in the tile's settings
