@@ -1,5 +1,5 @@
 /** Wide tiles: this week in Nookdeck's `week` card part (0.5.1), which draws a time grid, or a list when the tile is low. */
-import { TONES, dateText, whenText, type View } from "./card";
+import { TONES, dateText, daysAway, whenText, type View } from "./card";
 import type { Occurrence } from "./events";
 
 type Node = Record<string, unknown>;
@@ -58,8 +58,13 @@ export function buildWeek(events: Occurrence[], view: View, notes: string[] = []
   };
   const under: Node[] = notes.slice(0, 1).map((n) => ({ t: "text", text: n.slice(0, 200), size: "s", tone: "warn" }));
   if (next && !events.some((o) => o.end > view.now)) {
-    const when = next.allDay ? dateText(next.start) : `${dateText(next.start)}, ${whenText(next, "Today", view)}`;
-    under.unshift({ t: "text", text: `Nothing more this week. Next: ${next.title || "(no title)"}, ${when}`.slice(0, 200), size: "s", tone: "muted" });
+    const away = daysAway(next.start, view.now);
+    const when = [dateText(next.start), ...(next.allDay ? [] : [whenText(next, "Today", view)])].join(", ");
+    // it is the thing to read on a week with nothing left, so it has two lines of its own, the name large
+    under.unshift(
+      { t: "text", text: `Next: ${next.title || "(no title)"}`.slice(0, 200), size: "l", bold: true },
+      { t: "text", text: away < 1 ? when : `${when} · ${away === 1 ? "tomorrow" : `in ${away} days`}`, bold: true, tone: "accent" },
+    );
   }
   return { root: under.length ? { t: "col", gap: 1, children: [week, ...under] } : week };
 }

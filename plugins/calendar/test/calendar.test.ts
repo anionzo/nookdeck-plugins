@@ -280,7 +280,13 @@ describe("the week", () => {
   test("a week with nothing left says what is next, and a note goes under the week", () => {
     const next = ev("Christmas Eve", local(12, 24), 24, { allDay: true });
     const root = buildWeek([ev("Past", local(11, 23, 9))], view, [], next).root as any;
-    expect(text(root.children[1] ? { children: [root.children[1]] } : root)).toEqual(["Nothing more this week. Next: Christmas Eve, Thu 24 Dec"]);
+    expect(root.children.slice(1)).toEqual([
+      { t: "text", text: "Next: Christmas Eve", size: "l", bold: true },
+      { t: "text", text: "Thu 24 Dec · in 29 days", bold: true, tone: "accent" },
+    ]);
+    // a timed one says its time, and the day after this week is counted like any other
+    const monday = (buildWeek([], view, [], ev("Kickoff", local(11, 30, 9))).root as any).children[2];
+    expect(monday.text).toBe("Mon 30 Nov, 09:00 · in 5 days");
     expect((buildWeek([ev("Soon", local(11, 26, 9))], view, [], next).root as any).t).toBe("week");
     expect(text({ children: [(buildWeek([], view, ["Calendar 2: could not load it"]).root as any).children[1]] })).toEqual(["Calendar 2: could not load it"]);
   });
