@@ -14,10 +14,10 @@
       "name": "Mac controls",
       "render": "card",
       "sizes": ["2x1", "2x2", "4x2"],
-      "preview": { "root": { "t": "col", "gap": 1, "children": [
+      "preview": { "root": { "t": "col", "gap": 1, "align": "center", "children": [
         { "t": "row", "gap": 1, "children": [
           { "t": "button", "label": "Dark mode", "icon": "moon", "action": "dark-mode", "args": { "mode": "toggle" }, "active": true },
-          { "t": "button", "label": "Awake 42 min", "icon": "coffee", "action": "keep-awake", "args": { "minutes": 60 }, "active": true }
+          { "t": "button", "label": "42 min", "icon": "coffee", "action": "keep-awake", "args": { "minutes": 60 }, "active": true }
         ] },
         { "t": "row", "gap": 1, "children": [
           { "t": "button", "label": "Lock", "icon": "lock", "action": "lock" },

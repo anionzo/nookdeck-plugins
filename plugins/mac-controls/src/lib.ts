@@ -53,7 +53,7 @@ export function awakeLabel(a: Awake | null, now: number): string {
   if (!a) return "Keep awake";
   if (!a.until) return "Awake";
   const min = Math.max(1, Math.ceil((a.until - now) / 60_000));
-  return min < 90 ? `Awake ${min} min` : `Awake ${Math.floor(min / 60)} h ${min % 60} min`;
+  return min < 90 ? `${min} min` : `${Math.floor(min / 60)} h ${min % 60} m`;
 }
 
 /** The message for what osascript printed, when it was refused. */
@@ -82,5 +82,5 @@ export function buildCard(s: { appearance: "Dark" | "Light" | null; awake: Awake
   ];
   // first: when a tile is too small, the deck leaves out the last parts
   if (s.problem) children.unshift({ t: "text", text: s.problem.slice(0, 200), size: "s", tone: "warn" });
-  return { root: { t: "col", gap: 1, children } };
+  return { root: { t: "col", gap: 1, align: "center", children } };
 }

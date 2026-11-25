@@ -2,10 +2,12 @@
 
 Everyday Mac switches on the phone. macOS only.
 
+<img src="preview.png" width="264" alt="A 2x2 Mac controls tile with demo data: dark mode on and 42 minutes of keep awake left">
+
 | Button | What it does |
 |---|---|
 | Appearance | Shows Dark or Light; tap to switch. The **Dark mode** action can also set one of them. |
-| Keep awake | Keeps the Mac and its display awake for the tile's number of minutes (0: until you turn it off). Tap again to stop. |
+| Keep awake | Keeps the Mac and its display awake for the tile's number of minutes (0: until you turn it off). While it is on, the button shows the time left. Tap again to stop. |
 | Lock | Locks the screen (the system's Control + Command + Q). |
 | Display off | Puts the display to sleep. |
 

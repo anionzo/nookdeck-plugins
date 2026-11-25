@@ -21,8 +21,8 @@ describe("parsing and commands", () => {
   test("labels and permission messages", () => {
     expect(awakeLabel(null, 0)).toBe("Keep awake");
     expect(awakeLabel({ pid: 9, until: 0 }, 0)).toBe("Awake");
-    expect(awakeLabel({ pid: 9, until: 42 * 60_000 }, 0)).toBe("Awake 42 min");
-    expect(awakeLabel({ pid: 9, until: 150 * 60_000 }, 0)).toBe("Awake 2 h 30 min");
+    expect(awakeLabel({ pid: 9, until: 42 * 60_000 }, 0)).toBe("42 min");
+    expect(awakeLabel({ pid: 9, until: 150 * 60_000 }, 0)).toBe("2 h 30 m");
     expect(failure("execution error: Not authorized to send Apple events to System Events. (-1743)", "x")).toContain("Automation");
     expect(failure("System Events got an error: osascript is not allowed to send keystrokes. (1002)", "x")).toContain("Accessibility");
     expect(failure("", "x")).toBe("x");
@@ -70,7 +70,7 @@ describe("the plugin", () => {
   test("keep awake turns on and off", async () => {
     const h = harness();
     await h.act("keep-awake", { minutes: 10 });
-    expect(await h.card()).toContain("Awake 10 min");
+    expect(await h.card()).toContain("10 min");
     await h.act("keep-awake", { minutes: 10 });
     expect(h.alive.size).toBe(0);
     expect(await h.card()).toContain("Keep awake");
@@ -81,7 +81,7 @@ describe("the plugin", () => {
     const started = h.act("keep-awake", { minutes: 10 });
     await h.card();
     await started;
-    expect(await h.card()).toContain("Awake 10 min");
+    expect(await h.card()).toContain("10 min");
     expect(h.alive.size).toBe(1);
   });
   test("one that never shows up is stopped and reported", async () => {
