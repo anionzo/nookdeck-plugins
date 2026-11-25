@@ -13,7 +13,7 @@
       "id": "levels",
       "name": "Batteries",
       "render": "card",
-      "sizes": ["2x1", "2x2", "4x2"],
+      "sizes": ["1x1", "2x1", "2x2", "4x2"],
       "preview": { "root": { "t": "col", "gap": 2, "children": [
         { "t": "row", "gap": 2, "align": "center", "children": [
           { "t": "icon", "name": "device-laptop" },
@@ -32,6 +32,7 @@
         ] }
       ] } },
       "settings": [
+        { "key": "style", "type": "select", "label": "Style: details, compact (2x1), or only the lowest battery (1x1)", "options": ["details", "compact", "lowest"], "default": "details" },
         { "key": "showMac", "type": "boolean", "label": "Show this Mac's battery", "default": true }
       ]
     }

@@ -1,5 +1,5 @@
 import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
-import { IOREG, PMSET, PROFILER, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, type Device } from "./lib";
+import { IOREG, PMSET, PROFILER, STYLES, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, type Device, type Style } from "./lib";
 
 export function createPlugin(): PluginModule {
   return {
@@ -26,7 +26,8 @@ export function createPlugin(): PluginModule {
           read<Device[]>(IOREG, parseIoreg, []),
         ]);
         if (failed === 3) throw new Error("Could not read any battery");
-        return { render: "card", data: buildCard(merge(s.showMac === false ? null : mac, bluetooth, registry)) };
+        const style = STYLES.includes(s.style as Style) ? (s.style as Style) : "details";
+        return { render: "card", data: buildCard(merge(s.showMac === false ? null : mac, bluetooth, registry), style) };
       }, { every: 60 });
     },
   };

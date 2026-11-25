@@ -1,0 +1,25 @@
+{
+ "SPBluetoothDataType": [
+  {
+   "device_connected": [
+    {
+     "AirPods Pro": {
+      "device_batteryLevelCase": "88%",
+      "device_batteryLevelLeft": "100%",
+      "device_batteryLevelRight": "100%",
+      "device_minorType": "Headphones",
+      "device_productID": "0x2027",
+      "device_services": "0x980019 < HFP AVRCP A2DP AACP GATT ACL >",
+      "device_vendorID": "0x004C"
+     }
+    },
+    {
+     "Bluetooth Device": {
+      "device_batteryLevelCase": "88%",
+      "device_services": "0x400000 < BLE >"
+     }
+    }
+   ]
+  }
+ ]
+}

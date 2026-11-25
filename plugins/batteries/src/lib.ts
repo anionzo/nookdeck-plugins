@@ -6,7 +6,7 @@ export const PMSET = "/usr/bin/pmset -g batt";
 export const IOREG = "/usr/sbin/ioreg -r -c AppleDeviceManagementHIDEventService -l";
 export const PROFILER = "/usr/sbin/system_profiler SPBluetoothDataType -json";
 
-export const MAX_DEVICES = 8;
+export const MAX_DEVICES = 7;
 
 export interface Device { name: string; icon: string; percent: number; charging?: boolean; note?: string; mac?: boolean }
 
@@ -23,9 +23,8 @@ export function parsePmset(out: string): Device | null {
   const charging = state === "charging" || state === "finishing charge";
   const onPower = /'AC Power'/.test(out);
   const note = state === "discharging" ? (left ? `${left} left` : "On battery")
-    : charging ? (left ? `${left} to full` : "Charging")
-    : state === "charged" ? "Charged"
-    : onPower ? "Plugged in" : "";
+    : charging ? "Charging"
+    : state === "charged" || onPower ? "Plugged in" : "";
   return { name: "This Mac", icon: "device-laptop", percent: clamp(Number(m[1])), charging, mac: true, ...(note ? { note } : {}) };
 }
 
@@ -58,11 +57,25 @@ const percentOf = (v: unknown): number | null => {
   return m ? clamp(Number(m[1])) : null;
 };
 
-/** Connected Bluetooth devices that report a level. AirPods report each side and the case: the tile shows the lower side. */
+/** macOS also lists the AirPods case as a nameless Bluetooth LE beacon: no type, no product id, only a case level. */
+const isBeacon = (name: string, p: any) => name === "Bluetooth Device" && !p?.device_minorType && !p?.device_productID;
+
+/** "L 64 · R 71 · Case 40", kept short enough for a 2x2 tile when the numbers are long. */
+export function budsNote(left: number | null, right: number | null, box: number | null): string {
+  const tail = box !== null ? [`Case ${box}`] : [];
+  if (left !== null && left === right) return [`L+R ${left}`, ...tail].join(" · ");
+  const join = (space: string) => [...(left !== null ? [`L${space}${left}`] : []), ...(right !== null ? [`R${space}${right}`] : []), ...tail].join(" · ");
+  const wide = join(" ");
+  return wide.length > 22 ? join("") : wide;
+}
+
+/** Connected Bluetooth devices that report a level. AirPods report each side and the case: one device, showing the lower side. */
 export function parseBluetooth(json: string): Device[] {
   let data: any;
   try { data = JSON.parse(json); } catch { throw new Error("Could not read the Bluetooth list"); }
   const found: Device[] = [];
+  const beacons: Device[] = [];
+  let caseSeen = false;
   for (const controller of Array.isArray(data?.SPBluetoothDataType) ? data.SPBluetoothDataType : []) {
     for (const entry of Array.isArray(controller?.device_connected) ? controller.device_connected : []) {
       for (const [rawName, p] of Object.entries<any>(entry ?? {})) {
@@ -73,45 +86,92 @@ export function parseBluetooth(json: string): Device[] {
         const percent = sides.length ? Math.min(...sides) : main ?? box;
         if (percent === null) continue;
         const name = clean(rawName);
-        const note = [left !== null ? `L${left}` : "", right !== null ? `R${right}` : "", (sides.length || main !== null) && box !== null ? `case ${box}` : "", !sides.length && main === null ? "Case" : ""].filter(Boolean).join(" ");
+        const caseOnly = !sides.length && main === null;
+        if (caseOnly && isBeacon(name, p)) { beacons.push({ name: "Earbuds case", icon: "headphones", percent }); continue; }
+        if (box !== null) caseSeen = true;
+        const note = caseOnly ? "Case" : budsNote(left, right, box);
         found.push({ name, icon: iconFor(String(p?.device_minorType ?? ""), name), percent, ...(note ? { note } : {}) });
       }
     }
   }
-  return found;
+  // when a device already tells its case's level, the beacon is that same case: shown only when nothing else does
+  return caseSeen ? found : [...found, ...beacons.slice(0, 1)];
 }
 
-/** The Mac first, then the others by name. A device both tools report is shown once, with the Bluetooth list's detail. */
+/**
+ * "AirPods Pro Thinhcv245" reads as "AirPods Pro". Only for a known Apple model followed by one word that is clearly a user
+ * name (letters and digits together); anything else keeps its full name.
+ */
+export function shortName(name: string): string {
+  const m = /^(AirPods(?: Pro| Max)?(?: [2-4])?|Magic (?:Keyboard|Mouse|Trackpad)(?: [2-4])?) (\S+)$/.exec(name);
+  return m && /[A-Za-z]/.test(m[2]!) && /\d/.test(m[2]!) && !/^(gen\d+|usb-?c|\d+(st|nd|rd|th))$/i.test(m[2]!) ? m[1]! : name;
+}
+
+/**
+ * The Mac first, then the others from the lowest level up (a tile that is too small leaves out the last ones). A device both
+ * tools report is shown once, with the Bluetooth list's detail. Names are shortened unless two devices would end up alike.
+ */
 export function merge(mac: Device | null, bluetooth: Device[], registry: Device[]): Device[] {
   const key = (n: string) => n.toLowerCase();
   const byName = new Map<string, Device>();
   for (const d of [...registry, ...bluetooth]) byName.set(key(d.name), d);
-  const others = [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
-  return [...(mac ? [mac] : []), ...others];
+  const list = [...byName.values()];
+  const named = list.map((d) => {
+    const short = shortName(d.name);
+    return short !== d.name && list.filter((o) => shortName(o.name) === short).length === 1 ? { ...d, name: short } : d;
+  });
+  named.sort((a, b) => a.percent - b.percent || a.name.localeCompare(b.name));
+  return [...(mac ? [mac] : []), ...named];
 }
 
+export const STYLES = ["details", "compact", "lowest"] as const;
+export type Style = (typeof STYLES)[number];
 
-export const toneFor = (d: Device): "ok" | "warn" | "bad" | "default" => (d.charging ? "ok" : d.percent <= 10 ? "bad" : d.percent <= 20 ? "warn" : "default");
+/** green above half, amber from 20 to 50, red below 20 */
+export const toneFor = (d: Device): "ok" | "warn" | "bad" => (d.percent > 50 ? "ok" : d.percent >= 20 ? "warn" : "bad");
 
-export function buildCard(devices: Device[]): CardData {
-  const shown = devices.slice(0, MAX_DEVICES);
-  // a card holds at most 60 nodes: the second line (time left, each AirPod) is dropped when there are many devices
-  const notes = shown.length <= 6;
-  const children: CardNode[] = shown.map((d) => {
-    const tone = toneFor(d);
-    const toned = tone === "default" ? {} : { tone };
-    const middle: CardNode[] = [
-      { t: "text", text: d.name.slice(0, 200), size: "s" },
-      { t: "progress", value: d.percent / 100, ...toned },
-      ...(notes && d.note ? [{ t: "text", text: d.note, size: "s", tone: "muted" } as CardNode] : []),
-    ];
-    return { t: "row", gap: 2, align: "center", children: [
-      { t: "icon", name: d.charging ? "bolt" : d.icon, ...toned },
-      { t: "col", gap: 0, grow: true, children: middle },
-      { t: "text", text: `${d.percent}%`, bold: true, ...toned },
-    ] };
-  });
+/** the second line of a row; charging is always said, also by a device that has nothing else to say */
+const detailOf = (d: Device): string => d.note ?? (d.charging ? "Charging" : "");
+
+function row(d: Device, details: boolean): CardNode {
+  const tone = toneFor(d);
+  // the bar is always coloured; the icon and the number only when the level needs attention
+  const alert = tone === "ok" ? {} : { tone };
+  const detail = details ? detailOf(d) : "";
+  return { t: "row", gap: 2, align: "center", children: [
+    { t: "icon", name: d.icon, ...alert },
+    { t: "col", gap: 0, grow: true, children: [
+      { t: "row", gap: 1, children: [
+        { t: "col", gap: 0, grow: true, children: [{ t: "text", text: d.name.slice(0, 200), size: "s", bold: true }] },
+        { t: "text", text: `${d.percent}%`, size: "s", bold: true, ...alert },
+      ] },
+      { t: "progress", value: d.percent / 100, tone },
+      ...(detail ? [{ t: "text", text: detail, size: "s", tone: "muted" } as CardNode] : []),
+    ] },
+  ] };
+}
+
+/** For a very small tile: the one battery that needs attention first. */
+function lowest(devices: Device[]): CardData {
+  const d = [...devices].sort((a, b) => a.percent - b.percent)[0];
+  if (!d) return { root: { t: "col", align: "center", children: [{ t: "text", text: "No battery to show", size: "s", tone: "muted" }] } };
+  const tone = toneFor(d);
+  return { root: { t: "col", gap: 1, align: "center", children: [
+    { t: "icon", name: d.icon, ...(tone === "ok" ? {} : { tone }) },
+    { t: "number", value: `${d.percent}%`, size: "xl", ...(tone === "ok" ? {} : { tone }) },
+    { t: "text", text: d.name.slice(0, 200), size: "s", tone: "muted" },
+  ] } };
+}
+
+export function buildCard(devices: Device[], style: Style = "details"): CardData {
+  if (style === "lowest") return lowest(devices);
+  // compact is for a 2x1 tile: two rows, and nothing under them
+  const shown = devices.slice(0, style === "compact" ? 2 : MAX_DEVICES);
+  // a card holds at most 60 parts: with many devices the second lines are left out
+  const details = style === "details" && shown.length <= 6;
+  const children: CardNode[] = shown.map((d) => row(d, details));
   if (!shown.length) children.push({ t: "text", text: "No battery to show", tone: "muted" });
-  if (devices.length > shown.length) children.push({ t: "text", text: `+${devices.length - shown.length} more`, size: "s", tone: "muted" });
-  return { root: { t: "col", gap: 2, children } };
+  if (style !== "compact" && devices.length > shown.length) children.push({ t: "text", text: `+${devices.length - shown.length} more`, size: "s", tone: "muted" });
+  // spacers centre the rows from top to bottom; align: "center" on the column would centre every line of text too
+  return { root: { t: "col", gap: 2, children: [{ t: "spacer" }, ...children, { t: "spacer" }] } };
 }
