@@ -18,11 +18,12 @@ export function parsePmset(out: string): Device | null {
   if (!m) return null;
   const state = m[2]!.trim().toLowerCase();
   const time = /\b(\d{1,2}):(\d{2}) remaining/.exec(m[3] ?? "");
-  const left = time && (time[1] !== "0" || time[2] !== "00") ? `${Number(time[1])} h ${time[2]} min` : "";
+  const hours = time ? Number(time[1]) : 0, minutes = time ? Number(time[2]) : 0;
+  const left = hours ? `${hours} h ${time![2]} min` : minutes ? `${minutes} min` : "";
   const charging = state === "charging" || state === "finishing charge";
   const onPower = /'AC Power'/.test(out);
   const note = state === "discharging" ? (left ? `${left} left` : "On battery")
-    : charging ? (left ? `Charging, ${left} to full` : "Charging")
+    : charging ? (left ? `${left} to full` : "Charging")
     : state === "charged" ? "Charged"
     : onPower ? "Plugged in, not charging" : "";
   return { name: "This Mac", icon: "device-laptop", percent: clamp(Number(m[1])), charging, mac: true, ...(note ? { note } : {}) };
@@ -72,7 +73,7 @@ export function parseBluetooth(json: string): Device[] {
         const percent = sides.length ? Math.min(...sides) : main ?? box;
         if (percent === null) continue;
         const name = clean(rawName);
-        const note = [left !== null ? `L ${left}%` : "", right !== null ? `R ${right}%` : "", (sides.length || main !== null) && box !== null ? `Case ${box}%` : "", !sides.length && main === null ? "Case" : ""].filter(Boolean).join("  ");
+        const note = [left !== null ? `L ${left}` : "", right !== null ? `R ${right}` : "", (sides.length || main !== null) && box !== null ? `Case ${box}` : "", !sides.length && main === null ? "Case" : ""].filter(Boolean).join(" · ");
         found.push({ name, icon: iconFor(String(p?.device_minorType ?? ""), name), percent, ...(note ? { note } : {}) });
       }
     }

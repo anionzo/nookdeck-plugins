@@ -14,7 +14,8 @@ describe("pmset", () => {
     expect(parsePmset(pm!)!.note).toMatch(/^\d+ h \d\d min left$/);
   });
   test("the other states", () => {
-    expect(parsePmset(line("charging; 1:05 remaining"))).toMatchObject({ percent: 80, charging: true, note: "Charging, 1 h 05 min to full" });
+    expect(parsePmset(line("charging; 1:05 remaining"))).toMatchObject({ percent: 80, charging: true, note: "1 h 05 min to full" });
+    expect(parsePmset(line("charging; 0:41 remaining"))!.note).toBe("41 min to full");
     expect(parsePmset(line("charging; (no estimate)"))!.note).toBe("Charging");
     expect(parsePmset(line("charged; 0:00 remaining"))!.note).toBe("Charged");
     expect(parsePmset(line("AC attached; not charging"))!.note).toBe("Plugged in, not charging");
@@ -38,7 +39,7 @@ describe("Bluetooth devices", () => {
   });
   test("AirPods show the lower side, with each side and the case", () => {
     const pods = parseBluetooth(btOn!).find((d) => d.name === "AirPods Pro")!;
-    expect(pods).toEqual({ name: "AirPods Pro", icon: "headphones", percent: 18, note: "L 95%  R 18%  Case 40%" });
+    expect(pods).toEqual({ name: "AirPods Pro", icon: "headphones", percent: 18, note: "L 95 · R 18 · Case 40" });
     expect(parseBluetooth(btOn!).find((d) => d.name === "Case Only Buds")).toMatchObject({ percent: 55, note: "Case" });
   });
   test("a device both tools report is shown once", () => {
