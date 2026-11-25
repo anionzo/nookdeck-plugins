@@ -2,9 +2,11 @@
 
 Battery levels on one tile. macOS only.
 
+<img src="preview.png" width="264" alt="A 2x2 Batteries tile with demo data: a Mac, AirPods Pro, a Magic Keyboard and a Magic Mouse">
+
 - **This Mac:** percent, charging, and the time left when macOS has an estimate. A Mac without a battery shows only devices.
 - **Magic Keyboard, Mouse and Trackpad**, and other Bluetooth devices that tell macOS their level.
-- **AirPods:** the lower of the two sides, with left, right and case under the name.
+- **AirPods:** the lower of the two sides, with left (L), right (R) and case under the name.
 
 A device that is not connected is hidden. A device that does not report a level to macOS cannot be shown. The tile refreshes every 60 seconds.
 

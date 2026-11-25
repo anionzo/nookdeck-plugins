@@ -73,7 +73,7 @@ export function parseBluetooth(json: string): Device[] {
         const percent = sides.length ? Math.min(...sides) : main ?? box;
         if (percent === null) continue;
         const name = clean(rawName);
-        const note = [left !== null ? `L ${left}` : "", right !== null ? `R ${right}` : "", (sides.length || main !== null) && box !== null ? `Case ${box}` : "", !sides.length && main === null ? "Case" : ""].filter(Boolean).join(" · ");
+        const note = [left !== null ? `L${left}` : "", right !== null ? `R${right}` : "", (sides.length || main !== null) && box !== null ? `case ${box}` : "", !sides.length && main === null ? "Case" : ""].filter(Boolean).join(" ");
         found.push({ name, icon: iconFor(String(p?.device_minorType ?? ""), name), percent, ...(note ? { note } : {}) });
       }
     }

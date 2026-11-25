@@ -39,7 +39,7 @@ describe("Bluetooth devices", () => {
   });
   test("AirPods show the lower side, with each side and the case", () => {
     const pods = parseBluetooth(btOn!).find((d) => d.name === "AirPods Pro")!;
-    expect(pods).toEqual({ name: "AirPods Pro", icon: "headphones", percent: 18, note: "L 95 · R 18 · Case 40" });
+    expect(pods).toEqual({ name: "AirPods Pro", icon: "headphones", percent: 18, note: "L95 R18 case 40" });
     expect(parseBluetooth(btOn!).find((d) => d.name === "Case Only Buds")).toMatchObject({ percent: 55, note: "Case" });
   });
   test("a device both tools report is shown once", () => {
