@@ -1,0 +1,39 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "id": "dev.nookdeck.mac-controls",
+  "name": "Mac controls",
+  "version": "1.0.0",
+  "nookdeck": ">=0.5.0",
+  "author": "Nookdeck",
+  "description": "Dark mode, keep awake, display off and lock, from the phone",
+  "os": ["darwin"],
+  "permissions": { "shell": true, "storage": true },
+  "widgets": [
+    {
+      "id": "controls",
+      "name": "Mac controls",
+      "render": "card",
+      "sizes": ["2x1", "2x2", "4x2"],
+      "preview": { "root": { "t": "col", "gap": 1, "children": [
+        { "t": "row", "gap": 1, "children": [
+          { "t": "button", "label": "Dark mode", "icon": "moon", "action": "dark-mode", "args": { "mode": "toggle" }, "active": true },
+          { "t": "button", "label": "Awake 42 min", "icon": "coffee", "action": "keep-awake", "args": { "minutes": 60 }, "active": true }
+        ] },
+        { "t": "row", "gap": 1, "children": [
+          { "t": "button", "label": "Lock", "icon": "lock", "action": "lock" },
+          { "t": "button", "label": "Display off", "icon": "device-desktop", "action": "display-off" }
+        ] }
+      ] } },
+      "settings": [
+        { "key": "minutes", "type": "number", "label": "Keep awake for (minutes, 0: until turned off)", "default": 60 }
+      ]
+    }
+  ],
+  "actions": [
+    { "id": "dark-mode", "name": "Dark mode", "settings": [{ "key": "mode", "type": "select", "label": "Do what", "options": ["toggle", "light", "dark"], "default": "toggle" }] },
+    { "id": "keep-awake", "name": "Keep awake on or off", "settings": [{ "key": "minutes", "type": "number", "label": "Minutes (0: until turned off)", "default": 60 }] },
+    { "id": "display-off", "name": "Turn the display off" },
+    { "id": "lock", "name": "Lock the screen" }
+  ],
+  "main": "src/index.ts"
+}

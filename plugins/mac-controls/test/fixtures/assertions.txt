@@ -1,0 +1,12 @@
+   pid 22827(caffeinate): [0x0003207f0001a541] 00:03:17 PreventUserIdleSystemSleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting for 300 secs
+	Localized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.
+	Timeout will fire in 102 secs Action=TimeoutActionRelease
+   pid 26393(caffeinate): [0x0003208c0001a544] 00:03:04 PreventUserIdleSystemSleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting for 300 secs
+	Localized=THE CAFFEINATE TOOL IS PREVENTING SLEEP.
+	Timeout will fire in 116 secs Action=TimeoutActionRelease
+   pid 4242(caffeinate): [0x000320860001a600] 00:00:03 PreventUserIdleDisplaySleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting for 3600 secs
+   pid 361(powerd): [0x000314d900019dfe] 00:50:08 PreventUserIdleSystemSleep named: "Powerd - Prevent sleep while display is on"  
+   pid 777(Google Chrome): [0x000314d900019aaa] 00:00:08 PreventUserIdleDisplaySleep named: "Playing video"  

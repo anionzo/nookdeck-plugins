@@ -1,0 +1,106 @@
+import { describe, expect, test } from "bun:test";
+import { join } from "node:path";
+import { createPlugin } from "../src/index";
+import { ASSERTIONS, DARK_MODE, DISPLAY_OFF, LOCK, awakeCommand, awakeLabel, buildCard, checkMinutes, displayCaffeinates, failure, stopCommand } from "../src/lib";
+
+const assertions = await Bun.file(join(import.meta.dir, "fixtures/assertions.txt")).text();
+
+describe("parsing and commands", () => {
+  test("only caffeinate processes that keep the display awake count", () => {
+    // the fixture has `caffeinate -i` processes (system sleep only), another app's display assertion and one `caffeinate -d`
+    expect(displayCaffeinates(assertions)).toEqual([4242]);
+  });
+  test("minutes are whole numbers in range, so nothing else reaches a command line", () => {
+    expect(checkMinutes(undefined)).toBe(60);
+    expect(checkMinutes("15")).toBe(15);
+    for (const bad of [-1, 1441, 1.5, "5; rm -rf /", NaN]) expect(() => checkMinutes(bad)).toThrow();
+    expect(awakeCommand(15)).toBe("nohup /usr/bin/caffeinate -d -t 900 -w $PPID >/dev/null 2>&1 & echo $!");
+    expect(awakeCommand(0)).toBe("nohup /usr/bin/caffeinate -d -w $PPID >/dev/null 2>&1 & echo $!");
+    for (const bad of [0, 1, -5, 2.5]) expect(() => stopCommand(bad)).toThrow();
+  });
+  test("labels and permission messages", () => {
+    expect(awakeLabel(null, 0)).toBe("Keep awake");
+    expect(awakeLabel({ pid: 9, until: 0 }, 0)).toBe("Awake");
+    expect(awakeLabel({ pid: 9, until: 42 * 60_000 }, 0)).toBe("Awake 42 min");
+    expect(awakeLabel({ pid: 9, until: 150 * 60_000 }, 0)).toBe("Awake 2 h 30 min");
+    expect(failure("execution error: Not authorized to send Apple events to System Events. (-1743)", "x")).toContain("Automation");
+    expect(failure("System Events got an error: osascript is not allowed to send keystrokes. (1002)", "x")).toContain("Accessibility");
+    expect(failure("", "x")).toBe("x");
+  });
+  test("the card shows the state", () => {
+    const card = JSON.stringify(buildCard({ appearance: "Dark", awake: { pid: 9, until: 0 }, minutes: 30, now: 0 }));
+    expect(card).toContain('"label":"Dark","icon":"moon"');
+    expect(card).toContain('"label":"Awake"');
+    expect(card).toContain('"minutes":30');
+  });
+});
+
+describe("the plugin", () => {
+  const harness = () => {
+    const calls: string[] = [];
+    const store = new Map<string, unknown>();
+    const alive = new Set<number>();
+    const providers: Record<string, any> = {}, handlers: Record<string, any> = {};
+    let clock = 1_000_000, nextPid = 100;
+    let refuse = "";
+    const ctx: any = {
+      log() {},
+      storage: { get: async (k: string) => store.get(k) ?? null, set: async (k: string, v: unknown) => { if (v == null) store.delete(k); else store.set(k, v); } },
+      shell: {
+        run: async (cmd: string) => {
+          calls.push(cmd);
+          if (refuse && cmd.includes("System Events")) return { code: 1, stdout: refuse };
+          if (cmd === ASSERTIONS) return { code: 0, stdout: [...alive].map((p) => `   pid ${p}(caffeinate): [0x1] 00:00:01 PreventUserIdleDisplaySleep named: "caffeinate command-line tool"`).join("\n") };
+          if (cmd.startsWith("nohup")) { alive.add(++nextPid); return { code: 0, stdout: `${nextPid}\n` }; }
+          if (cmd.startsWith("kill ")) { alive.delete(Number(cmd.split(" ")[1])); return { code: 0, stdout: "" }; }
+          if (cmd.includes("AppleInterfaceStyle")) return { code: 0, stdout: "Light\n" };
+          return { code: 0, stdout: "" };
+        },
+      },
+      widgets: { provide: (id: string, fn: unknown) => { providers[id] = fn; } },
+      actions: { handle: (id: string, fn: unknown) => { handlers[id] = fn; } },
+    };
+    createPlugin(() => clock).activate(ctx);
+    return { calls, store, alive, act: (id: string, s: object = {}) => handlers[id](s), card: async () => JSON.stringify(await providers.controls({})), tick: (ms: number) => { clock += ms; }, refuse: (s: string) => { refuse = s; } };
+  };
+
+  test("keep awake turns on and off", async () => {
+    const h = harness();
+    await h.act("keep-awake", { minutes: 10 });
+    expect(await h.card()).toContain("Awake 10 min");
+    await h.act("keep-awake", { minutes: 10 });
+    expect(h.alive.size).toBe(0);
+    expect(await h.card()).toContain("Keep awake");
+  });
+  test("two quick taps do not start two", async () => {
+    const h = harness();
+    await Promise.all([h.act("keep-awake", { minutes: 0 }), h.act("keep-awake", { minutes: 0 })]);
+    expect(h.calls.filter((c) => c.startsWith("nohup")).length).toBe(1);
+    expect(h.alive.size).toBe(0);
+  });
+  test("a caffeinate that ended is forgotten, and its pid is never killed", async () => {
+    const h = harness();
+    await h.act("keep-awake", { minutes: 5 });
+    h.alive.clear(); // it ended, and the pid may now belong to anything
+    expect(await h.card()).toContain("Keep awake");
+    expect(h.store.size).toBe(0);
+    await h.act("keep-awake", { minutes: 5 });
+    expect(h.calls.some((c) => c.startsWith("kill "))).toBe(false);
+  });
+  test("a refused permission is thrown and written on the card for a minute", async () => {
+    const h = harness();
+    h.refuse("execution error: Not authorized to send Apple events to System Events. (-1743)");
+    await expect(h.act("dark-mode", { mode: "toggle" })).rejects.toThrow("Automation");
+    expect(await h.card()).toContain("Automation");
+    h.tick(61_000);
+    expect(await h.card()).not.toContain("Automation");
+  });
+  test("each button runs its fixed command", async () => {
+    const h = harness();
+    await h.act("dark-mode", { mode: "light" });
+    await h.act("display-off");
+    await h.act("lock");
+    expect(h.calls).toEqual([DARK_MODE.light, DISPLAY_OFF, LOCK]);
+    await expect(h.act("dark-mode", { mode: "x'; true" })).rejects.toThrow("toggle, light or dark");
+  });
+});
