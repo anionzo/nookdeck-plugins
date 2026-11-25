@@ -3,11 +3,11 @@
     "id": "dev.nookdeck.batteries",
     "name": "Batteries",
     "author": "Nookdeck",
-    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/batteries",
-    "version": "1.0.0",
-    "sha256": "24c6210ab0fa429cb041c8358716f5f05ed5b2813be53ea0688dfbe744100b31",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/d4c0f02c79b4898460d6ba55cf34ac728c901fe5/plugins/batteries",
+    "version": "1.0.1",
+    "sha256": "79a9b680de4b7620973d966d63f48238d1039f647ea98621d7d328f07ab7c582",
     "description": "Battery of your Mac, Magic keyboard, mouse and trackpad, and AirPods",
-    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/batteries/preview.png",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/d4c0f02c79b4898460d6ba55cf34ac728c901fe5/plugins/batteries/preview.png",
     "permissions": {
       "shell": true
     },
@@ -110,11 +110,11 @@
     "id": "dev.nookdeck.shortcuts",
     "name": "Apple Shortcuts",
     "author": "Nookdeck",
-    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/shortcuts",
-    "version": "1.0.0",
-    "sha256": "76a5dd502d6dc9457b5cc727ae04ddefc90c957c03280ddea5e1ab46861700ab",
+    "repo": "https://github.com/howznguyen/nookdeck-plugins/tree/d4c0f02c79b4898460d6ba55cf34ac728c901fe5/plugins/shortcuts",
+    "version": "1.0.1",
+    "sha256": "a03411badd221a1986207aad112d856c1ff4e72b2836996bde7212bb5b14d340",
     "description": "Run your Apple Shortcuts from the phone",
-    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/shortcuts/preview.png",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/d4c0f02c79b4898460d6ba55cf34ac728c901fe5/plugins/shortcuts/preview.png",
     "permissions": {
       "shell": true
     },
