@@ -40,9 +40,14 @@ Browse them with previews at [nookdeck.app/plugins](https://nookdeck.app/plugins
 
 | Plugin | Version | What it does | Permissions |
 |---|---|---|---|
+| [Batteries](plugins/batteries) | 1.0.0 | Battery of your Mac, Magic keyboard, mouse and trackpad, and AirPods | shell |
+| [Calendar](plugins/calendar) | 1.0.0 | Your next events from Google, iCloud and Outlook calendar links | network: calendar.google.com, *.icloud.com, outlook.live.com, outlook.office365.com, outlook.office.com |
 | [Clipboard snippets](plugins/clipboard-snippets) | 1.0.0 | Buttons that copy a saved piece of text to the clipboard | shell |
 | [Crypto price](plugins/crypto-price) | 1.0.1 | Live price of a coin from CoinGecko, as a stat tile | network: api.coingecko.com |
 | [GitHub stars](plugins/github-stars) | 1.1.0 | Star count of a GitHub repository, with a short history | network: api.github.com, storage |
+| [Mac controls](plugins/mac-controls) | 1.0.0 | Dark mode, keep awake, display off and lock, from the phone | shell, storage |
+| [Pomodoro](plugins/pomodoro) | 1.0.0 | A focus timer that keeps time on the computer while the phone sleeps | storage |
+| [Apple Shortcuts](plugins/shortcuts) | 1.0.0 | Run your Apple Shortcuts from the phone | shell |
 | [Uptime ping](plugins/uptime-ping) | 1.1.0 | Checks whether a web address answers, and how fast | network: nookdeck.app, storage |
 
 ## Listed themes
