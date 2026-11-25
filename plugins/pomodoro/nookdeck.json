@@ -1,0 +1,44 @@
+{
+  "$schema": "https://nookdeck.app/schema/plugin.json",
+  "id": "dev.nookdeck.pomodoro",
+  "name": "Pomodoro",
+  "version": "1.0.0",
+  "nookdeck": ">=0.5.0",
+  "author": "Nookdeck",
+  "description": "A focus timer that keeps time on the computer while the phone sleeps",
+  "icon": "clock",
+  "permissions": { "storage": true },
+  "settings": [
+    { "key": "focus", "type": "number", "label": "Focus (minutes)", "default": 25 },
+    { "key": "break", "type": "number", "label": "Break (minutes)", "default": 5 }
+  ],
+  "widgets": [
+    {
+      "id": "timer",
+      "name": "Pomodoro",
+      "render": "card",
+      "sizes": ["2x1", "2x2", "4x2"],
+      "preview": { "root": { "t": "col", "gap": 1, "children": [
+        { "t": "row", "gap": 1, "align": "between", "children": [
+          { "t": "pill", "text": "Focus", "tone": "accent" },
+          { "t": "text", "text": "3 today", "size": "s", "tone": "muted" }
+        ] },
+        { "t": "number", "value": "18:24", "size": "xl" },
+        { "t": "progress", "value": 0.26, "tone": "accent" },
+        { "t": "row", "gap": 1, "children": [
+          { "t": "button", "label": "Pause", "icon": "player-pause", "action": "toggle", "active": true },
+          { "t": "button", "label": "Skip", "icon": "player-skip-forward", "action": "skip" },
+          { "t": "button", "label": "Reset", "icon": "refresh", "action": "reset" }
+        ] }
+      ] } },
+      "settings": [],
+      "source": { "agent": { "every": 5 } }
+    }
+  ],
+  "actions": [
+    { "id": "toggle", "name": "Start or pause" },
+    { "id": "skip", "name": "Skip to the next phase" },
+    { "id": "reset", "name": "Reset this phase" }
+  ],
+  "main": "src/index.ts"
+}
