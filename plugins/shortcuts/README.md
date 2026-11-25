@@ -48,6 +48,23 @@ Choose any other Focus (Work, Sleep) in the same action. For a single button, se
 
 **Set Brightness** changes the Mac's own display. Most external monitors do not follow it.
 
-Each button shows one icon above the name; long names take two lines. macOS does not give the shortcut's own color and icon to this plugin.
+Each button shows an icon above the name; long names take two lines. macOS does not give this plugin the shortcut's own color and icon, so the icon is guessed from whole words in the name, in English or Vietnamese. The first line that matches wins:
+
+| Words in the name | Icon |
+|---|---|
+| translate, dịch | globe |
+| sleep, bedtime, night, ngủ | moon |
+| wake, morning, thức dậy | sun |
+| camera, screenshot, chụp màn hình | camera |
+| photo, image, picture, ảnh | picture |
+| music, play, playlist, song, nhạc | music note |
+| timer, focus, pomodoro, alarm, hẹn giờ, tập trung | clock |
+| mail, email, inbox | envelope |
+| message, text, SMS, tin nhắn | message |
+| VPN, Shadowrocket, network, proxy, Wi-Fi, mạng | globe |
+| note, ghi chú | page |
+| script, run, terminal, shell | terminal |
+| open, app, mở, ứng dụng | app window |
+| anything else | bolt |
 
 Needs Nookdeck 0.5.1 or later.

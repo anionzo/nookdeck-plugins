@@ -3,7 +3,7 @@ import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createPlugin } from "../src/index";
-import { STILL_RUNNING, buildCard, gridFor, checkName, errorText, listCommand, parseLines, parseNames, pickNames, quote, runCommand } from "../src/lib";
+import { STILL_RUNNING, buildCard, gridFor, iconFor, checkName, errorText, listCommand, parseLines, parseNames, pickNames, quote, runCommand } from "../src/lib";
 
 const NASTY = ["Start focus", "What’s a shortcut?", "Say \"hi\"", "Bob's lamp", "Ảnh này được chụp ở đâu?", "$(touch pwned) `id` ; & | > x", "-h", "--input-path", "emoji 🎧 mix", "back\\slash", "*"];
 
@@ -37,13 +37,15 @@ describe.if(posix)("the command line, run by a real /bin/sh with a stand-in for 
     expect(r.code).toBe(1);
     expect(errorText(r.stdout, "x")).toBe("The operation couldn’t be completed. Couldn’t find shortcut");
   });
-  test("a slow shortcut is left running and finishes later", async () => {
-    const slow = stub("slow", `sleep 1; touch "${dir}/finished"`);
+  test("a slow shortcut is left running and finishes later", { timeout: 15_000 }, async () => {
+    // slower by far than the 0.4 s the command waits, so a busy machine does not fail the test
+    const slow = stub("slow", `sleep 3; touch "${dir}/finished"`);
     const started = Date.now();
     const r = await sh(runCommand("slow one", slow, 2));
-    expect(Date.now() - started).toBeLessThan(900);
+    expect(Date.now() - started).toBeLessThan(2800);
     expect(r).toEqual({ code: 0, stdout: `${STILL_RUNNING}\n` });
-    await Bun.sleep(1200);
+    expect(await Bun.file(join(dir, "finished")).exists()).toBe(false);
+    await Bun.sleep(3200);
     expect(await Bun.file(join(dir, "finished")).exists()).toBe(true);
   });
 });
@@ -117,10 +119,26 @@ describe("the grid", () => {
     expect(at(4, 2, { columns: 1, max: 4 })).toEqual({ columns: 1, max: 4 });
   });
   test("tile buttons with one icon; the count only on tiles three cells high or more", () => {
-    const names = ["a", "b", "c", "d", "e", "f", "g"];
+    const names = ["a", "b", "c", "d", "e", "f", "g"]; // no keyword: the bolt
     const small = JSON.stringify(buildCard(names, {}, { w: 2, h: 2 }));
     expect(small).toContain('"icon":"bolt","layout":"tile"');
     expect(small).not.toContain("more");
     expect(JSON.stringify(buildCard(names, {}, { w: 2, h: 3 }))).toContain("+1 more");
   });
 });
+
+describe("icons by name", () => {
+  test("whole words, English and Vietnamese, the first rule that matches", () => {
+    const of = (names: string[]) => names.map(iconFor);
+    expect(of(["Easydict-Translate-V1.2.0", "Dịch đoạn này", "Mac sleep", "Giờ đi ngủ", "Mac wake", "Good night"])).toEqual(["world", "world", "moon", "moon", "sun", "moon"]);
+    expect(of(["Run Script", "Open terminal", "Ảnh này được chụp ở đâu?", "Take Screenshot", "Resize images", "Morning playlist"])).toEqual(["terminal-2", "terminal-2", "photo", "camera", "photo", "sun"]);
+    expect(of(["Play music", "Start focus", "Hẹn giờ 5 phút", "Check email", "Text mom", "Gửi tin nhắn", "Start Shadowrocket", "VPN on", "Standup notes", "Ghi chú nhanh", "Open Today"])).toEqual(["music", "clock", "clock", "mail", "message", "message", "world", "world", "file-text", "file-text", "app-window"]);
+  });
+  test("a word inside another word does not count; anything else gets the bolt", () => {
+    for (const name of ["Happy birthday", "Brunch order", "Notification test", "Displayport", "New Shortcut", "Log water", "🎧", ""]) expect(iconFor(name)).toBe("bolt");
+  });
+  test("names that arrive decomposed still match", () => {
+    expect(iconFor("Ảnh mới".normalize("NFD"))).toBe("photo");
+  });
+});
+

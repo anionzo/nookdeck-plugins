@@ -62,6 +62,33 @@ export function pickNames(all: string[], wanted: string[]): { found: string[]; m
 /** The tile's size in grid cells. Nookdeck tells it from 0.5.1. */
 export interface TileSize { w: number; h: number }
 export const ICON = "bolt";
+/**
+ * An icon for a shortcut, guessed from whole words of its name (English, and Vietnamese where it is clear). The first line
+ * that matches wins. macOS does not tell a plugin the shortcut's own icon. Only icons Nookdeck's cards have built in.
+ */
+export const ICONS: ReadonlyArray<readonly [icon: string, words: string]> = [
+  ["world", "translate|translator|translation|dịch"],
+  ["moon", "sleep|bedtime|night|ngủ"],
+  ["sun", "wake|morning|thức dậy"],
+  ["camera", "camera|screenshot|chụp màn hình"],
+  ["photo", "photo|photos|image|images|picture|pictures|ảnh"],
+  ["music", "music|play|playlist|song|songs|nhạc"],
+  ["clock", "timer|timers|focus|pomodoro|alarm|hẹn giờ|tập trung"],
+  ["mail", "mail|email|e mail|gmail|inbox"],
+  ["message", "message|messages|text|sms|tin nhắn|nhắn tin"],
+  ["world", "vpn|shadowrocket|network|proxy|wifi|mạng"],
+  ["file-text", "note|notes|ghi chú"],
+  ["terminal-2", "script|scripts|run|terminal|shell"],
+  ["app-window", "open|app|apps|mở|ứng dụng"],
+];
+
+/** the words of a name, one space around each, so a word is only ever matched whole */
+const words = (s: string): string => ` ${s.normalize("NFC").toLowerCase().split(/[^\p{L}\p{M}\p{N}]+/u).filter(Boolean).join(" ")} `;
+
+export function iconFor(name: string): string {
+  const said = words(name);
+  return ICONS.find(([, list]) => list.split("|").some((w) => said.includes(words(w))))?.[0] ?? ICON;
+}
 export const MAX_COLUMNS = 6;
 export const MAX_ROWS = 4;
 
@@ -88,7 +115,7 @@ export function buildCard(names: string[], o: { columns?: number; max?: number; 
   while (parts(shown.length) > 55) shown = shown.slice(0, -1);
   const children: CardNode[] = [];
   for (let i = 0; i < shown.length; i += columns) {
-    const cells: CardNode[] = shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, icon: ICON, layout: "tile", action: "run", args: { name } }) as CardNode);
+    const cells: CardNode[] = shown.slice(i, i + columns).map((name) => ({ t: "button", label: name, icon: iconFor(name), layout: "tile", action: "run", args: { name } }) as CardNode);
     // a short last row keeps the width of the buttons above it
     while (i > 0 && cells.length < columns) cells.push({ t: "col", grow: true, children: [] });
     children.push({ t: "row", gap: 1, grow: true, children: cells });

@@ -16,12 +16,12 @@
       "sizes": ["2x1", "2x2", "4x2"],
       "preview": { "root": { "t": "col", "gap": 1, "children": [
         { "t": "row", "gap": 1, "grow": true, "children": [
-          { "t": "button", "label": "Start focus", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Start focus" } },
-          { "t": "button", "label": "Open Today", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Open Today" } }
+          { "t": "button", "label": "Start focus", "icon": "clock", "layout": "tile", "action": "run", "args": { "name": "Start focus" } },
+          { "t": "button", "label": "Open Today", "icon": "app-window", "layout": "tile", "action": "run", "args": { "name": "Open Today" } }
         ] },
         { "t": "row", "gap": 1, "grow": true, "children": [
           { "t": "button", "label": "Take a break", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Take a break" } },
-          { "t": "button", "label": "Backup notes", "icon": "bolt", "layout": "tile", "action": "run", "args": { "name": "Backup notes" } }
+          { "t": "button", "label": "Backup notes", "icon": "file-text", "layout": "tile", "action": "run", "args": { "name": "Backup notes" } }
         ] }
       ] } },
       "settings": [
