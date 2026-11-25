@@ -3,7 +3,7 @@
   "id": "dev.nookdeck.pomodoro",
   "name": "Pomodoro",
   "version": "1.0.0",
-  "nookdeck": ">=0.5.0",
+  "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "A focus timer that keeps time on the computer while the phone sleeps",
   "icon": "clock",
@@ -18,21 +18,7 @@
       "name": "Pomodoro",
       "render": "card",
       "sizes": ["2x1", "2x2", "4x2"],
-      "preview": { "root": { "t": "col", "gap": 1, "children": [
-        { "t": "row", "gap": 1, "align": "between", "children": [
-          { "t": "pill", "text": "Focus", "tone": "accent" },
-          { "t": "text", "text": "3 today", "size": "s", "tone": "muted" }
-        ] },
-        { "t": "row", "gap": 2, "align": "between", "children": [
-          { "t": "number", "value": "18:24", "size": "xl" },
-          { "t": "button", "label": "", "icon": "player-pause", "action": "toggle", "active": true }
-        ] },
-        { "t": "progress", "value": 0.26, "tone": "accent" },
-        { "t": "row", "gap": 1, "children": [
-          { "t": "button", "label": "Skip", "action": "skip" },
-          { "t": "button", "label": "Reset", "action": "reset" }
-        ] }
-      ] } },
+      "preview": {"root": {"t": "col", "gap": 1, "children": [{"t": "ring", "value": 0.26, "tone": "accent", "text": "18:24", "size": "l", "label": "Focus · 3 today"}, {"t": "row", "gap": 1, "children": [{"t": "button", "label": "", "icon": "refresh", "action": "reset"}, {"t": "button", "label": "Pause", "action": "toggle", "tone": "accent", "active": true}, {"t": "button", "label": "", "icon": "player-skip-forward", "action": "skip"}]}]}},
       "settings": [],
       "source": { "agent": { "every": 5 } }
     }

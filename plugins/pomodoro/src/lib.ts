@@ -90,27 +90,50 @@ export function clock(ms: number): string {
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
 
-export function buildCard(state: State, days: Days, len: Lengths, now: number) {
+/** A tile's size in grid cells. */
+export interface Tile { w: number; h: number }
+
+/**
+ * The timer as a ring: the time left in the middle, the arc filling as the phase runs. A tile at least twice as wide as it is
+ * high has the ring on the left and the buttons beside it; a squarer one has the ring on top. Without a size (the preview, an
+ * older Nookdeck) it takes the square one.
+ */
+export function buildCard(state: State, days: Days, len: Lengths, now: number, tile?: Tile) {
   const { left, total } = remaining(state, len, now);
   const tone = state.phase === "focus" ? "accent" : "ok";
   const running = state.status === "running";
-  return {
-    root: { t: "col", gap: 1, children: [
-      { t: "row", gap: 1, align: "between", children: [
-        { t: "pill", text: state.phase === "focus" ? "Focus" : "Break", tone },
-        { t: "text", text: `${days[dayKey(now)] ?? 0} today`, size: "s", tone: "muted" },
-      ] },
-      // A short tile drops the end of a column first (a 2x1 shows down to about here): the time and its main button come early,
-      // and the main button is an icon so it fits beside the time.
-      { t: "row", gap: 2, align: "between", children: [
-        { t: "number", value: clock(left), size: "xl", ...(state.status === "paused" ? { tone: "muted" } : {}) },
-        { t: "button", label: "", icon: running ? "player-pause" : "player-play", action: "toggle", ...(running ? { active: true } : {}) },
-      ] },
-      { t: "progress", value: Math.round(Math.min(1, Math.max(0, 1 - left / total)) * 1000) / 1000, tone },
-      { t: "row", gap: 1, children: [
-        { t: "button", label: "Skip", action: "skip" },
-        { t: "button", label: "Reset", action: "reset" },
-      ] },
-    ] },
+  const paused = state.status === "paused";
+  const phase = state.phase === "focus" ? "Focus" : "Break";
+  const count = `${days[dayKey(now)] ?? 0} today`;
+  const said = `${paused ? `${phase} paused` : phase} · ${count}`;
+  const ring = {
+    t: "ring", value: Math.round(Math.min(1, Math.max(0, 1 - left / total)) * 1000) / 1000,
+    tone: paused ? "muted" : tone, text: clock(left), size: "l",
   };
+  const icon = running ? "player-pause" : "player-play";
+  // filled in the phase's colour both ways, so it is the one button that stands out
+  const main = (label: string, withIcon = true) => ({ t: "button", label, ...(withIcon ? { icon } : {}), action: "toggle", tone, active: true });
+  const word = running ? "Pause" : paused ? "Resume" : "Start";
+  const reset = { t: "button", label: "", icon: "refresh", action: "reset" };
+  const skipIt = { t: "button", label: "", icon: "player-skip-forward", action: "skip" };
+
+  if (!tile || tile.w < tile.h * 2) {
+    return { root: { t: "col", gap: 1, children: [
+      { ...ring, label: said },
+      // between two icon buttons there is room for the word or an icon, not both: "Paused" is said under the ring
+      { t: "row", gap: 1, children: [reset, main(running ? "Pause" : "Start", false), skipIt] },
+    ] } };
+  }
+  const side = tile.h <= 1
+    // one row high: two short lines beside the ring, with room for the phase's name and two buttons
+    ? [{ t: "text", text: paused ? "Paused" : phase, size: "s", tone: "muted" }, { t: "row", gap: 1, children: [main(""), skipIt] }]
+    : [
+        { t: "row", gap: 1, align: "between", children: [{ t: "pill", text: paused ? `${phase} paused` : phase, tone }, { t: "text", text: count, size: "s", tone: "muted" }] },
+        { t: "row", children: [main(word)] },
+        { t: "row", gap: 1, children: [
+          { t: "button", label: "Reset", action: "reset" },
+          { t: "button", label: "Skip", action: "skip" },
+        ] },
+      ];
+  return { root: { t: "row", gap: 2, children: [ring, { t: "col", gap: 1, grow: true, children: side }] } };
 }

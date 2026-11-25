@@ -1,5 +1,5 @@
 import type { PluginContext, PluginModule } from "@nookdeck/plugin";
-import { buildCard, lengths, readDays, readState, reset, settle, skip, toggle, type Days, type Lengths, type State } from "./lib";
+import { buildCard, lengths, readDays, readState, reset, settle, skip, toggle, type Days, type Lengths, type State, type Tile } from "./lib";
 
 /** A tap that arrives just after the phase ran out was meant for the old card: it must not start the next phase. */
 export const LATE_TAP_MS = 2_000;
@@ -45,16 +45,17 @@ export function createPlugin(env: Env = real): PluginModule {
         stopTick = env.every(() => {
           void locked(async () => {
             const { state, days } = await load();
-            ctx.widgets.push("timer", { render: "card", data: buildCard(state, days, len(), env.now()) });
+            // each tile gets the layout for its own size
+            ctx.widgets.push("timer", (tile?: Tile) => ({ render: "card" as const, data: buildCard(state, days, len(), env.now(), tile) }));
             follow(state);
           }).catch((err) => ctx.log("tick failed:", err instanceof Error ? err.message : err));
         }, 1000);
       }
 
-      ctx.widgets.provide("timer", () => locked(async () => {
+      ctx.widgets.provide("timer", (_settings: unknown, tile?: Tile) => locked(async () => {
         const { state, days } = await load();
         follow(state);
-        return { render: "card", data: buildCard(state, days, len(), env.now()) };
+        return { render: "card", data: buildCard(state, days, len(), env.now(), tile) };
       }), { every: 5 });
 
       const on = (id: string, change: (s: State) => State) => ctx.actions.handle(id, () => locked(async () => {

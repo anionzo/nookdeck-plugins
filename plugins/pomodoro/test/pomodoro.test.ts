@@ -50,12 +50,33 @@ describe("the timer", () => {
   test("the clock rounds up", () => {
     expect([clock(25 * MIN), clock(24 * MIN + 59_001), clock(1), clock(0), clock(120 * MIN)]).toEqual(["25:00", "25:00", "00:01", "00:00", "120:00"]);
   });
-  test("the card says what the buttons will do", () => {
-    const find = (s: State) => JSON.stringify(buildCard(s, { "2026-11-25": 3 }, len, at(25, 9)));
-    expect(find(START)).toContain('"icon":"player-play","action":"toggle"');
-    expect(find(START)).toContain('"text":"3 today"');
-    expect(find(toggle(START, len, at(25, 9)))).toContain('"icon":"player-pause","action":"toggle","active":true');
-    expect(find({ phase: "break", status: "paused", left: MIN, total: 5 * MIN })).toContain('"tone":"muted"},{"t":"button","label":"","icon":"player-play"');
+  test("the ring shows the time left and how far the phase is", () => {
+    const running = toggle(START, len, at(25, 9));
+    const root = buildCard(running, { "2026-11-25": 3 }, len, at(25, 9, 10), { w: 2, h: 2 }).root as any;
+    expect(root.children[0]).toEqual({ t: "ring", value: 0.4, tone: "accent", text: "15:00", size: "l", label: "Focus · 3 today" });
+    const paused = buildCard({ phase: "break", status: "paused", left: MIN, total: 5 * MIN }, {}, len, at(25, 9), { w: 2, h: 2 }).root as any;
+    expect(paused.children[0]).toMatchObject({ value: 0.8, tone: "muted", text: "01:00", label: "Break paused · 0 today" });
+    expect((buildCard(toggle(skip(START), len, at(25, 9)), {}, len, at(25, 9)).root as any).children[0].tone).toBe("ok");
+  });
+  test("the main button says what it will do and stands out", () => {
+    const find = (s: State) => JSON.stringify(buildCard(s, {}, len, at(25, 9), { w: 2, h: 2 }));
+    expect(find(START)).toContain('"label":"Start","action":"toggle","tone":"accent","active":true');
+    expect(find(toggle(START, len, at(25, 9)))).toContain('"label":"Pause","action":"toggle"');
+    const resting: State = { phase: "break", status: "paused", left: MIN, total: 5 * MIN };
+    expect(find(resting)).toContain('"label":"Start","action":"toggle","tone":"ok"');
+    expect(JSON.stringify(buildCard(resting, {}, len, at(25, 9), { w: 4, h: 2 }))).toContain('"label":"Resume","icon":"player-play"');
+  });
+  test("the tile's size chooses where the ring goes", () => {
+    const build = (w: number, h: number) => buildCard(START, { "2026-11-25": 3 }, len, at(25, 9), { w, h }).root as any;
+    expect([build(2, 2).t, build(2, 1).t, build(4, 2).t]).toEqual(["col", "row", "row"]);
+    for (const [w, h] of [[2, 1], [2, 2], [4, 2]] as const) {
+      const json = JSON.stringify(build(w, h));
+      for (const action of h === 1 ? ["toggle", "skip"] : ["toggle", "skip", "reset"]) expect(json).toContain(`"action":"${action}"`);
+      expect(json).toContain(h === 1 ? '"text":"Focus"' : "3 today");
+    }
+    expect(build(2, 1).children[1].children).toHaveLength(2);
+    expect(JSON.stringify(build(4, 2))).toContain('"t":"pill","text":"Focus"');
+    expect((buildCard(START, {}, len, at(25, 9)).root as any).t).toBe("col");
   });
 });
 
@@ -63,7 +84,7 @@ describe("the timer", () => {
 function harness(store = new Map<string, unknown>(), clockRef = { now: at(25, 9) }) {
   const pushes: any[] = [];
   const acts: Record<string, (s: any) => any> = {};
-  let provide: () => Promise<any> = async () => null;
+  let provide: (tile?: { w: number; h: number }) => Promise<any> = async () => null;
   let tick: (() => void) | null = null;
   const plugin = createPlugin({ now: () => clockRef.now, every: (fn) => { tick = fn; return () => { tick = null; }; } });
   void plugin.activate({
@@ -71,7 +92,7 @@ function harness(store = new Map<string, unknown>(), clockRef = { now: at(25, 9)
     settings: { get: () => ({ focus: 25, break: 5 }) },
     storage: { get: async (k: string) => store.get(k) ?? null, set: async (k: string, v: unknown) => { store.set(k, structuredClone(v)); } },
     net: { fetch: async () => { throw new Error("no network"); } },
-    widgets: { provide: (_id: string, fn: any) => { provide = () => fn({}); }, push: (_id: string, u: any) => pushes.push(u) },
+    widgets: { provide: (_id: string, fn: any) => { provide = (tile) => fn({}, tile ?? { w: 2, h: 2 }); }, push: (_id: string, u: any) => pushes.push(typeof u === "function" ? { wide: u({ w: 4, h: 2 }), square: u({ w: 2, h: 2 }) } : u) },
     actions: { handle: (id: string, fn: any) => { acts[id] = fn; } },
   } as any);
   const settleTicks = () => new Promise((r) => setTimeout(r, 5));
@@ -93,7 +114,9 @@ describe("the plugin", () => {
     expect(h.ticking()).toBe(true);
     h.clockRef.now += 1000;
     await h.tick();
-    expect(JSON.stringify(h.pushes.at(-1))).toContain('"value":"24:59"');
+    expect(h.pushes.at(-1).square.data.root.t).toBe("col");
+    expect(h.pushes.at(-1).wide.data.root.t).toBe("row");
+    expect(JSON.stringify(h.pushes.at(-1))).toContain('"text":"24:59"');
     await h.act("toggle");
     expect(h.ticking()).toBe(false);
   });
@@ -105,9 +128,9 @@ describe("the plugin", () => {
     a.clockRef.now += 40 * MIN;
     const b = harness(a.store, a.clockRef);
     const card = await b.card();
-    expect(card).toContain('"text":"Break"');
-    expect(card).toContain('"text":"1 today"');
-    expect(await b.card()).toContain('"text":"1 today"');
+    expect(card).toContain('"label":"Break · 1 today"');
+    expect(card).toContain('1 today"');
+    expect(await b.card()).toContain('1 today"');
     expect(b.ticking()).toBe(false);
   });
 
@@ -117,7 +140,7 @@ describe("the plugin", () => {
     a.plugin.deactivate!();
     a.clockRef.now += 10 * MIN;
     const b = harness(a.store, a.clockRef);
-    expect(await b.card()).toContain('"value":"15:00"');
+    expect(await b.card()).toContain('"text":"15:00"');
     expect(b.ticking()).toBe(true);
   });
 
