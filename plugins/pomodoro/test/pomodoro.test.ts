@@ -55,7 +55,7 @@ describe("the timer", () => {
     const root = buildCard(running, { "2026-11-25": 3 }, len, at(25, 9, 10), { w: 2, h: 2 }).root as any;
     expect(root.children[0]).toEqual({ t: "ring", value: 0.4, tone: "accent", text: "15:00", size: "l", label: "Focus · 3 today" });
     const paused = buildCard({ phase: "break", status: "paused", left: MIN, total: 5 * MIN }, {}, len, at(25, 9), { w: 2, h: 2 }).root as any;
-    expect(paused.children[0]).toMatchObject({ value: 0.8, tone: "muted", text: "01:00", label: "Break paused · 0 today" });
+    expect(paused.children[0]).toMatchObject({ value: 0.8, tone: "muted", text: "01:00", label: "Paused · 0 today" });
     expect((buildCard(toggle(skip(START), len, at(25, 9)), {}, len, at(25, 9)).root as any).children[0].tone).toBe("ok");
   });
   test("the main button says what it will do and stands out", () => {

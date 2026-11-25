@@ -105,7 +105,9 @@ export function buildCard(state: State, days: Days, len: Lengths, now: number, t
   const paused = state.status === "paused";
   const phase = state.phase === "focus" ? "Focus" : "Break";
   const count = `${days[dayKey(now)] ?? 0} today`;
-  const said = `${paused ? `${phase} paused` : phase} · ${count}`;
+  // "Paused" stands in for the phase's name: both together do not fit. The main button keeps the phase's colour.
+  const name = paused ? "Paused" : phase;
+  const said = `${name} · ${count}`;
   const ring = {
     t: "ring", value: Math.round(Math.min(1, Math.max(0, 1 - left / total)) * 1000) / 1000,
     tone: paused ? "muted" : tone, text: clock(left), size: "l",
@@ -126,9 +128,9 @@ export function buildCard(state: State, days: Days, len: Lengths, now: number, t
   }
   const side = tile.h <= 1
     // one row high: two short lines beside the ring, with room for the phase's name and two buttons
-    ? [{ t: "text", text: paused ? "Paused" : phase, size: "s", tone: "muted" }, { t: "row", gap: 1, children: [main(""), skipIt] }]
+    ? [{ t: "text", text: name, size: "s", tone: "muted" }, { t: "row", gap: 1, children: [main(""), skipIt] }]
     : [
-        { t: "row", gap: 1, align: "between", children: [{ t: "pill", text: paused ? `${phase} paused` : phase, tone }, { t: "text", text: count, size: "s", tone: "muted" }] },
+        { t: "row", gap: 1, align: "between", children: [{ t: "pill", text: name, tone }, { t: "text", text: count, size: "s", tone: "muted" }] },
         { t: "row", children: [main(word)] },
         { t: "row", gap: 1, children: [
           { t: "button", label: "Reset", action: "reset" },
