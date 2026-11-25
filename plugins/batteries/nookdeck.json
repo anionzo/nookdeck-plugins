@@ -13,7 +13,7 @@
       "id": "levels",
       "name": "Batteries",
       "render": "card",
-      "sizes": ["1x1", "2x1", "2x2", "4x2"],
+      "sizes": ["2x2", "1x1", "2x1", "4x2"],
       "preview": { "root": { "t": "col", "gap": 2, "children": [
         { "t": "row", "gap": 2, "grow": true, "children": [
           { "t": "ring", "value": 0.95, "tone": "ok", "icon": "device-laptop", "size": "m", "label": "⚡︎ 95%" },
