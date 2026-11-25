@@ -2,7 +2,7 @@
   "$schema": "https://nookdeck.app/schema/plugin.json",
   "id": "dev.nookdeck.batteries",
   "name": "Batteries",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "nookdeck": ">=0.5.1",
   "author": "Nookdeck",
   "description": "Battery of your Mac, Magic keyboard, mouse and trackpad, and AirPods",
@@ -15,20 +15,13 @@
       "render": "card",
       "sizes": ["1x1", "2x1", "2x2", "4x2"],
       "preview": { "root": { "t": "col", "gap": 2, "children": [
-        { "t": "row", "gap": 2, "align": "center", "children": [
-          { "t": "icon", "name": "device-laptop" },
-          { "t": "col", "gap": 0, "grow": true, "children": [ { "t": "text", "text": "This Mac", "size": "s" }, { "t": "progress", "value": 0.95 } ] },
-          { "t": "text", "text": "95%", "bold": true }
+        { "t": "row", "gap": 2, "grow": true, "children": [
+          { "t": "ring", "value": 0.95, "tone": "ok", "icon": "device-laptop", "size": "m", "label": "⚡︎ 95%" },
+          { "t": "ring", "value": 0.18, "tone": "bad", "icon": "mouse", "size": "m", "label": "18%" }
         ] },
-        { "t": "row", "gap": 2, "align": "center", "children": [
-          { "t": "icon", "name": "keyboard" },
-          { "t": "col", "gap": 0, "grow": true, "children": [ { "t": "text", "text": "Magic Keyboard", "size": "s" }, { "t": "progress", "value": 0.62 } ] },
-          { "t": "text", "text": "62%", "bold": true }
-        ] },
-        { "t": "row", "gap": 2, "align": "center", "children": [
-          { "t": "icon", "name": "headphones" },
-          { "t": "col", "gap": 0, "grow": true, "children": [ { "t": "text", "text": "AirPods Pro", "size": "s" }, { "t": "progress", "value": 0.18, "tone": "warn" } ] },
-          { "t": "text", "text": "18%", "bold": true, "tone": "warn" }
+        { "t": "row", "gap": 2, "grow": true, "children": [
+          { "t": "ring", "value": 0.62, "tone": "ok", "icon": "keyboard", "size": "m", "label": "62%" },
+          { "t": "ring", "value": 0.8, "tone": "ok", "icon": "headphones", "size": "m", "label": "80%" }
         ] }
       ] } },
       "settings": [

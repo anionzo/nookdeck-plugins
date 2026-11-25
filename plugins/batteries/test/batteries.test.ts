@@ -188,3 +188,16 @@ describe("the plugin", () => {
     await expect(provider(() => ({ code: 1, stdout: "" }))({})).rejects.toThrow("Could not read any battery");
   });
 });
+
+describe("the manifest's sample", () => {
+  test("is the ring card the plugin builds for four devices, one charging and one low", async () => {
+    const manifest = await Bun.file(join(import.meta.dir, "../nookdeck.json")).json();
+    expect(manifest.widgets[0].preview).toEqual(buildCard([
+      { name: "This Mac", icon: "device-laptop", percent: 95, charging: true, mac: true },
+      { name: "Magic Mouse", icon: "mouse", percent: 18 },
+      { name: "Magic Keyboard", icon: "keyboard", percent: 62 },
+      { name: "Headphones", icon: "headphones", percent: 80 },
+    ], "rings"));
+  });
+});
+
