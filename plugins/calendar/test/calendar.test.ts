@@ -161,17 +161,23 @@ describe("the tile", () => {
       "● | Trip | Sat",
     ]);
     expect(JSON.stringify(card)).toContain('{"t":"pill","text":"All day","tone":"ok"}');
+    expect(JSON.stringify(card)).toContain('"text":"Sat","size":"s","tone":"muted"');
     expect(JSON.stringify(card)).toContain('{"t":"text","text":"●","size":"s","tone":"warn"}');
   });
-  test("a heading stays with its first event, and few events get two lines each", () => {
+  test("one or two events look like any others; only a long title gets a second line", () => {
     const two = [o(local(12, 24), true, 0, "Christmas Eve"), o(local(12, 25), true, 0, "Christmas Day")];
     const parts = (buildCard(two, { ...view, days: 31 }).root as any).children;
-    // "Next in 29 days" stands alone; a plain heading is tied to its event
+    // "Next in 29 days" stands alone, so it stays on a tile too small for the event
     expect(parts.map((n: any) => n.t)).toEqual(["row", "row", "text", "row", "row"]);
+    for (const row of parts.slice(3)) expect(row).toMatchObject({ align: "between", children: [{ t: "row", grow: true }, { t: "text", tone: "muted" }] });
+    const long = o(local(11, 25, 15), false, 0, "Quarterly planning review");
+    const two_lines = (buildCard([long], view).root as any).children[1];
+    expect(two_lines).toMatchObject({ t: "col", children: [{ t: "row", children: [{ text: "●" }, { text: long.title }] }, { t: "row", align: "end", children: [{ text: "15:00" }] }] });
+    // with three events there is no second line
+    expect((buildCard([long, long, long], view).root as any).children[1].align).toBe("between");
+  });
+  test("a heading stays with its first event", () => {
     expect(words((buildCard([o(local(11, 26, 12), false, 0, "Lunch")], view).root as any).children[2])).toEqual(["Tomorrow", "●", "Lunch", "12:00"]);
-    expect(parts[4].children[1]).toMatchObject({ t: "col", children: [{ text: "Christmas Day" }, { t: "pill", text: "25 Dec" }] });
-    const three = (buildCard([...two, o(local(12, 26), true)], { ...view, days: 40 }).root as any).children[4];
-    expect(three.align).toBe("between");
   });
   test("a free day says so, and how far the next event is", () => {
     expect(lines(buildCard([o(local(11, 26, 12), false, 0, "Lunch")], view))).toEqual([

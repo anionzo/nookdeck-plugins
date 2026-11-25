@@ -71,21 +71,23 @@ const away = (n: number) => (n === 1 ? "tomorrow" : `in ${n} days`);
 const title = (o: Occurrence) => (o.title || "(no title)").slice(0, 200);
 const muted = (text: string, more: Node = {}): Node => ({ t: "text", text, size: "s", tone: "muted", ...more });
 
-/** With this many events or fewer there is room for two lines each, so no title is cut to make way for its time. */
+/** With this many events or fewer there is room for a second line. */
 export const ROOMY_MAX = 2;
+/** About the longest title that fits beside a time on the narrowest tile. A card cannot measure text, so this is a count. */
+export const LONG_TITLE = 15;
 
 /**
- * A dot in the calendar's colour and the title on the left, which gives way when there is no room; the time stays in one column
- * on the right. An all-day event has a pill there instead. With room to spare (`roomy`) the time goes under the title.
+ * A dot in the calendar's colour and the title on the left, which gives way when there is no room; the time or the day stays in
+ * one column on the right. An event that is all day today or tomorrow has a pill there. When there is room to spare and the
+ * title is long, the title takes the whole line and the right-hand column moves to a second one.
  */
 function eventRow(o: Occurrence, group: Group, view: View, roomy: boolean): Node {
   const tone = TONES[o.calendar % TONES.length];
   const when = whenText(o, group, view);
-  const time: Node = o.allDay ? { t: "pill", text: when, tone } : when === "Now" ? { t: "text", text: when, size: "s", tone, bold: true } : muted(when);
-  const dot: Node = { t: "text", text: "●", size: "s", tone };
-  const name: Node = { t: "text", text: title(o), size: "s" };
-  if (roomy) return { t: "row", gap: 1, children: [dot, { t: "col", gap: 0, grow: true, children: [name, time] }] };
-  return { t: "row", gap: 2, align: "between", children: [{ t: "row", gap: 1, grow: true, children: [dot, name] }, time] };
+  const time: Node = when === "All day" ? { t: "pill", text: when, tone } : when === "Now" ? { t: "text", text: when, size: "s", tone, bold: true } : muted(when);
+  const lead: Node = { t: "row", gap: 1, grow: true, children: [{ t: "text", text: "●", size: "s", tone }, { t: "text", text: title(o), size: "s" }] };
+  if (roomy && title(o).length > LONG_TITLE) return { t: "col", gap: 0, children: [{ t: "row", children: lead.children }, { t: "row", align: "end", children: [time] }] };
+  return { t: "row", gap: 2, align: "between", children: [lead, time] };
 }
 
 /** Always the top of the tile: what a small tile shows first. */
