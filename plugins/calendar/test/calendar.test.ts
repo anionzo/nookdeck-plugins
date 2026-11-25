@@ -8,7 +8,7 @@ import { createPlugin, FETCH_EVERY_MS, RETRY_MS } from "../src/index";
 import { HOSTS, UNSUPPORTED, checkLink, fetchProblem } from "../src/links";
 import { isAgenda, isWeek, listRows } from "../src/layout";
 import { buildAgenda, monthMarks } from "../src/agenda";
-import { WEEK_EVENTS, buildWeek, dayItems, weekDays } from "../src/week";
+import { WEEK_EVENTS, buildWeek, dayItems, runDates, runs, weekDays } from "../src/week";
 
 process.env.TZ = "Asia/Ho_Chi_Minh"; // the computer's zone in these tests, UTC+7 with no summer time
 
@@ -277,17 +277,40 @@ describe("the week", () => {
     expect(kept.filter((e: any) => e.tone === "muted").length).toBeLessThan(21);
     expect(kept.map((e: any) => e.title)).toContain("b44");
   });
+  test("a quiet week on a tall tile lists what comes after Next, as far as 90 days, runs of one name on one line", () => {
+    const ahead = expand(parseEvents(holidays!), local(11, 30), local(6, 1, 0, 0, 2027), 0).sort((a, b) => a.start - b.start);
+    const culture = expand(parseEvents(holidays!), local(11, 23), local(11, 29, 23, 59), 0);
+    const later = (height: number, week = culture, from = ahead, notes: string[] = []) => {
+      const kids = ((buildWeek(week, view, notes, from, height).root as any).children ?? []) as any[];
+      const at = kids.findIndex((c) => c.text === "Later");
+      return at < 0 ? [] : kids.slice(at + 1).filter((c) => c.t === "row").map((c) => `${c.children[0].text} ${c.children[1].children[0].text}`);
+    };
+    expect(later(4)).toEqual(["25 Dec Christmas Day", "31 Dec International New Year's Eve", "1 Jan International New Year's Day", "4 Feb Tet Holiday", "5 Feb Vietnamese New Year's Eve"]);
+    expect(later(3)).toEqual(["25 Dec Christmas Day"]);
+    expect(later(2)).toEqual([]);
+    expect(later(4, culture, ahead, ["Calendar 2: could not load it"])).toHaveLength(4);
+    expect(runs(ahead).find((r) => r.from === local(2, 7, 0, 0, 2027))).toEqual({ title: "Tet Holiday", from: local(2, 7, 0, 0, 2027), to: local(2, 10, 0, 0, 2027) });
+    expect(runDates(runs(ahead).find((r) => r.from === local(2, 7, 0, 0, 2027))!)).toBe("7-10 Feb");
+    expect(runDates({ title: "x", from: local(12, 30), to: local(1, 2, 0, 0, 2027) })).toBe("30 Dec - 2 Jan");
+    // 90 days with today as the first end on 22 February; a week with timed events keeps its room
+    const on = (title: string, d: number) => ev(title, local(2, d, 0, 0, 2027), 24, { allDay: true });
+    expect(later(4, culture, [ahead[0]!, on("Edge", 22), on("Too far", 23)])).toEqual(["22 Feb Edge"]);
+    expect(later(4, [ev("Past", local(11, 23, 9))])).toEqual([]);
+    // the note stays last
+    const kids = (buildWeek(culture, view, ["a note"], ahead, 4).root as any).children;
+    expect(kids.at(-1).text).toBe("a note");
+  });
   test("a week with nothing left says what is next, and a note goes under the week", () => {
     const next = ev("Christmas Eve", local(12, 24), 24, { allDay: true });
-    const root = buildWeek([ev("Past", local(11, 23, 9))], view, [], next).root as any;
+    const root = buildWeek([ev("Past", local(11, 23, 9))], view, [], [next]).root as any;
     expect(root.children.slice(1)).toEqual([
       { t: "text", text: "Next: Christmas Eve", size: "l", bold: true },
       { t: "text", text: "Thu 24 Dec · in 29 days", bold: true, tone: "accent" },
     ]);
     // a timed one says its time, and the day after this week is counted like any other
-    const monday = (buildWeek([], view, [], ev("Kickoff", local(11, 30, 9))).root as any).children[2];
+    const monday = (buildWeek([], view, [], [ev("Kickoff", local(11, 30, 9))]).root as any).children[2];
     expect(monday.text).toBe("Mon 30 Nov, 09:00 · in 5 days");
-    expect((buildWeek([ev("Soon", local(11, 26, 9))], view, [], next).root as any).t).toBe("week");
+    expect((buildWeek([ev("Soon", local(11, 26, 9))], view, [], [next]).root as any).t).toBe("week");
     expect(text({ children: [(buildWeek([], view, ["Calendar 2: could not load it"]).root as any).children[1]] })).toEqual(["Calendar 2: could not load it"]);
   });
 });

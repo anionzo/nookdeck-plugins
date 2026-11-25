@@ -94,7 +94,7 @@ export function createPlugin(now: () => number = Date.now): PluginModule {
         events.sort((a, b) => a.start - b.start || Number(b.allDay) - Number(a.allDay));
         const between = (a: number, b: number) => read.flatMap((r) => expand(r.events, a, b, r.calendar)).sort((x, y) => x.start - y.start || Number(y.allDay) - Number(x.allDay));
         const ahead = () => between(view.now, windowEnd(view.now, LOOK_AHEAD_DAYS));
-        if (week) return { render: "card", data: buildWeek(events, view, notes, events.some((o) => o.end > view.now) ? undefined : ahead().find((o) => o.start >= to)) };
+        if (week) return { render: "card", data: buildWeek(events, view, notes, events.some((o) => o.end > view.now) ? [] : ahead().filter((o) => o.start >= to), tile!.h) };
         if (isAgenda(tile)) {
           // a list that the days ahead do not fill goes on past them
           const far = windowEnd(view.now, Math.max(FILL_DAYS, view.days));
