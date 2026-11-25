@@ -7,6 +7,7 @@
     "version": "1.0.0",
     "sha256": "24c6210ab0fa429cb041c8358716f5f05ed5b2813be53ea0688dfbe744100b31",
     "description": "Battery of your Mac, Magic keyboard, mouse and trackpad, and AirPods",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/batteries/preview.png",
     "permissions": {
       "shell": true
     },
@@ -22,6 +23,7 @@
     "version": "1.0.0",
     "sha256": "5f24b248c878c858167ecf5543481244647f563a31e602d47019b38e145f0c2d",
     "description": "Your next events from Google, iCloud and Outlook calendar links",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/calendar/preview.png",
     "permissions": {
       "network": [
         "calendar.google.com",
@@ -82,6 +84,7 @@
     "version": "1.0.0",
     "sha256": "0273bd0a49b12c58ca9b4fb8591b32879466010c01b71f1bb0393019f5cbea9f",
     "description": "Dark mode, keep awake, display off and lock, from the phone",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/mac-controls/preview.png",
     "permissions": {
       "shell": true,
       "storage": true
@@ -98,6 +101,7 @@
     "version": "1.0.0",
     "sha256": "7c05e43420dc14dcbacfac092296f3e27561166efe9eb14ec3eecd42ea011890",
     "description": "A focus timer that keeps time on the computer while the phone sleeps",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/pomodoro/preview.png",
     "permissions": {
       "storage": true
     }
@@ -110,6 +114,7 @@
     "version": "1.0.0",
     "sha256": "76a5dd502d6dc9457b5cc727ae04ddefc90c957c03280ddea5e1ab46861700ab",
     "description": "Run your Apple Shortcuts from the phone",
+    "screenshot": "https://raw.githubusercontent.com/howznguyen/nookdeck-plugins/78d136e7039d3ba3158ae08317b64574a6dc4eee/plugins/shortcuts/preview.png",
     "permissions": {
       "shell": true
     },
