@@ -13,9 +13,13 @@ The Mac comes first, then the other devices from the lowest level up. A device t
 
 Green is above 50%, amber from 20% to 50% and red below 20%.
 
+- **Headphones that tell their level to nothing else** (many Sony models, for example) are read from macOS's Bluetooth framework.
+
 ## Access
 
-`shell`: `pmset -g batt`, `ioreg -r -c AppleDeviceManagementHIDEventService -l` and `system_profiler SPBluetoothDataType -json`. All three only read. Their output includes device addresses and serial numbers: the plugin does not save, log or send them. Only names and levels go to the phone.
+`shell`: `pmset -g batt`, `ioreg -r -c AppleDeviceManagementHIDEventService -l`, `system_profiler SPBluetoothDataType -json`, and a short `osascript` (JavaScript) that asks macOS's Bluetooth framework for the levels of connected devices. All four only read. The output of `ioreg` and `system_profiler` includes device addresses and serial numbers: the plugin does not save, log or send them. Only names and levels go to the phone.
+
+The first time, macOS may ask whether Nookdeck may use Bluetooth. If you refuse, or the question is left unanswered, the other three still work; only devices that tell their level through the framework alone are missing.
 
 ## Tile settings
 

@@ -1,7 +1,10 @@
 import type { PluginContext, PluginModule, Settings } from "@nookdeck/plugin";
-import { IOREG, PMSET, PROFILER, buildCard, lookFor, merge, parseBluetooth, parseIoreg, parsePmset, type Device, type TileSize } from "./lib";
+import { IOBT, IOREG, PMSET, PROFILER, buildCard, lookFor, merge, parseIOBluetooth, parseBluetooth, parseIoreg, parsePmset, type Device, type TileSize } from "./lib";
 
-export function createPlugin(): PluginModule {
+/** The first time, macOS may hold the call while it asks about Bluetooth: the tile does not wait longer than this. */
+export const IOBT_WAIT_MS = 5000;
+
+export function createPlugin(iobtWait: number = IOBT_WAIT_MS): PluginModule {
   return {
     activate(ctx: PluginContext) {
       ctx.widgets.provide("levels", async (s: Settings, tile?: TileSize) => {
@@ -20,13 +23,21 @@ export function createPlugin(): PluginModule {
             return empty;
           }
         };
-        const [mac, bluetooth, registry] = await Promise.all([
+        // an extra source: when it fails, is refused or takes too long, the others carry on without a word
+        const extra = async (): Promise<Device[]> => {
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          const late = new Promise<Device[]>((done) => { timer = setTimeout(() => done([]), iobtWait); });
+          const asked = shell.run(IOBT).then((r) => (r.code === 0 ? parseIOBluetooth(r.stdout) : []), () => []);
+          try { return await Promise.race([asked, late]); } finally { clearTimeout(timer); }
+        };
+        const [mac, bluetooth, registry, iobt] = await Promise.all([
           read<Device | null>(PMSET, parsePmset, null),
           read<Device[]>(PROFILER, parseBluetooth, []),
           read<Device[]>(IOREG, parseIoreg, []),
+          extra(),
         ]);
-        if (failed === 3) throw new Error("Could not read any battery");
-        return { render: "card", data: buildCard(merge(s.showMac === false ? null : mac, bluetooth, registry), lookFor(s.style, tile), tile) };
+        if (failed === 3 && !iobt.length) throw new Error("Could not read any battery");
+        return { render: "card", data: buildCard(merge(s.showMac === false ? null : mac, bluetooth, registry, iobt), lookFor(s.style, tile), tile) };
       }, { every: 60 });
     },
   };

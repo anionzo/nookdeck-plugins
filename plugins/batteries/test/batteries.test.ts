@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import { createPlugin } from "../src/index";
-import { IOREG, PMSET, PROFILER, STYLES, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, shortName, budsNote, toneFor, lookFor, BOLT } from "../src/lib";
+import { IOREG, PMSET, PROFILER, STYLES, buildCard, merge, parseBluetooth, parseIoreg, parsePmset, shortName, budsNote, parseIOBluetooth, IOBT, IOBT_SCRIPT, toneFor, lookFor, BOLT } from "../src/lib";
 
 const fx = (f: string) => Bun.file(join(import.meta.dir, "fixtures", f)).text();
-const [pm, ioNone, ioMagic, btNone, btOn, pods] = await Promise.all(["pmset-discharging.txt", "ioreg-internal-only.txt", "ioreg-magic.txt", "bluetooth-none-connected.json", "bluetooth-connected.json", "bluetooth-airpods.json"].map(fx));
+const [pm, ioNone, ioMagic, btNone, btOn, pods, iobt] = await Promise.all(["pmset-discharging.txt", "ioreg-internal-only.txt", "ioreg-magic.txt", "bluetooth-none-connected.json", "bluetooth-connected.json", "bluetooth-airpods.json", "iobluetooth-headset.json"].map(fx));
 
 const line = (state: string, source = "AC Power") => `Now drawing from '${source}'\n -InternalBattery-0 (id=1)\t80%; ${state} present: true\n`;
 
@@ -133,6 +133,34 @@ describe("the card", () => {
   });
 });
 
+describe("IOBluetooth", () => {
+  test("a headset that tells its level only here: one ring's worth, with the headphones icon and its real name", () => {
+    expect(parseIOBluetooth(iobt!)).toEqual([{ name: "WH-1000XM4", icon: "headphones", percent: 80 }]);
+  });
+  test("0 is unknown; sides and case win over a single level; rubbish is nothing", () => {
+    const one = (o: object) => parseIOBluetooth(JSON.stringify([{ name: "AirPods Pro", major: 4, single: 0, left: 0, right: 0, case: 0, combined: 0, ...o }]));
+    expect(one({})).toEqual([]);
+    expect(one({ single: 50, left: 64, right: 71, case: 40 })).toEqual([{ name: "AirPods Pro", icon: "headphones", percent: 64, note: "L 64 · R 71 · Case 40", caseLevel: 40 }]);
+    expect(one({ combined: 55 })[0]!.percent).toBe(55);
+    expect(one({ case: 30 })[0]).toMatchObject({ percent: 30, note: "Case" });
+    expect(parseIOBluetooth("execution error")).toEqual([]);
+  });
+  test("merged by name: the sides are kept, and the nameless entry of the same pair is dropped", () => {
+    const pair = { name: "AirPods Pro", icon: "headphones", percent: 64, note: "L 64 · R 71 · Case 40", caseLevel: 40 };
+    const plain = { name: "AirPods Pro", icon: "headphones", percent: 70 };
+    expect(merge(null, [plain], [], [pair])).toEqual([pair]);
+    expect(merge(null, [pair], [], [plain])).toEqual([pair]);
+    const beacon = { name: "Earbuds", icon: "headphones", percent: 64, note: "L 64 · R 71 · Case 40", caseLevel: 40 };
+    expect(merge(null, [beacon], [], [pair]).map((d) => d.name)).toEqual(["AirPods Pro"]);
+    expect(merge(null, [beacon], [], parseIOBluetooth(iobt!)).map((d) => d.name)).toEqual(["Earbuds", "WH-1000XM4"]);
+  });
+  test("the command only reads, and the shell gets the script whole", () => {
+    expect(IOBT_SCRIPT).not.toContain("'");
+    expect(IOBT.startsWith("/usr/bin/osascript -l JavaScript -e '")).toBe(true);
+    expect(IOBT_SCRIPT).not.toMatch(/address|openConnection|closeConnection|remove|set[A-Z]/);
+  });
+});
+
 describe("the plugin", () => {
   const provider = (answer: (cmd: string) => { code: number; stdout: string }) => {
     let fn: any;
@@ -146,6 +174,15 @@ describe("the plugin", () => {
     expect(card).toContain("This Mac");
     expect(card).toContain("Magic Keyboard");
     expect(JSON.stringify(await p({ style: "list", showMac: false }))).not.toContain("This Mac");
+  });
+  test("IOBluetooth is extra: refused, silent or slow, the others carry on", async () => {
+    const base = (c: string) => ({ code: 0, stdout: c === IOBT ? iobt! : out[c]! });
+    expect(JSON.stringify(await provider(base)({ style: "list" }))).toContain("WH-1000XM4");
+    const refused = provider((c) => (c === IOBT ? { code: 1, stdout: "" } : base(c)));
+    expect(JSON.stringify(await refused({ style: "list" }))).toContain("This Mac");
+    let slow: any;
+    createPlugin(20).activate({ log() {}, shell: { run: (c: string) => (c === IOBT ? new Promise(() => {}) : Promise.resolve(base(c))) }, widgets: { provide: (_: string, f: unknown) => { slow = f; } }, actions: { handle() {} } } as any);
+    expect(JSON.stringify(await slow({ style: "list" }))).toContain("This Mac");
   });
   test("all three failing is an error", async () => {
     await expect(provider(() => ({ code: 1, stdout: "" }))({})).rejects.toThrow("Could not read any battery");

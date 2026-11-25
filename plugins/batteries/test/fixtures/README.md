@@ -4,3 +4,5 @@ because no Magic device or AirPods was connected when recording.
 
 `bluetooth-airpods.json` was recorded with AirPods Pro connected (owner name removed, no addresses or serial numbers). It has
 the AirPods and the nameless Bluetooth LE beacon macOS lists for their case.
+
+`iobluetooth-headset.json` was recorded from the plugin's `osascript` with Sony WH-1000XM4 headphones connected.

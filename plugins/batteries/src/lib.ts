@@ -63,6 +63,47 @@ const percentOf = (v: unknown): number | null => {
  */
 const isBeacon = (name: string, p: any) => name === "Bluetooth Device" && !p?.device_minorType && !p?.device_productID;
 
+/**
+ * What IOBluetooth knows about the connected devices. Some, such as many Sony headphones, tell their level to nothing else.
+ * Only reads; prints names and levels, never addresses. The script has no single quotes, so the shell takes it whole.
+ */
+export const IOBT_SCRIPT = [
+  'ObjC.import("IOBluetooth");',
+  'var out = [], devices = $.IOBluetoothDevice.pairedDevices;',
+  'for (var i = 0; devices && !devices.isNil() && i < devices.count; i++) {',
+  '  var d = devices.objectAtIndex(i);',
+  '  if (!d.isConnected) continue;',
+  '  var read = function (k) { return d.respondsToSelector(k) ? Number(d[k]) : 0; };',
+  '  out.push({ name: ObjC.unwrap(d.name) || "", major: read("deviceClassMajor"), single: read("batteryPercentSingle"), left: read("batteryPercentLeft"), right: read("batteryPercentRight"), "case": read("batteryPercentCase"), combined: read("batteryPercentCombined") });',
+  '}',
+  'JSON.stringify(out);',
+].join("\n");
+export const IOBT = `/usr/bin/osascript -l JavaScript -e '${IOBT_SCRIPT}' 2>/dev/null`;
+
+/** the "major device class" of audio devices */
+const AUDIO = 4;
+
+/** IOBluetooth says 0 for a level it does not know. */
+export function parseIOBluetooth(json: string): Device[] {
+  let list: unknown;
+  try { list = JSON.parse(json); } catch { return []; }
+  const found: Device[] = [];
+  for (const e of Array.isArray(list) ? list : []) {
+    const level = (v: unknown): number | null => (typeof v === "number" && v > 0 && v <= 100 ? Math.round(v) : null);
+    const name = clean(String(e?.name ?? ""));
+    if (!name) continue;
+    const left = level(e.left), right = level(e.right), box = level(e.case);
+    const sides = [left, right].filter((n): n is number => n !== null);
+    const main = level(e.single) ?? level(e.combined);
+    const percent = sides.length ? Math.min(...sides) : main ?? box;
+    if (percent === null) continue;
+    const note = sides.length ? budsNote(left, right, box) : main === null ? "Case" : "";
+    const icon = e.major === AUDIO ? "headphones" : iconFor("", name);
+    found.push({ name, icon, percent, ...(note ? { note } : {}), ...(box !== null && (sides.length || main !== null) ? { caseLevel: box } : {}) });
+  }
+  return found;
+}
+
 /** "L 64 · R 71 · Case 40", kept short enough for a 2x2 tile when the numbers are long. */
 export function budsNote(left: number | null, right: number | null, box: number | null): string {
   const tail = box !== null ? [`Case ${box}`] : [];
@@ -117,11 +158,19 @@ export function shortName(name: string): string {
  * The Mac first, then the others from the lowest level up (a tile that is too small leaves out the last ones). A device both
  * tools report is shown once, with the Bluetooth list's detail. Names are shortened unless two devices would end up alike.
  */
-export function merge(mac: Device | null, bluetooth: Device[], registry: Device[]): Device[] {
+export function merge(mac: Device | null, bluetooth: Device[], registry: Device[], iobt: Device[] = []): Device[] {
   const key = (n: string) => n.toLowerCase();
   const byName = new Map<string, Device>();
-  for (const d of [...registry, ...bluetooth]) byName.set(key(d.name), d);
-  const list = [...byName.values()];
+  // later sources win, except that one which tells the two sides keeps them against one which does not
+  const sided = (d: Device) => /^(L[ +\d]|R[ \d])/.test(d.note ?? "");
+  for (const d of [...iobt, ...registry, ...bluetooth]) {
+    const known = byName.get(key(d.name));
+    byName.set(key(d.name), known && sided(known) && !sided(d) ? known : d);
+  }
+  // the nameless earbuds entry is dropped when a named device has the same case: it is the same pair
+  const all = [...byName.values()];
+  const nameless = (d: Device) => d.name === "Earbuds" || d.name === "Earbuds case";
+  const list = all.filter((d) => !nameless(d) || !all.some((o) => !nameless(o) && o.caseLevel !== undefined && o.caseLevel === (d.caseLevel ?? d.percent)));
   const named = list.map((d) => {
     const short = shortName(d.name);
     return short !== d.name && list.filter((o) => shortName(o.name) === short).length === 1 ? { ...d, name: short } : d;
